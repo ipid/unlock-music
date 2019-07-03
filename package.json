@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "element-ui": "^2.4.5",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10"
   },
@@ -15,6 +16,7 @@
     "@vue/cli-plugin-babel": "^3.9.0",
     "@vue/cli-plugin-pwa": "^3.9.0",
     "@vue/cli-service": "^3.9.0",
+    "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.10"
   }
 }
