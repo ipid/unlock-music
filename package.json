@@ -7,18 +7,18 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "browser-id3-writer": "^4.1.0",
+    "browser-id3-writer": "^4.2.0",
     "core-js": "^2.6.5",
     "crypto-js": "^3.1.9-1",
-    "element-ui": "^2.4.5",
-    "jsmediatags": "^3.9.1",
+    "element-ui": "^2.11.1",
+    "jsmediatags": "^3.9.2",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.9.0",
-    "@vue/cli-plugin-pwa": "^3.9.0",
-    "@vue/cli-service": "^3.9.0",
+    "@vue/cli-plugin-babel": "^3.11.0",
+    "@vue/cli-plugin-pwa": "^3.11.0",
+    "@vue/cli-service": "^3.11.0",
     "babel-plugin-component": "^1.1.1",
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.10"
