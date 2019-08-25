@@ -1,4 +1,15 @@
-# music-crack
+# Unlock Music 音乐解锁
+Unlock encrypted music file in browser. 
+在浏览器中解锁加密的音乐文件。
+## Features
+- [x] Unlock in browser 在浏览器中解锁
+- [x] QQMusic File QQ音乐文件 (.qmc0/.qmc3/.qmcflac)
+- [x] Netease File 网易云音乐文件 (.ncm)
+- [x] Drag and Drop 拖放文件
+- [x] Play instantly 在线播放
+- [x] Batch unlocking 批量解锁
+- [ ] Multi-language 多语言
+- [ ] Write ID3 写入ID3信息
 
 ## Project setup
 ```
@@ -14,16 +25,3 @@ npm run serve
 ```
 npm run build
 ```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
