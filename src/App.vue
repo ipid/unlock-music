@@ -69,14 +69,14 @@
                 <el-row>
                     音乐解锁：移除已购音乐的加密保护。
                     目前支持网易云音乐(ncm)和QQ音乐(qmc0, qmc3, qmcflac)。
-
-
                 </el-row>
                 <el-row>
                     <span>Copyright &copy; 2019</span>
-                    <a href="https://ixarea.com" target="_blank">IXarea</a>
-                    <span>and</span>
                     <a href="https://github.com/ix64" target="_blank">MengYX</a>
+                    音乐解锁使用
+                    <a href="https://github.com/ix64/unlock-music/blob/master/LICENSE" target="_blank">MIT许可协议</a>
+                    开放
+                    <a href="https://github.com/ix64/unlock-music" target="_blank">源代码</a>
                 </el-row>
             </el-footer>
         </el-container>
