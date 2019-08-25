@@ -1,6 +1,6 @@
 {
-  "name": "music-crack",
-  "version": "0.1.0",
+  "name": "unlock-music",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -11,7 +11,7 @@
     "core-js": "^2.6.5",
     "crypto-js": "^3.1.9-1",
     "element-ui": "^2.11.1",
-    "jsmediatags": "^3.9.2",
+    "jsmediatags": "3.9.1",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10"
   },
