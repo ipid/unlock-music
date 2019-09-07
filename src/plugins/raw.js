@@ -1,4 +1,4 @@
-const jsmediatags = require("jsmediatags");
+const musicMetadata = require("music-metadata-browser");
 export {Decrypt}
 
 const audio_mime_type = {
@@ -7,14 +7,7 @@ const audio_mime_type = {
 };
 
 async function Decrypt(file) {
-    let tag = await new Promise(resolve => {
-        new jsmediatags.Reader(file).read({
-            onSuccess: resolve,
-            onError: () => {
-                resolve({tags: {}})
-            }
-        });
-    });
+    let tag = await musicMetadata.parseBlob(file);
     let pic_url = "";
     if (tag.tags.picture !== undefined) {
         let pic = new Blob([new Uint8Array(tag.tags.picture.data)], {type: tag.tags.picture.format});
@@ -28,8 +21,8 @@ async function Decrypt(file) {
     let filename_array = filename_no_ext.split("-");
     let filename_ext = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length).toLowerCase();
     const mime = audio_mime_type[filename_ext];
-    let title = tag.tags.title;
-    let artist = tag.tags.artist;
+    let title = tag.common.title;
+    let artist = tag.common.artist;
 
     if (filename_array.length > 1) {
         if (artist === undefined) artist = filename_array[0].trim();
