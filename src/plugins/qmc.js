@@ -1,4 +1,4 @@
-const jsmediatags = require("jsmediatags");
+const musicMetadata = require("music-metadata-browser");
 export {Decrypt}
 const SEED_MAP = [
     [0x4a, 0xd6, 0xca, 0x90, 0x67, 0xf7, 0x52],
@@ -31,7 +31,7 @@ async function Decrypt(file) {
     }
     const mime = audio_mime_type[new_ext];
     // 读取文件
-    const fileBuffer = await new Promise(reslove => {
+    const fileBuffer = await new Promise(() => {
         const reader = new FileReader();
         reader.onload = (e) => {
             reslove(e.target.result);
@@ -51,20 +51,12 @@ async function Decrypt(file) {
     });
     const musicUrl = URL.createObjectURL(musicData);
     // 读取Meta
-    let tag = await new Promise(resolve => {
-        new jsmediatags.Reader(musicData).read({
-            onSuccess: resolve,
-            onError: (err) => {
-                console.log(err);
-                resolve({tags: {}})
-            }
-        });
-    });
+    let tag = await musicMetadata.parseBlob(file);
 
     // 处理无标题歌手
     let filename_array = file.name.substring(0, file.name.lastIndexOf(".")).split("-");
-    let title = tag.tags.title;
-    let artist = tag.tags.artist;
+    let title = tag.common.title;
+    let artist = tag.common.artist;
     if (filename_array.length > 1) {
         if (artist === undefined) artist = filename_array[0].trim();
         if (title === undefined) title = filename_array[1].trim();
@@ -74,9 +66,10 @@ async function Decrypt(file) {
     const filename = artist + " - " + title + "." + new_ext;
     // 处理无封面
     let pic_url = "";
-    if (tag.tags.picture !== undefined) {
-        let pic = new Blob([new Uint8Array(tag.tags.picture.data)], {type: tag.tags.picture.format});
-        pic_url = URL.createObjectURL(pic);
+    if (tag.common.picture !== undefined && tag.common.picture.length >= 1) {
+        const picture = tag.common.picture[0];
+        const blobPic = new Blob([picture.data], {type: picture.format});
+        pic_url = URL.createObjectURL(blobPic);
     }
     // 返回
     return {
