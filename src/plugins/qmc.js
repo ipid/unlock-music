@@ -31,10 +31,10 @@ async function Decrypt(file) {
     }
     const mime = audio_mime_type[new_ext];
     // 读取文件
-    const fileBuffer = await new Promise(() => {
+    const fileBuffer = await new Promise(resolve => {
         const reader = new FileReader();
         reader.onload = (e) => {
-            reslove(e.target.result);
+            resolve(e.target.result);
         };
         reader.readAsArrayBuffer(file);
     });
@@ -51,7 +51,7 @@ async function Decrypt(file) {
     });
     const musicUrl = URL.createObjectURL(musicData);
     // 读取Meta
-    let tag = await musicMetadata.parseBlob(file);
+    let tag = await musicMetadata.parseBlob(musicData);
 
     // 处理无标题歌手
     let filename_array = file.name.substring(0, file.name.lastIndexOf(".")).split("-");
@@ -66,8 +66,8 @@ async function Decrypt(file) {
     const filename = artist + " - " + title + "." + new_ext;
     // 处理无封面
     let pic_url = "";
-    if (tag.tags.picture !== undefined) {
-        let pic = new Blob([new Uint8Array(tag.tags.picture.data)], {type: tag.tags.picture.format});
+    if (tag.common.picture !== undefined && tag.common.picture.length > 0) {
+        let pic = new Blob([tag.common.picture[0].data], {type: tag.common.picture[0].format});
         pic_url = URL.createObjectURL(pic);
     }
     // 返回
@@ -75,7 +75,7 @@ async function Decrypt(file) {
         filename: filename,
         title: title,
         artist: artist,
-        album: tag.tags.album,
+        album: tag.common.album,
         file: musicUrl,
         picture: pic_url,
         mime: mime
