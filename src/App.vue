@@ -17,7 +17,7 @@
                 <el-row id="app-control">
 
                     <el-button @click="handleDownloadAll" icon="el-icon-download" plain>下载全部</el-button>
-                    <el-button @click="handleDeleteAll" icon="el-icon-download" plain type="danger">删除全部</el-button>
+                    <el-button @click="handleDeleteAll" icon="el-icon-delete" plain type="danger">删除全部</el-button>
 
                 </el-row>
                 <audio :autoplay="playing_auto" :src="playing_url" controls></audio>
