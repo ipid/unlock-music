@@ -66,9 +66,11 @@ async function Decrypt(file) {
     const filename = artist + " - " + title + "." + new_ext;
     // 处理无封面
     let pic_url = "";
-    if (tag.common.picture !== undefined && tag.common.picture.length > 0) {
-        let pic = new Blob([tag.common.picture[0].data], {type: tag.common.picture[0].format});
-        pic_url = URL.createObjectURL(pic);
+
+    if (tag.common.picture !== undefined && tag.common.picture.length >= 1) {
+        const picture = tag.common.picture[0];
+        const blobPic = new Blob([picture.data], {type: picture.format});
+        pic_url = URL.createObjectURL(blobPic);
     }
     // 返回
     return {
