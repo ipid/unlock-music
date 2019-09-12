@@ -1,4 +1,5 @@
 const CryptoJS = require("crypto-js");
+const ID3Writer = require("browser-id3-writer");
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
 const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
 
@@ -6,7 +7,6 @@ const audio_mime_type = {
     mp3: "audio/mpeg",
     flac: "audio/flac"
 };
-
 
 export {Decrypt};
 
@@ -121,14 +121,13 @@ async function Decrypt(file) {
 
     offset += dataView.getUint32(offset + 5, true) + 13;
 
-    const audioData = new Uint8Array(fileBuffer, offset);
-    const audioDataLen = audioData.length;
+    let audioData = new Uint8Array(fileBuffer, offset);
+    let audioDataLen = audioData.length;
 
 
     for (let cur = 0; cur < audioDataLen; ++cur) {
         audioData[cur] ^= keyBox[cur & 0xff];
     }
-
 
     if (musicMeta.format === undefined) {
         musicMeta.format = (() => {
@@ -140,16 +139,37 @@ async function Decrypt(file) {
         })();
     }
     const mime = audio_mime_type[musicMeta.format];
-    const musicData = new Blob([audioData], {
-        type: mime
-    });
-
-    const musicUrl = URL.createObjectURL(musicData);
 
     const artists = [];
     musicMeta.artist.forEach(arr => {
         artists.push(arr[0]);
     });
+
+    if (musicMeta.format === "mp3") {
+        const writer = new ID3Writer(audioData);
+        writer.setFrame("TPE1", artists)
+            .setFrame("TIT2", musicMeta.musicName)
+            .setFrame("TALB", musicMeta.album);
+        if (musicMeta.albumPic !== "") {
+            try {
+                const img = await (await fetch(musicMeta.albumPic)).arrayBuffer();
+                writer.setFrame('APIC', {
+                    type: 3,
+                    data: img,
+                    description: 'Cover'
+                })
+            } catch (e) {
+                console.log("Fail to write cover image!");
+            }
+        }
+        writer.addTag();
+        audioData = writer.arrayBuffer;
+    }
+
+    const musicData = new Blob([audioData], {
+        type: mime
+    });
+    const musicUrl = URL.createObjectURL(musicData);
     const filename = artists.join(" & ") + " - " + musicMeta.musicName + "." + musicMeta.format;
     return {
         meta: musicMeta,
