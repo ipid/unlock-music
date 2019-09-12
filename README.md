@@ -10,8 +10,8 @@
 - [x] Play instantly 在线播放
 - [x] Batch unlocking 批量解锁
 - [x] Progressive Web App 渐进式Web应用
+- [x] Complete ID3 for ncm 补全ncm的ID3信息
 - [ ] Multi-language 多语言
-- [ ] Write ID3 写入ID3信息
 
 ## Project setup
 ```
