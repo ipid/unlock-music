@@ -172,13 +172,12 @@ async function Decrypt(file) {
     const musicUrl = URL.createObjectURL(musicData);
     const filename = artists.join(" & ") + " - " + musicMeta.musicName + "." + musicMeta.format;
     return {
-        meta: musicMeta,
-        file: musicUrl,
-        picture: musicMeta.albumPic,
-        title: musicMeta.musicName,
-        album: musicMeta.album,
-        artist: artists.join(" & "),
         filename: filename,
+        title: musicMeta.musicName,
+        artist: artists.join(" & "),
+        album: musicMeta.album,
+        picture: musicMeta.albumPic,
+        file: musicUrl,
         mime: mime
     };
 }

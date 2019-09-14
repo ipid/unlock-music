@@ -140,11 +140,21 @@
                             title: '解锁成功',
                             message: '成功解锁 ' + data.title
                         });
+                        let _rp_data = {
+                            original: data.original,
+                            title: data.title,
+                            album: data.album,
+                            artist: data.artist,
+                            mime: data.mime
+                        };
+                        console.log(data);
+                        _paq.push(["trackEvent", "Unlock", "Success", JSON.stringify(_rp_data)]);
                     } else {
                         this.$notify.error({
                             title: '错误',
-                            message: '不支持此文件类型'
+                            message: '解析此文件时出现问题'
                         });
+                        _paq.push(["trackEvent", "Unlock", "Error", file.name]);
                     }
 
 
@@ -189,7 +199,6 @@
             }
         }
     }
-
 
 </script>
 

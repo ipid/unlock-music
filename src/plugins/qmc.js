@@ -78,8 +78,8 @@ async function Decrypt(file) {
         title: title,
         artist: artist,
         album: tag.common.album,
-        file: musicUrl,
         picture: pic_url,
+        file: musicUrl,
         mime: mime
     }
 }
