@@ -108,7 +108,7 @@
         },
         methods: {
             finishLoad() {
-
+                document.getElementById("loader-mask").remove();
                 this.$notify.info({
                     title: '离线使用',
                     message: "音乐解锁加载成功。我们使用PWA技术，可以添加到桌面或收藏夹，无网络状况下也能使用。",
@@ -150,13 +150,13 @@
                             mime: data.mime
                         };
                         console.log(data);
-                        _paq.push(["trackEvent", "Unlock", "Success", JSON.stringify(_rp_data)]);
+                        window._paq.push(["trackEvent", "Unlock", "Success", JSON.stringify(_rp_data)]);
                     } else {
                         this.$notify.error({
                             title: '错误',
                             message: '解析此文件时出现问题'
                         });
-                        _paq.push(["trackEvent", "Unlock", "Error", file.name]);
+                        window._paq.push(["trackEvent", "Unlock", "Error", file.name]);
                     }
 
 
