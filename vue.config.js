@@ -1,4 +1,4 @@
 module.exports = {
-    publicPath: '/music/',
+    publicPath: '',
     productionSourceMap: false
 };
