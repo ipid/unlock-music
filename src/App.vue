@@ -6,7 +6,7 @@
                         :auto-upload="false"
                         :on-change="handleFile"
                         :show-file-list="false"
-                        accept=".ncm,.qmc0,.qmc3,.qmcflac"
+                        accept=".ncm,.qmc0,.qmc3,.qmcflac,.qmcogg"
                         action=""
                         drag
                         multiple>
@@ -111,7 +111,8 @@
                 document.getElementById("loader-mask").remove();
                 this.$notify.info({
                     title: '离线使用',
-                    message: "音乐解锁加载成功。我们使用PWA技术，可以添加到桌面或收藏夹，无网络状况下也能使用。",
+                    message: '我们使用PWA技术，添加到桌面或收藏夹，无网络也能使用。点击查看<a href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
+                    dangerouslyUseHTMLString: true,
                     duration: 30000,
                     position: 'top-left'
                 });
@@ -131,6 +132,7 @@
                         case "qmc3":
                         case "qmc0":
                         case "qmcflac":
+                        case "qmcogg":
                             data = await QmcDecrypt.Decrypt(file.raw);
                             break;
                         default:
@@ -154,7 +156,8 @@
                     } else {
                         this.$notify.error({
                             title: '错误',
-                            message: '解析此文件时出现问题'
+                            message: '解析此文件时出现问题，请查看<a href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
+                            dangerouslyUseHTMLString: true
                         });
                         window._paq.push(["trackEvent", "Unlock", "Error", file.name]);
                     }

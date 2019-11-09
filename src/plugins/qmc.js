@@ -21,6 +21,7 @@ async function Decrypt(file) {
     switch (filename_ext) {
         case "qmc0":
         case "qmc3":
+        case "qmcogg":
             new_ext = "mp3";
             break;
         case "qmcflac":
