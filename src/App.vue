@@ -111,7 +111,7 @@
                 document.getElementById("loader-mask").remove();
                 this.$notify.info({
                     title: '离线使用',
-                    message: '我们使用PWA技术，添加到桌面或收藏夹，无网络也能使用。点击查看<a href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
+                    message: '我们使用PWA技术，添加到桌面或收藏夹，无网络也能使用。点击查看<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
                     dangerouslyUseHTMLString: true,
                     duration: 30000,
                     position: 'top-left'
@@ -156,7 +156,7 @@
                     } else {
                         this.$notify.error({
                             title: '错误',
-                            message: '解析此文件时出现问题，请查看<a href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
+                            message: '解析此文件时出现问题，请查看<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
                             dangerouslyUseHTMLString: true
                         });
                         window._paq.push(["trackEvent", "Unlock", "Error", file.name]);
