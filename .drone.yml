@@ -1,0 +1,33 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+clone:
+  depth: 1
+
+steps:
+  - name: installDependencies
+    image: node:lts
+    commands:
+      - npm config set registry http://registry.npm.taobao.org
+      - npm install
+
+  - name: build
+    image: node:lts
+    commands:
+      - npm run build
+      - tar -czf dist.tar.gz ./dist/*
+
+  - name: release
+    image: plugins/gitea-release
+    settings:
+      base_url: https://git.ixarea.com
+      files:
+        - dist.tar.gz
+      api_key:
+        from_secret: gitea_token
+      checksum:
+        - sha256
+    when:
+      event: [tag]
