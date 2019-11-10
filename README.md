@@ -7,7 +7,7 @@
 
 ## Features
 - [x] Unlock in browser 在浏览器中解锁
-- [x] QQMusic File QQ音乐文件 (.qmc0/.qmc3/.qmcflac)
+- [x] QQMusic File QQ音乐文件 (.qmc0/.qmc3/.qmcflac/.qmcogg)
 - [x] Netease File 网易云音乐文件 (.ncm)
 - [x] Drag and Drop 拖放文件
 - [x] Play instantly 在线播放

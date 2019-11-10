@@ -11,7 +11,8 @@ const SEED_MAP = [
     [0x00, 0x09, 0x5b, 0x9f, 0x62, 0x66, 0xa1]];
 const audio_mime_type = {
     mp3: "audio/mpeg",
-    flac: "audio/flac"
+    flac: "audio/flac",
+    ogg: "audio/ogg"
 };
 
 async function Decrypt(file) {
@@ -21,8 +22,10 @@ async function Decrypt(file) {
     switch (filename_ext) {
         case "qmc0":
         case "qmc3":
-        case "qmcogg":
             new_ext = "mp3";
+            break;
+        case "qmcogg":
+            new_ext = "ogg";
             break;
         case "qmcflac":
             new_ext = "flac";
