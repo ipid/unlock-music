@@ -2,6 +2,9 @@
 - Unlock encrypted music file in browser. 
 - 在浏览器中解锁加密的音乐文件。
 - [Online Demo](https://tool.ixarea.com/music)
+
+[![Build Status](https://ci.ixarea.com/api/badges/ix64/unlock-music/status.svg)](https://ci.ixarea.com/ix64/unlock-music)
+
 ## Features
 - [x] Unlock in browser 在浏览器中解锁
 - [x] QQMusic File QQ音乐文件 (.qmc0/.qmc3/.qmcflac)
