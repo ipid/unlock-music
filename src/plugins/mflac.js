@@ -4,7 +4,10 @@ export {Decrypt}
 async function Decrypt(file) {
     // 获取扩展名
     let filename_ext = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length).toLowerCase();
-    if (filename_ext !== "mflac") return;
+    if (filename_ext !== "mflac") return {
+        status: false,
+        message: "File type is incorrect!",
+    };
     // 读取文件
     const fileBuffer = await new Promise(resolve => {
         const reader = new FileReader();
@@ -18,7 +21,10 @@ async function Decrypt(file) {
 
     // 转换数据
     const seed = new Mask();
-    if (!seed.DetectMask(audioData)) return;
+    if (!seed.DetectMask(audioData)) return{
+        status: false,
+        message: "此音乐无法解锁，目前mflac格式不提供完整支持",
+    };
     for (let cur = 0; cur < audioDataLen; ++cur) {
         audioData[cur] ^= seed.NextMask();
     }
@@ -51,6 +57,8 @@ async function Decrypt(file) {
     }
     // 返回*/
     return {
+        status: true,
+        message: "",
         filename: filename,
         title: title,
         artist: artist,

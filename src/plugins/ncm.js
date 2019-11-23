@@ -24,10 +24,10 @@ async function Decrypt(file) {
 
     if (dataView.getUint32(0, true) !== 0x4e455443 ||
         dataView.getUint32(4, true) !== 0x4d414446
-    ) {
-        console.log({type: "error", data: "not ncm file"});
-        return;
-    }
+    ) return {
+        status: false,
+        message: "此ncm文件已损坏",
+    };
 
     let offset = 10;
 
@@ -50,13 +50,12 @@ async function Decrypt(file) {
 
         const result = new Uint8Array(plainText.sigBytes);
 
-        {
-            const words = plainText.words;
-            const sigBytes = plainText.sigBytes;
-            for (let i = 0; i < sigBytes; i++) {
-                result[i] = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
-            }
+        const words = plainText.words;
+        const sigBytes = plainText.sigBytes;
+        for (let i = 0; i < sigBytes; i++) {
+            result[i] = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
         }
+
 
         return result.slice(17);
     })();
@@ -130,13 +129,12 @@ async function Decrypt(file) {
     }
 
     if (musicMeta.format === undefined) {
-        musicMeta.format = (() => {
-            const [f, L, a, C] = audioData;
-            if (f === 0x66 && L === 0x4c && a === 0x61 && C === 0x43) {
-                return "flac";
-            }
-            return "mp3";
-        })();
+        const [f, L, a, C] = audioData;
+        if (f === 0x66 && L === 0x4c && a === 0x61 && C === 0x43) {
+            musicMeta.format = "flac";
+        } else {
+            musicMeta.format = "mp3";
+        }
     }
     const mime = audio_mime_type[musicMeta.format];
 

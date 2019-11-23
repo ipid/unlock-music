@@ -140,10 +140,13 @@
                             data = await MFlacDecrypt.Decrypt(file.raw);
                             break;
                         default:
-                            console.log("Not Supported File!");
+                            data = {
+                                status: false,
+                                message: "不支持此文件格式",
+                            };
                             break;
                     }
-                    if (null != data) {
+                    if (data.status) {
                         this.tableData.push(data);
                         this.$notify.success({
                             title: '解锁成功',
@@ -160,8 +163,8 @@
                         window._paq.push(["trackEvent", "Unlock", "Success", JSON.stringify(_rp_data)]);
                     } else {
                         this.$notify.error({
-                            title: '错误',
-                            message: '解析此文件时出现问题，请查看<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
+                            title: '出现问题',
+                            message: data.message + '，参考<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
                             dangerouslyUseHTMLString: true
                         });
                         window._paq.push(["trackEvent", "Unlock", "Error", file.name]);
