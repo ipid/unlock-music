@@ -117,7 +117,4 @@ class Mask {
         return ret
     }
 
-
 }
-
-
