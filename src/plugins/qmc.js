@@ -31,7 +31,10 @@ async function Decrypt(file) {
             new_ext = "flac";
             break;
         default:
-            return;
+            return {
+                status: false,
+                message: "File type is incorrect!",
+            };
     }
     const mime = audio_mime_type[new_ext];
     // 读取文件
