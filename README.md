@@ -7,8 +7,11 @@
 
 ## Features
 - [x] Unlock in browser 在浏览器中解锁
-- [x] QQMusic File QQ音乐文件 (.qmc0/.qmc3/.qmcflac/.qmcogg)
-- [x] Netease File 网易云音乐文件 (.ncm)
+- [x] QQMusic File QQ音乐格式 (.qmc0/.qmc3/.qmcflac/.qmcogg)
+- [ ] QQMusic New Format QQ音乐新格式
+    - [x] .mflac (Partial 部分支持)
+    - [ ] .mgg
+- [x] Netease Format 网易云音乐格式 (.ncm)
 - [x] Drag and Drop 拖放文件
 - [x] Play instantly 在线播放
 - [x] Batch unlocking 批量解锁
