@@ -31,7 +31,6 @@ async function Decrypt(file) {
     // 导出
     const musicData = new Blob([audioData], {type: "audio/flac"});
     const musicUrl = URL.createObjectURL(musicData);
-    console.log(musicUrl);
 
     // 读取Meta
     let tag = await musicMetadata.parseBlob(musicData);
@@ -104,7 +103,6 @@ class Mask {
             }
             if (!flag) continue;
             this.mask = mask;
-            console.log(mask);
             return true;
         }
         return false;

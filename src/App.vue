@@ -51,14 +51,9 @@
                             <el-button @click="handlePlay(scope.$index, scope.row)"
                                        circle icon="el-icon-video-play" type="success">
                             </el-button>
-
-                            <el-button circle>
-                                <el-link :download="scope.row.filename" :href="scope.row.file"
-                                         :underline="false" icon="el-icon-download">
-
-                                </el-link>
+                            <el-button @click="handleDownload(scope.row)"
+                                       circle icon="el-icon-download">
                             </el-button>
-
                             <el-button @click="handleDelete(scope.$index, scope.row)"
                                        circle icon="el-icon-delete" type="danger">
                             </el-button>
@@ -164,16 +159,13 @@
                     } else {
                         this.$notify.error({
                             title: '出现问题',
-                            message: data.message + '，参考<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
+                            message: data.message + "，" + file.name +
+                                '，参考<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
                             dangerouslyUseHTMLString: true
                         });
                         window._paq.push(["trackEvent", "Unlock", "Error", file.name]);
                     }
-
-
                 })();
-
-
             },
             handlePlay(index, row) {
                 this.playing_url = row.file;
@@ -184,6 +176,14 @@
                 URL.revokeObjectURL(row.file);
                 URL.revokeObjectURL(row.picture);
                 this.tableData.splice(index, 1);
+            },
+            handleDownload(row) {
+                let a = document.createElement('a');
+                a.href = row.file;
+                a.download = row.filename;
+                document.body.append(a);
+                a.click();
+                a.remove();
             },
             handleDeleteAll() {
                 this.tableData.forEach(value => {
@@ -196,17 +196,11 @@
                 let index = 0;
                 let c = setInterval(() => {
                     if (index < this.tableData.length) {
-                        let a = document.createElement('a');
-                        a.href = this.tableData[index].file;
-                        a.download = this.tableData[index].filename;
-                        document.body.append(a);
-                        a.click();
-                        a.remove();
+                        this.handleDownload(this.tableData[index]);
                         index++;
                     } else {
                         clearInterval(c);
                     }
-
                 }, 1000);
 
             }
