@@ -151,15 +151,9 @@
                             title: '解锁成功',
                             message: '成功解锁 ' + data.title
                         });
-                        let _rp_data = {
-                            original: file.name,
-                            title: data.title,
-                            album: data.album,
-                            artist: data.artist,
-                            mime: data.mime
-                        };
+                        let _rp_data = [data.title, data.artist, data.album];
                         console.log(data);
-                        window._paq.push(["trackEvent", "Unlock", "Success", JSON.stringify(_rp_data)]);
+                        window._paq.push(["trackEvent", "Unlock", ext + "," + data.mime, JSON.stringify(_rp_data)]);
                     } else {
                         this.$notify.error({
                             title: '出现问题',
@@ -167,7 +161,7 @@
                                 '，参考<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
                             dangerouslyUseHTMLString: true
                         });
-                        window._paq.push(["trackEvent", "Unlock", "Error", file.name]);
+                        window._paq.push(["trackEvent", "Error", data.message, file.name]);
                     }
                 })();
             },
