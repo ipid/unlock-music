@@ -1,18 +1,18 @@
 import Vue from 'vue'
 import {
-    Image,
     Button,
+    Col,
+    Container,
+    Footer,
+    Icon,
+    Image,
+    Link,
+    Main,
+    Notification,
+    Row,
     Table,
     TableColumn,
-    Main,
-    Footer,
-    Container,
-    Icon,
-    Row,
-    Col,
-    Upload,
-    Notification,
-    Link
+    Upload
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -29,5 +29,3 @@ Vue.use(Row);
 Vue.use(Col);
 Vue.use(Upload);
 Vue.prototype.$notify = Notification;
-
-
