@@ -32,6 +32,7 @@ async function Decrypt(file) {
 
     const filename = artist + " - " + title + "." + filename_ext;
     return {
+        status:true,
         filename: filename,
         title: title,
         artist: artist,

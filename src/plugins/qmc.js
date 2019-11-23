@@ -81,6 +81,7 @@ async function Decrypt(file) {
     }
     // 返回
     return {
+        status:true,
         filename: filename,
         title: title,
         artist: artist,

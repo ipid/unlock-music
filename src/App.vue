@@ -26,9 +26,13 @@
 
                 <el-table :data="tableData" style="width: 100%">
 
-                    <el-table-column label="图片">
+                    <el-table-column label="封面">
                         <template slot-scope="scope">
-                            <el-image :src="scope.row.picture" style="width: 100px; height: 100px"></el-image>
+                            <el-image :src="scope.row.picture" style="width: 100px; height: 100px">
+                                <div class="image-slot el-image__error" slot="error">
+                                    暂无封面
+                                </div>
+                            </el-image>
                         </template>
                     </el-table-column>
                     <el-table-column label="歌曲" sortable>
