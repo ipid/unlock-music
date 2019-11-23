@@ -6,7 +6,7 @@
                         :auto-upload="false"
                         :on-change="handleFile"
                         :show-file-list="false"
-                        accept=".ncm,.qmc0,.qmc3,.qmcflac,.qmcogg"
+                        accept=".ncm,.qmc0,.qmc3,.qmcflac,.qmcogg,.mflac"
                         action=""
                         drag
                         multiple>
@@ -69,7 +69,7 @@
             <el-footer id="app-footer">
                 <el-row>
                     音乐解锁：移除已购音乐的加密保护。
-                    目前支持网易云音乐(ncm)和QQ音乐(qmc0, qmc3, qmcflac, qmcogg)。
+                    目前支持网易云音乐(ncm)和QQ音乐(qmc0, qmc3, qmcflac, qmcogg, mflac)。
                     <a href="https://github.com/ix64/unlock-music/wiki/使用提示" target="_blank">使用提示</a>
                 </el-row>
                 <el-row>
@@ -90,6 +90,7 @@
     const NcmDecrypt = require("./plugins/ncm");
     const QmcDecrypt = require("./plugins/qmc");
     const RawDecrypt = require("./plugins/raw");
+    const MFlacDecrypt = require("./plugins/mflac");
     export default {
         name: 'app',
         components: {},
@@ -135,7 +136,11 @@
                         case "qmcogg":
                             data = await QmcDecrypt.Decrypt(file.raw);
                             break;
+                        case "mflac":
+                            data = await MFlacDecrypt.Decrypt(file.raw);
+                            break;
                         default:
+                            console.log("Not Supported File!");
                             break;
                     }
                     if (null != data) {
