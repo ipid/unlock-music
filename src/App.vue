@@ -111,9 +111,11 @@
                 document.getElementById("loader-mask").remove();
                 this.$notify.info({
                     title: '离线使用',
-                    message: '我们使用PWA技术，添加到桌面或收藏夹，无网络也能使用。点击查看<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
+                    message: '我们使用PWA技术，无网络也能使用<br/>' +
+                        '最近更新：支持qmcogg,mflac<br/>' +
+                        '点击查看 <a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
                     dangerouslyUseHTMLString: true,
-                    duration: 30000,
+                    duration: 10000,
                     position: 'top-left'
                 });
             },
@@ -149,7 +151,8 @@
                         this.tableData.push(data);
                         this.$notify.success({
                             title: '解锁成功',
-                            message: '成功解锁 ' + data.title
+                            message: '成功解锁 ' + data.title,
+                            duration: 3000
                         });
                         let _rp_data = [data.title, data.artist, data.album];
                         console.log(data);
@@ -159,7 +162,8 @@
                             title: '出现问题',
                             message: data.message + "，" + file.name +
                                 '，参考<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
-                            dangerouslyUseHTMLString: true
+                            dangerouslyUseHTMLString: true,
+                            duration: 6000
                         });
                         window._paq.push(["trackEvent", "Error", data.message, file.name]);
                     }
