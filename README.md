@@ -5,7 +5,7 @@
 
 [![Build Status](https://ci.ixarea.com/api/badges/ix64/unlock-music/status.svg)](https://ci.ixarea.com/ix64/unlock-music)
 
-## Features
+# Features
 - [x] Unlock in browser 在浏览器中解锁
 - [x] QQMusic File QQ音乐格式 (.qmc0/.qmc3/.qmcflac/.qmcogg)
 - [ ] QQMusic New Format QQ音乐新格式
@@ -19,17 +19,14 @@
 - [x] Complete ID3 for ncm 补全ncm的ID3信息
 - [ ] Multi-language 多语言
 
-## Project setup
-```
-npm install
-```
+# 使用方法
+## 下载已构建版本
+- 已构建的版本发布在 [GitHub Release](https://github.com/ix64/unlock-music), 下载解压缩后即可部署或本地使用
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
+## 自行构建
+- 环境要求 
+    - nodejs
+    - npm
+1. 获取项目源代码后执行 `npm install` 安装相关依赖
+2. 执行 `npm run build` 即可进行构建，构建输出为 dist 目录
+- `npm run serve` 可用于开发

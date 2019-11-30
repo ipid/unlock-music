@@ -1,6 +1,6 @@
 {
   "name": "unlock-music",
-  "version": "0.2.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -10,7 +10,7 @@
     "browser-id3-writer": "^4.3.0",
     "core-js": "^2.6.10",
     "crypto-js": "^3.1.9-1",
-    "element-ui": "^2.11.1",
+    "element-ui": "^2.13.0",
     "music-metadata-browser": "^1.8.1",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10"
