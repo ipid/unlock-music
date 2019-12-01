@@ -21,7 +21,7 @@
 
 # 使用方法
 ## 下载已构建版本
-- 已构建的版本发布在 [GitHub Release](https://github.com/ix64/unlock-music), 下载解压缩后即可部署或本地使用
+- 已构建的版本发布在 [GitHub Release](https://github.com/ix64/unlock-music/releases/latest), 下载解压缩后即可部署或本地使用
 
 ## 自行构建
 - 环境要求 
