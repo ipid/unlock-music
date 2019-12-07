@@ -6,7 +6,6 @@
                         :auto-upload="false"
                         :on-change="handleFile"
                         :show-file-list="false"
-                        accept=".ncm,.qmc0,.qmc3,.qmcflac,.qmcogg,.mflac"
                         action=""
                         drag
                         multiple>
