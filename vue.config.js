@@ -1,4 +1,4 @@
 module.exports = {
     publicPath: '',
-    productionSourceMap: false
+    productionSourceMap: true
 };
