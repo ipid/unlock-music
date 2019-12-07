@@ -26,7 +26,7 @@ steps:
   - name: build
     image: node:lts
     commands:
-      - npm run build
+      - npm run build -- --modern
       - tar -czf dist.tar.gz ./dist/*
 
   - name: release
