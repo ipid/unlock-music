@@ -1,7 +1,8 @@
 # Unlock Music 音乐解锁
 - Unlock encrypted music file in browser. 
 - 在浏览器中解锁加密的音乐文件。
-- [Online Demo](https://tool.ixarea.com/music)
+- unlock-music项目是以学习和技术研究的初衷创建的。
+- 由于存在可能的法律风险以及滥用风险，不再提供Demo服务。
 
 [![Build Status](https://ci.ixarea.com/api/badges/ix64/unlock-music/status.svg)](https://ci.ixarea.com/ix64/unlock-music)
 
