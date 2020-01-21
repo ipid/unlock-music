@@ -8,19 +8,19 @@
   },
   "dependencies": {
     "browser-id3-writer": "^4.3.0",
-    "core-js": "^3.4.3",
+    "core-js": "^3.6.4",
     "crypto-js": "^3.1.9-1",
     "element-ui": "^2.13.0",
-    "music-metadata-browser": "^1.8.1",
+    "music-metadata-browser": "^1.10.0",
     "register-service-worker": "^1.6.2",
-    "vue": "^2.6.10"
+    "vue": "^2.6.11"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.1.1",
-    "@vue/cli-plugin-pwa": "^4.1.1",
-    "@vue/cli-service": "^4.1.1",
+    "@vue/cli-plugin-babel": "^4.1.2",
+    "@vue/cli-plugin-pwa": "^4.1.2",
+    "@vue/cli-service": "^4.1.2",
     "babel-plugin-component": "^1.1.1",
     "vue-cli-plugin-element": "^1.0.1",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.11"
   }
 }
