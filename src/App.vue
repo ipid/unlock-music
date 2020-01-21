@@ -85,10 +85,7 @@
 
 <script>
 
-    const NcmDecrypt = require("./plugins/ncm");
-    const QmcDecrypt = require("./plugins/qmc");
-    const RawDecrypt = require("./plugins/raw");
-    const MFlacDecrypt = require("./plugins/mflac");
+    const dec = require("./decrypt/common");
     export default {
         name: 'app',
         components: {},
@@ -119,33 +116,9 @@
                 });
             },
             handleFile(file) {
-                let ext = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length).toLowerCase();
+
                 (async () => {
-                    let data = null;
-                    switch (ext) {
-                        case "ncm":
-                            data = await NcmDecrypt.Decrypt(file.raw);
-                            break;
-                        case "mp3":
-                        case "flac":
-                            data = await RawDecrypt.Decrypt(file.raw);
-                            break;
-                        case "qmc3":
-                        case "qmc0":
-                        case "qmcflac":
-                        case "qmcogg":
-                            data = await QmcDecrypt.Decrypt(file.raw);
-                            break;
-                        case "mflac":
-                            data = await MFlacDecrypt.Decrypt(file.raw);
-                            break;
-                        default:
-                            data = {
-                                status: false,
-                                message: "不支持此文件格式",
-                            };
-                            break;
-                    }
+                    let data =await dec.CommonDecrypt(file);
                     if (data.status) {
                         this.tableData.push(data);
                         this.$notify.success({
@@ -154,8 +127,7 @@
                             duration: 3000
                         });
                         let _rp_data = [data.title, data.artist, data.album];
-                        console.log(data);
-                        window._paq.push(["trackEvent", "Unlock", ext + "," + data.mime, JSON.stringify(_rp_data)]);
+                        window._paq.push(["trackEvent", "Unlock", data.rawExt + "," + data.mime, JSON.stringify(_rp_data)]);
                     } else {
                         this.$notify.error({
                             title: '出现问题',
@@ -173,7 +145,6 @@
                 this.playing_auto = true;
             },
             handleDelete(index, row) {
-                console.log(index);
                 URL.revokeObjectURL(row.file);
                 URL.revokeObjectURL(row.picture);
                 this.tableData.splice(index, 1);
