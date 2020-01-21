@@ -108,7 +108,7 @@
                 this.$notify.info({
                     title: '离线使用',
                     message: '我们使用PWA技术，无网络也能使用<br/>' +
-                        '最近更新：支持qmcogg,mflac<br/>' +
+                        '最近更新：支持tm0/2/3/6<br/>' +
                         '点击查看 <a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
                     dangerouslyUseHTMLString: true,
                     duration: 10000,
