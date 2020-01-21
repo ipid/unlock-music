@@ -7,7 +7,8 @@
 
 # Features
 - [x] Unlock in browser 在浏览器中解锁
-- [x] QQMusic File QQ音乐格式 (.qmc0/.qmc3/.qmcflac/.qmcogg)
+- [x] QQMusic Format QQ音乐格式 (.qmc0/.qmc3/.qmcflac/.qmcogg)
+- [x] QQMusic Tm Format QQ音乐 (.tm0/.tm2/.tm3/.tm6)
 - [ ] QQMusic New Format QQ音乐新格式
     - [x] .mflac (Partial 部分支持)
     - [ ] .mgg
