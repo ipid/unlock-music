@@ -27,6 +27,8 @@ async function CommonDecrypt(file) {
         case "qmc0"://QQ Music Android Mp3
         case "qmcflac"://QQ Music Android Flac
         case "qmcogg"://QQ Music Android Ogg
+        case "bkcmp3"://Moo Music Mp3
+        case "bkcflac"://Moo Music Flac
             rt_data = await QmcDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
             break;
         case "mflac"://QQ Music Desktop Flac

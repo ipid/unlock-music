@@ -11,24 +11,21 @@ const SEED_MAP = [
     [0x0e, 0x74, 0xbb, 0x90, 0xbc, 0x3f, 0x92],
     [0x00, 0x09, 0x5b, 0x9f, 0x62, 0x66, 0xa1]];
 
+const OriginalExtMap = {
+    "qmc0": "mp3",
+    "qmc3": "mp3",
+    "qmcogg": "ogg",
+    "qmcflac": "flac",
+    "bkcmp3": "mp3",
+    "bkcflac": "flac"
+};
 
 async function Decrypt(file, raw_filename, raw_ext) {
     // 获取扩展名
-    let new_ext;
-    switch (raw_ext) {
-        case "qmc0":
-        case "qmc3":
-            new_ext = "mp3";
-            break;
-        case "qmcogg":
-            new_ext = "ogg";
-            break;
-        case "qmcflac":
-            new_ext = "flac";
-            break;
-        default:
-            return {status: false, message: "File type is incorrect!"}
+    if (!(raw_ext in OriginalExtMap)) {
+        return {status: false, message: "File type is incorrect!"}
     }
+    let new_ext = OriginalExtMap[raw_ext]
     const mime = util.AudioMimeType[new_ext];
     // 读取文件
     const fileBuffer = await util.GetArrayBuffer(file);
