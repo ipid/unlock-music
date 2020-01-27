@@ -16,7 +16,8 @@ async function CommonDecrypt(file) {
             break;
         case "mp3":// Raw Mp3
         case "flac"://Raw Flac
-        case "m4a":// todo: Raw M4A
+        case "m4a":// Raw M4a
+        case "ogg":// Raw Ogg
             rt_data = await RawDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
             break;
         case "tm0":// QQ Music IOS Mp3
@@ -27,6 +28,7 @@ async function CommonDecrypt(file) {
         case "qmc0"://QQ Music Android Mp3
         case "qmcflac"://QQ Music Android Flac
         case "qmcogg"://QQ Music Android Ogg
+        case "tkm"://QQ Music Accompaniment M4a
         case "bkcmp3"://Moo Music Mp3
         case "bkcflac"://Moo Music Flac
             rt_data = await QmcDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
@@ -34,8 +36,8 @@ async function CommonDecrypt(file) {
         case "mflac"://QQ Music Desktop Flac
             rt_data = await MFlacDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
             break;
-        case "tm2":// todo: QQ Music IOS M4A
-        case "tm6":// todo: QQ Music IOS M4A
+        case "tm2":// QQ Music IOS M4a
+        case "tm6":// QQ Music IOS M4a
             rt_data = await TmDecrypt.Decrypt(file.raw, raw_filename);
             break;
         default:
