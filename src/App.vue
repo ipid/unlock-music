@@ -67,7 +67,7 @@
             <el-footer id="app-footer">
                 <el-row>
                     音乐解锁：移除已购音乐的加密保护。
-                    目前支持网易云音乐(ncm)、QQ音乐(qmc0, qmc3, qmcflac, qmcogg, mflac)以及
+                    目前支持网易云音乐(ncm)、QQ音乐(qmc, mflac, tkm)以及
                     <a href="https://github.com/ix64/unlock-music/blob/master/README.md" target="_blank">其他格式</a>。
                     <a href="https://github.com/ix64/unlock-music/wiki/使用提示" target="_blank">使用提示</a>
                 </el-row>
@@ -109,7 +109,7 @@
                 this.$notify.info({
                     title: '离线使用',
                     message: '我们使用PWA技术，无网络也能使用<br/>' +
-                        '最近更新：支持bkcmp3/bkcflac<br/>' +
+                        '最近更新：支持bkcmp3/bkcflac/tkm<br/>' +
                         '点击查看 <a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
                     dangerouslyUseHTMLString: true,
                     duration: 10000,

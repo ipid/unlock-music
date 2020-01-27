@@ -17,7 +17,8 @@ const OriginalExtMap = {
     "qmcogg": "ogg",
     "qmcflac": "flac",
     "bkcmp3": "mp3",
-    "bkcflac": "flac"
+    "bkcflac": "flac",
+    "tkm": "m4a"
 };
 
 async function Decrypt(file, raw_filename, raw_ext) {
