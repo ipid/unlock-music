@@ -40,7 +40,7 @@ async function Decrypt(file, raw_filename, raw_ext) {
     const musicUrl = URL.createObjectURL(musicData);
     // 读取Meta
     let tag = await musicMetadata.parseBlob(musicData);
-    const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename, raw_ext);
+    const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename, new_ext);
     let picUrl = util.GetCoverURL(tag);
 
     // 返回
