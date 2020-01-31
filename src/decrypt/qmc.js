@@ -26,7 +26,7 @@ async function Decrypt(file, raw_filename, raw_ext) {
     if (!(raw_ext in OriginalExtMap)) {
         return {status: false, message: "File type is incorrect!"}
     }
-    let new_ext = OriginalExtMap[raw_ext]
+    let new_ext = OriginalExtMap[raw_ext];
     const mime = util.AudioMimeType[new_ext];
     // 读取文件
     const fileBuffer = await util.GetArrayBuffer(file);
