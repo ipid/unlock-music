@@ -96,6 +96,19 @@
                 tableData: [],
                 playing_url: "",
                 playing_auto: false,
+                workCount: 0,
+                cacheQueue: [],
+                cacheQueueOption: {
+                    push: (element) => {
+                        this.cacheQueue.push(element);
+                    },
+                    pop: () => {
+                        return this.cacheQueue.shift();
+                    },
+                    size: () => {
+                        return this.cacheQueue.length;
+                    }
+                },
             }
         },
         mounted() {
@@ -117,9 +130,43 @@
                 });
             },
             handleFile(file) {
-
+                // 新的文件加入
+                if (file) {
+                    console.log("workCount", this.workCount);
+                    // 将工作数量大小限制为100
+                    if (this.workCount < 100) {
+                        // 工作数量增加
+                        this.workCount++;
+                        // 工作数量小于100  立刻处理文件
+                        this.handleDoFile(file);
+                    }
+                    // 工作数量大于100 则放入缓存队列
+                    else {
+                        this.cacheQueueOption.push(file);
+                    }
+                }
+                //消费缓存队列的数据
+                else {
+                    this.workCount++;
+                    this.handleDoFile(this.cacheQueueOption.pop());
+                }
+            },
+            handleCacheQueue() {
+                // 缓存队列中有数据且工作数量少于50的话 调用方法消费缓存队列中的数据
+                if (this.cacheQueueOption.size() > 0 && this.workCount < 50) {
+                    this.handleFile(null);
+                    console.log("size", this.cacheQueueOption.size(), this.workCount);
+                }
+            },
+            handleDoFile(file) {
                 (async () => {
                     let data = await dec.CommonDecrypt(file);
+
+
+                    // 完成之后 数量减少 同时调用判断函数
+                    this.workCount--;
+                    this.handleCacheQueue();
+
                     if (data.status) {
                         this.tableData.push(data);
                         this.$notify.success({
