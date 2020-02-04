@@ -56,6 +56,7 @@ async function Decrypt(file) {
         filename: filename,
         title: musicMeta.musicName,
         artist: artists.join(" & "),
+        ext: musicMeta.format,
         album: musicMeta.album,
         picture: musicMeta.albumPic,
         file: musicUrl,
