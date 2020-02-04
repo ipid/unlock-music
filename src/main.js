@@ -1,10 +1,40 @@
 import Vue from 'vue'
-import { Radio } from 'element-ui'
 import App from './App.vue'
 import './registerServiceWorker'
-import './plugins/element.js'
+import {
+    Button,
+    Col,
+    Container,
+    Footer,
+    Icon,
+    Image,
+    Link,
+    Main,
+    Notification,
+    Row,
+    Table,
+    TableColumn,
+    Upload,
+    Radio,
+    Checkbox
+} from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css'
 
-Vue.component(Radio.name, Radio)
+Vue.use(Link);
+Vue.use(Image);
+Vue.use(Button);
+Vue.use(Table);
+Vue.use(TableColumn);
+Vue.use(Main);
+Vue.use(Footer);
+Vue.use(Container);
+Vue.use(Icon);
+Vue.use(Row);
+Vue.use(Col);
+Vue.use(Upload);
+Vue.use(Checkbox);
+Vue.use(Radio);
+Vue.prototype.$notify = Notification;
 
 // only if your build system can import css, otherwise import it wherever you would import your css.
 Vue.config.productionTip = false;
