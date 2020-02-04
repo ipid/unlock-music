@@ -17,6 +17,7 @@ async function Decrypt(file, raw_filename, raw_ext) {
         filename: info.filename,
         title: info.title,
         artist: info.artist,
+        ext: raw_ext,
         album: tag.common.album,
         picture: picUrl,
         file: fileUrl,

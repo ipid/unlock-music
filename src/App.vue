@@ -16,6 +16,13 @@
 
                 <el-row id="app-control">
 
+                    <el-row style="padding-bottom: 1em; font-size: 14px">
+                        歌曲命名格式：
+                        <el-radio name="format" v-model="format" label="1">歌曲名</el-radio>
+                        <el-radio name="format" v-model="format" label="2">歌手-歌曲名</el-radio>
+                        <el-radio name="format" v-model="format" label="3">歌曲名-歌手</el-radio>
+                    </el-row>
+
                     <el-button @click="handleDownloadAll" icon="el-icon-download" plain>下载全部</el-button>
                     <el-button @click="handleDeleteAll" icon="el-icon-delete" plain type="danger">删除全部</el-button>
 
@@ -96,6 +103,7 @@
                 tableData: [],
                 playing_url: "",
                 playing_auto: false,
+                format: '2',
             }
         },
         mounted() {
@@ -153,7 +161,20 @@
             handleDownload(row) {
                 let a = document.createElement('a');
                 a.href = row.file;
-                a.download = row.filename;
+                switch(this.format) {
+                    case "1":
+                        a.download = row.title + "." + row.ext;
+                        break;
+                    case "2":
+                        a.download = row.artist + " - " + row.title + "." + row.ext;
+                        break;
+                    case "3":
+                        a.download = row.title + " - " + row.artist + "." + row.ext;
+                        break;
+                    default:
+                        a.download = row.filename;
+                        break;
+                }
                 document.body.append(a);
                 a.click();
                 a.remove();
