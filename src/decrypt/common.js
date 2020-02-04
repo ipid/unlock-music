@@ -4,9 +4,8 @@ const RawDecrypt = require("./raw");
 const MFlacDecrypt = require("./mflac");
 const TmDecrypt = require("./tm");
 
-export {CommonDecrypt}
 
-async function CommonDecrypt(file) {
+export async function CommonDecrypt(file) {
     let raw_ext = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length).toLowerCase();
     let raw_filename = file.name.substring(0, file.name.lastIndexOf("."));
     let rt_data;

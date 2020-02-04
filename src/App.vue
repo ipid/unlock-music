@@ -85,8 +85,11 @@
 </template>
 
 <script>
+    // 严格模式 用于尾调用优化
+    "use strict";
 
-    const dec = require("./decrypt/common");
+    const worker = require("workerize-loader!./decrypt/common");
+    const dec = require('./decrypt/common');
     export default {
         name: 'app',
         components: {},
@@ -109,12 +112,25 @@
                         return this.cacheQueue.length;
                     }
                 },
+                workers: [],
+                idle_workers: [],
+                thread_num: 1
             }
         },
         mounted() {
             this.$nextTick(function () {
                 this.finishLoad();
             });
+            if (document.location.host !== "") {
+                this.thread_num = Math.max(navigator.hardwareConcurrency, 1);
+                for (let i = 0; i < this.thread_num; i++) {
+                    this.workers.push(worker().CommonDecrypt);
+                    this.idle_workers.push(i);
+                }
+            } else {
+                this.workers.push(dec.CommonDecrypt);
+                this.idle_workers.push(0)
+            }
         },
         methods: {
             finishLoad() {
@@ -130,43 +146,25 @@
                 });
             },
             handleFile(file) {
-                // 新的文件加入
-                if (file) {
-                    console.log("workCount", this.workCount);
-                    // 将工作数量大小限制为100
-                    if (this.workCount < 100) {
-                        // 工作数量增加
-                        this.workCount++;
-                        // 工作数量小于100  立刻处理文件
-                        this.handleDoFile(file);
-                    }
-                    // 工作数量大于100 则放入缓存队列
-                    else {
-                        this.cacheQueueOption.push(file);
-                    }
+                // 有空闲worker 立刻处理文件
+                if (this.idle_workers.length > 0) {
+                    this.handleDoFile(file, this.idle_workers.shift());
                 }
-                //消费缓存队列的数据
+                // 无空闲worker 则放入缓存队列
                 else {
-                    this.workCount++;
-                    this.handleDoFile(this.cacheQueueOption.pop());
+                    this.cacheQueueOption.push(file);
                 }
             },
-            handleCacheQueue() {
-                // 缓存队列中有数据且工作数量少于50的话 调用方法消费缓存队列中的数据
-                if (this.cacheQueueOption.size() > 0 && this.workCount < 50) {
-                    this.handleFile(null);
-                    console.log("size", this.cacheQueueOption.size(), this.workCount);
+            handleCacheQueue(worker_id) {
+                // 调用方法消费缓存队列中的数据
+                if (this.cacheQueue.length === 0) {
+                    this.idle_workers.push(worker_id);
+                    return
                 }
+                this.handleDoFile(this.cacheQueueOption.pop(), worker_id);
             },
-            handleDoFile(file) {
-                (async () => {
-                    let data = await dec.CommonDecrypt(file);
-
-
-                    // 完成之后 数量减少 同时调用判断函数
-                    this.workCount--;
-                    this.handleCacheQueue();
-
+            handleDoFile(file, worker_id) {
+                this.workers[worker_id](file).then(data => {
                     if (data.status) {
                         this.tableData.push(data);
                         this.$notify.success({
@@ -186,7 +184,13 @@
                         });
                         window._paq.push(["trackEvent", "Error", data.message, file.name]);
                     }
-                })();
+                    // 完成之后 执行新任务 todo: 可能导致call stack过长
+                    this.handleCacheQueue(worker_id);
+                }).catch(err => {
+                    console.error(err, file);
+                    window._paq.push(["trackEvent", "Error", err, file.name]);
+                    this.handleCacheQueue(worker_id);
+                })
             },
             handlePlay(index, row) {
                 this.playing_url = row.file;
@@ -250,6 +254,7 @@
         font-size: small;
     }
 
+    /*noinspection CssUnusedSymbol*/
     .el-upload-dragger {
         width: 80vw !important;
     }
