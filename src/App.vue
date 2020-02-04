@@ -21,6 +21,7 @@
                         <el-radio name="format" v-model="format" label="1">歌曲名</el-radio>
                         <el-radio name="format" v-model="format" label="2">歌手-歌曲名</el-radio>
                         <el-radio name="format" v-model="format" label="3">歌曲名-歌手</el-radio>
+                        <el-checkbox v-model="instantDownload" border>立即保存</el-checkbox>
                     </el-row>
 
                     <el-button @click="handleDownloadAll" icon="el-icon-download" plain>下载全部</el-button>
@@ -107,6 +108,7 @@
                 playing_url: "",
                 playing_auto: false,
                 format: '2',
+                instantDownload: false,
                 workCount: 0,
                 cacheQueue: [],
                 cacheQueueOption: {
@@ -174,12 +176,17 @@
             handleDoFile(file, worker_id) {
                 this.workers[worker_id](file).then(data => {
                     if (data.status) {
-                        this.tableData.push(data);
-                        this.$notify.success({
-                            title: '解锁成功',
-                            message: '成功解锁 ' + data.title,
-                            duration: 3000
-                        });
+                        if (this.instantDownload) {
+                            this.handleDownload(data);
+                            this.handleDelete(null, data);
+                        } else {
+                            this.tableData.push(data);
+                            this.$notify.success({
+                                title: '解锁成功',
+                                message: '成功解锁 ' + data.title,
+                                duration: 3000
+                            });
+                        }
                         let _rp_data = [data.title, data.artist, data.album];
                         window._paq.push(["trackEvent", "Unlock", data.rawExt + "," + data.mime, JSON.stringify(_rp_data)]);
                     } else {
@@ -207,12 +214,14 @@
             handleDelete(index, row) {
                 URL.revokeObjectURL(row.file);
                 URL.revokeObjectURL(row.picture);
-                this.tableData.splice(index, 1);
+                if (index != null) {
+                    this.tableData.splice(index, 1);
+                }
             },
             handleDownload(row) {
                 let a = document.createElement('a');
                 a.href = row.file;
-                switch(this.format) {
+                switch (this.format) {
                     case "1":
                         a.download = row.title + "." + row.ext;
                         break;
