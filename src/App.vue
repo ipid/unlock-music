@@ -9,7 +9,7 @@
                         action=""
                         drag
                         multiple>
-                    <i class="el-icon-upload"></i>
+                    <i class="el-icon-upload"/>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击选择</em></div>
                     <div class="el-upload__tip" slot="tip">本工具仅在浏览器内对文件进行解锁，无需消耗流量</div>
                 </el-upload>
@@ -28,7 +28,7 @@
                     <el-button @click="handleDeleteAll" icon="el-icon-delete" plain type="danger">删除全部</el-button>
 
                 </el-row>
-                <audio :autoplay="playing_auto" :src="playing_url" controls></audio>
+                <audio :autoplay="playing_auto" :src="playing_url" controls/>
 
 
                 <el-table :data="tableData" style="width: 100%">
