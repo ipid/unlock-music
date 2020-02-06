@@ -1,6 +1,7 @@
 const musicMetadata = require("music-metadata-browser");
 const util = require("./util");
 export {Decrypt}
+const FLAC_HEADER = [0x66, 0x4C, 0x61, 0x43, 0x00];
 
 async function Decrypt(file, raw_filename, raw_ext) {
     // 获取扩展名
@@ -45,7 +46,7 @@ async function Decrypt(file, raw_filename, raw_ext) {
 }
 
 class Mask {
-    FLAC_HEADER = [0x66, 0x4C, 0x61, 0x43, 0x00];
+
 
     constructor() {
         this.index = -1;
@@ -69,9 +70,9 @@ class Mask {
             if (!flag) continue;
 
 
-            for (let test_idx = 0; test_idx < this.FLAC_HEADER.length; test_idx++) {
+            for (let test_idx = 0; test_idx < FLAC_HEADER.length; test_idx++) {
                 let p = data[test_idx] ^ mask[test_idx];
-                if (p !== this.FLAC_HEADER[test_idx]) {
+                if (p !== FLAC_HEADER[test_idx]) {
                     flag = false;
                     debugger;
                     break;

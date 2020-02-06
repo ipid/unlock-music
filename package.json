@@ -16,6 +16,7 @@
     "vue": "^2.6.11"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.8.4",
     "@vue/cli-plugin-babel": "^4.1.2",
     "@vue/cli-plugin-pwa": "^4.1.2",
     "@vue/cli-service": "^4.1.2",
