@@ -26,7 +26,7 @@ async function Decrypt(file, raw_filename, raw_ext) {
     if (!(raw_ext in OriginalExtMap)) {
         return {status: false, message: "File type is incorrect!"}
     }
-    let new_ext = OriginalExtMap[raw_ext];
+    const new_ext = OriginalExtMap[raw_ext];
     const mime = util.AudioMimeType[new_ext];
     // 读取文件
     const fileBuffer = await util.GetArrayBuffer(file);
@@ -38,22 +38,19 @@ async function Decrypt(file, raw_filename, raw_ext) {
     }
     // 导出
     const musicData = new Blob([audioData], {type: mime});
-    const musicUrl = URL.createObjectURL(musicData);
     // 读取Meta
-    let tag = await musicMetadata.parseBlob(musicData);
-    const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename, new_ext);
-    let picUrl = util.GetCoverURL(tag);
+    const tag = await musicMetadata.parseBlob(musicData);
+    const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename);
 
     // 返回
     return {
         status: true,
-        filename: info.filename,
         title: info.title,
         artist: info.artist,
         ext: new_ext,
         album: tag.common.album,
-        picture: picUrl,
-        file: musicUrl,
+        picture: util.GetCoverURL(tag),
+        file: URL.createObjectURL(musicData),
         mime: mime
     }
 }

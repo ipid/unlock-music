@@ -98,7 +98,7 @@
                     let _rp_data = [data.title, data.artist, data.album];
                     window._paq.push(["trackEvent", "Unlock", data.rawExt + "," + data.mime, JSON.stringify(_rp_data)]);
                 } else {
-                    this.showFail(data.message, data.rawFilename)
+                    this.showFail(data.message, data.rawFilename + "." + data.rawExt)
                 }
             },
             showFail(errInfo, filename) {
