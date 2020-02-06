@@ -25,22 +25,19 @@ async function Decrypt(file, raw_filename, raw_ext) {
     }
     // 导出
     const musicData = new Blob([audioData], {type: "audio/flac"});
-    const musicUrl = URL.createObjectURL(musicData);
 
     // 读取Meta
     let tag = await musicMetadata.parseBlob(musicData);
-    const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename, "flac");
-    let picUrl = util.GetCoverURL(tag);
+    const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename);
     // 返回
     return {
         status: true,
-        filename: info.filename,
         title: info.title,
         artist: info.artist,
         ext: 'flac',
         album: tag.common.album,
-        picture: picUrl,
-        file: musicUrl,
+        picture: util.GetCoverURL(tag),
+        file: URL.createObjectURL(musicData),
         mime: "audio/flac"
     }
 }

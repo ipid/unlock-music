@@ -49,17 +49,14 @@ async function Decrypt(file) {
     }
 
     const musicData = new Blob([audioData], {type: mime});
-    const musicUrl = URL.createObjectURL(musicData);
-    const filename = artists.join(" & ") + " - " + musicMeta.musicName + "." + musicMeta.format;
     return {
         status: true,
-        filename: filename,
         title: musicMeta.musicName,
         artist: artists.join(" & "),
         ext: musicMeta.format,
         album: musicMeta.album,
         picture: musicMeta.albumPic,
-        file: musicUrl,
+        file: URL.createObjectURL(musicData),
         mime: mime
     };
 }

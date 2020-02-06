@@ -18,7 +18,7 @@ const AudioMimeType = {
     ogg: "audio/ogg"
 };
 
-function GetFileInfo(artist, title, filenameNoExt, ext) {
+function GetFileInfo(artist, title, filenameNoExt) {
     let newArtist = "", newTitle = "";
     let filenameArray = filenameNoExt.split("-");
     if (filenameArray.length > 1) {
@@ -34,8 +34,7 @@ function GetFileInfo(artist, title, filenameNoExt, ext) {
     if (typeof title == "string" && title !== "") {
         newTitle = title;
     }
-    let newFilename = newArtist + " - " + newTitle + "." + ext;
-    return {artist: newArtist, title: newTitle, filename: newFilename};
+    return {artist: newArtist, title: newTitle};
 }
 
 /**
