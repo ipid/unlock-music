@@ -42,9 +42,9 @@ export async function CommonDecrypt(file) {
         default:
             rt_data = {status: false, message: "不支持此文件格式",}
     }
-    if (rt_data.status) {
-        rt_data.rawExt = raw_ext;
-        rt_data.rawFilename = raw_filename;
-    }
+
+    rt_data.rawExt = raw_ext;
+    rt_data.rawFilename = raw_filename;
+
     return rt_data;
 }
