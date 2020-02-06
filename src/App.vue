@@ -96,8 +96,6 @@
     // 严格模式 用于尾调用优化
     "use strict";
 
-    const worker = require("workerize-loader!./decrypt/common");
-    const dec = require('./decrypt/common');
     export default {
         name: 'app',
         components: {},
@@ -132,12 +130,15 @@
                 this.finishLoad();
             });
             if (document.location.host !== "") {
-                this.thread_num = Math.max(navigator.hardwareConcurrency, 1);
+                //todo: Fail on Hot Reload
+                const worker = require("workerize-loader!./decrypt/common");
+                this.thread_num = navigator.hardwareConcurrency || 1;
                 for (let i = 0; i < this.thread_num; i++) {
                     this.workers.push(worker().CommonDecrypt);
                     this.idle_workers.push(i);
                 }
             } else {
+                const dec = require('./decrypt/common');
                 this.workers.push(dec.CommonDecrypt);
                 this.idle_workers.push(0)
             }
