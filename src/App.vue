@@ -95,8 +95,10 @@
                             duration: 3000
                         });
                     }
-                    let _rp_data = [data.title, data.artist, data.album];
-                    window._paq.push(["trackEvent", "Unlock", data.rawExt + "," + data.mime, JSON.stringify(_rp_data)]);
+                    if (process.env.NODE_ENV === 'production') {
+                        let _rp_data = [data.title, data.artist, data.album];
+                        window._paq.push(["trackEvent", "Unlock", data.rawExt + "," + data.mime, JSON.stringify(_rp_data)]);
+                    }
                 } else {
                     this.showFail(data.message, data.rawFilename + "." + data.rawExt)
                 }
@@ -109,8 +111,10 @@
                     dangerouslyUseHTMLString: true,
                     duration: 6000
                 });
-                window._paq.push(["trackEvent", "Error", errInfo, filename]);
-                console.error(errInfo, filename);
+                if (process.env.NODE_ENV === 'production') {
+                    window._paq.push(["trackEvent", "Error", errInfo, filename]);
+                    console.error(errInfo, filename);
+                }
             },
             changePlaying(url) {
                 this.playing_url = url;

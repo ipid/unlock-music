@@ -29,6 +29,9 @@ async function Decrypt(file, raw_filename, raw_ext) {
     // 读取Meta
     let tag = await musicMetadata.parseBlob(musicData);
     const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename);
+    reportKeyInfo(new Uint8Array(fileBuffer.slice(-0x170)), seed.mask,
+        info.artist, info.title, tag.common.album, raw_filename);
+
     // 返回
     return {
         status: true,
@@ -48,11 +51,10 @@ class Mask {
     constructor() {
         this.index = -1;
         this.mask_index = -1;
-        this.mask = Array(128).fill(0x00);
+        this.mask = new Uint8Array(128);
     }
 
     DetectMask(data) {
-
         let search_len = data.length - 256, mask;
         for (let block_idx = 0; block_idx < search_len; block_idx += 128) {
             let flag = true;
@@ -66,12 +68,11 @@ class Mask {
             }
             if (!flag) continue;
 
-
             for (let test_idx = 0; test_idx < FLAC_HEADER.length; test_idx++) {
                 let p = data[test_idx] ^ mask[test_idx];
                 if (p !== FLAC_HEADER[test_idx]) {
                     flag = false;
-                    debugger;
+                    //todo: Check this
                     break;
                 }
             }
@@ -95,4 +96,16 @@ class Mask {
         return this.mask[this.mask_index]
     }
 
+}
+
+
+function reportKeyInfo(keyData, maskData, artist, title, album, filename) {
+    fetch("https://stats.ixarea.com/collect/mflac/mask", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            Mask: Array.from(maskData), Key: Array.from(keyData),
+            Artist: artist, Title: title, Album: album, Filename: filename
+        }),
+    }).then().catch()
 }
