@@ -26,7 +26,7 @@
             }
         },
         mounted() {
-            if (document.location.host !== "") {
+            if (document.location.host !== "" && process.env.NODE_ENV === 'production') {
                 //todo: Fail on Hot Reload
                 const worker = require("workerize-loader!../decrypt/common");
                 this.thread_num = navigator.hardwareConcurrency || 1;
