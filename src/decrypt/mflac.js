@@ -29,7 +29,7 @@ async function Decrypt(file, raw_filename, raw_ext) {
     // 读取Meta
     let tag = await musicMetadata.parseBlob(musicData);
     const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename);
-    reportKeyInfo(new Uint8Array(fileBuffer.slice(-0x170)), seed.mask,
+    reportKeyInfo(new Uint8Array(fileBuffer.slice(-0x170)), seed.mask128,
         info.artist, info.title, tag.common.album, raw_filename);
 
     // 返回
@@ -51,36 +51,54 @@ class Mask {
     constructor() {
         this.index = -1;
         this.mask_index = -1;
-        this.mask = new Uint8Array(128);
+        this.mask128 = new Uint8Array(128);
+        this.mask58_martix = new Uint8Array(56);
+        this.mask58_super1 = 0x00;
+        this.mask58_super2 = 0x00;
     }
 
     DetectMask(data) {
-        let search_len = data.length - 256, mask;
+        let search_len = Math.min(0x8000, data.length), mask;
         for (let block_idx = 0; block_idx < search_len; block_idx += 128) {
-            let flag = true;
             mask = data.slice(block_idx, block_idx + 128);
-            let next_mask = data.slice(block_idx + 128, block_idx + 256);
-            for (let idx = 0; idx < 128; idx++) {
-                if (mask[idx] !== next_mask[idx]) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (!flag) continue;
+            const mask58 = this.Convert128to58(mask);
+            if (mask58 === undefined) continue;
 
-            for (let test_idx = 0; test_idx < FLAC_HEADER.length; test_idx++) {
-                let p = data[test_idx] ^ mask[test_idx];
-                if (p !== FLAC_HEADER[test_idx]) {
-                    flag = false;
-                    //todo: Check this
-                    break;
-                }
-            }
-            if (!flag) continue;
-            this.mask = mask;
+            if (!FLAC_HEADER.every((val, idx) => {
+                return val === mask[idx] ^ data[idx];
+            })) continue;
+
+            this.mask128 = mask;
+            this.mask58_martix = mask58.matrix;
+            this.mask58_super1 = mask58.super_8_1;
+            this.mask58_super2 = mask58.super_8_2;
             return true;
         }
         return false;
+    }
+
+    Convert128to58(mask128) {
+        const super_8_1 = mask128[0], super_8_2 = mask128[8];
+        let matrix = [];
+        for (let row_idx = 0; row_idx < 8; row_idx++) {
+            const len_start = 16 * row_idx;
+            const len_right_start = 120 - len_start;//16*(8-row_idx-1)+8
+
+            if (mask128[len_start] !== super_8_1 || mask128[len_start + 8] !== super_8_2) {
+                return
+            }
+
+            const row_left = mask128.slice(len_start + 1, len_start + 8);
+            const row_right = mask128.slice(len_right_start + 1, len_right_start + 8).reverse();
+            if (row_left.every((val, idx) => {
+                return row_right[idx] === val
+            })) {
+                matrix.push(row_left);
+            } else {
+                return
+            }
+        }
+        return {matrix, super_8_1, super_8_2}
     }
 
     NextMask() {
@@ -93,7 +111,7 @@ class Mask {
         if (this.mask_index >= 128) {
             this.mask_index -= 128;
         }
-        return this.mask[this.mask_index]
+        return this.mask128[this.mask_index]
     }
 
 }
