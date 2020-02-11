@@ -10,18 +10,17 @@
                 </el-image>
             </template>
         </el-table-column>
-        <!--todo: Check sortable-->
-        <el-table-column label="歌曲" sortable>
+        <el-table-column label="歌曲">
             <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.title }}</span>
             </template>
         </el-table-column>
-        <el-table-column label="歌手" sortable>
+        <el-table-column label="歌手">
             <template slot-scope="scope">
                 <p>{{ scope.row.artist }}</p>
             </template>
         </el-table-column>
-        <el-table-column label="专辑" sortable>
+        <el-table-column label="专辑">
             <template slot-scope="scope">
                 <p>{{ scope.row.album }}</p>
             </template>
