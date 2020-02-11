@@ -1,10 +1,10 @@
+export const FLAC_HEADER = [0x66, 0x4C, 0x61, 0x43, 0x00];
 export const AudioMimeType = {
     mp3: "audio/mpeg",
     flac: "audio/flac",
     m4a: "audio/mp4",
     ogg: "audio/ogg"
 };
-export const FLAC_HEADER = [0x66, 0x4C, 0x61, 0x43, 0x00];
 
 // Also a new draft API: blob.arrayBuffer()
 export async function GetArrayBuffer(blobObject) {

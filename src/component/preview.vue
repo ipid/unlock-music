@@ -10,6 +10,7 @@
                 </el-image>
             </template>
         </el-table-column>
+        <!--todo: Check sortable-->
         <el-table-column label="歌曲" sortable>
             <template slot-scope="scope">
                 <span style="margin-left: 10px">{{ scope.row.title }}</span>

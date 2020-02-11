@@ -1,15 +1,12 @@
 const CryptoJS = require("crypto-js");
 const ID3Writer = require("browser-id3-writer");
-const util = require("./util");
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
 const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
+import {AudioMimeType, GetArrayBuffer} from "./util"
 
+export async function Decrypt(file) {
 
-export {Decrypt};
-
-async function Decrypt(file) {
-
-    const fileBuffer = await util.GetArrayBuffer(file);
+    const fileBuffer = await GetArrayBuffer(file);
     const dataView = new DataView(fileBuffer);
 
     if (dataView.getUint32(0, true) !== 0x4e455443 ||
@@ -38,7 +35,7 @@ async function Decrypt(file) {
             musicMeta.format = "mp3";
         }
     }
-    const mime = util.AudioMimeType[musicMeta.format];
+    const mime = AudioMimeType[musicMeta.format];
 
     const artists = [];
     musicMeta.artist.forEach(arr => {
