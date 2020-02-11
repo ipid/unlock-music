@@ -90,10 +90,15 @@ class QmcMask {
 
     Decrypt(data) {
         let dst = data.slice(0);
+        let index = -1;
         let maskIdx = -1;
         for (let cur = 0; cur < data.length; cur++) {
+            index++;
             maskIdx++;
-            if (cur === 0x8001 || (cur > 0x8001 && cur % 0x8000 === 0)) maskIdx++;
+            if (index === 0x8000 || (index > 0x8000 && (index + 1) % 0x8000 === 0)) {
+                index++;
+                maskIdx++;
+            }
             if (maskIdx >= 128) maskIdx -= 128;
             dst[cur] ^= this.Matrix128[maskIdx];
         }
