@@ -10,5 +10,5 @@ export async function Decrypt(file, raw_filename) {
         audioData[cur] = TM_HEADER[cur];
     }
     const musicData = new Blob([audioData], {type: "audio/mp4"});
-    return await RawDecrypt(musicData, raw_filename, "m4a")
+    return await RawDecrypt(musicData, raw_filename, "m4a", false)
 }

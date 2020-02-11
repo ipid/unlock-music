@@ -110,10 +110,7 @@ export function QmcMaskDetectMflac(data) {
     for (let block_idx = 0; block_idx < search_len; block_idx += 128) {
         try {
             mask = new QmcMask(data.slice(block_idx, block_idx + 128));
-            if (!mask.Decrypt(data.slice(0, FLAC_HEADER.length))
-                .every((val, idx) => {
-                    return val === FLAC_HEADER[idx];
-                })) break;
+            if (!IsBytesEqual(FLAC_HEADER, mask.Decrypt(data.slice(0, FLAC_HEADER.length)))) break;
         } catch (e) {
         }
     }

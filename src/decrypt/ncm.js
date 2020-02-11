@@ -2,7 +2,7 @@ const CryptoJS = require("crypto-js");
 const ID3Writer = require("browser-id3-writer");
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
 const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
-import {AudioMimeType, GetArrayBuffer} from "./util"
+import {AudioMimeType, DetectAudioExt, GetArrayBuffer} from "./util"
 
 export async function Decrypt(file) {
 
@@ -23,27 +23,16 @@ export async function Decrypt(file) {
     let audioOffset = musicMetaObj.offset + dataView.getUint32(musicMetaObj.offset + 5, true) + 13;
     let audioData = new Uint8Array(fileBuffer, audioOffset);
 
-    for (let cur = 0; cur < audioData.length; ++cur) {
-        audioData[cur] ^= keyBox[cur & 0xff];
-    }
+    for (let cur = 0; cur < audioData.length; ++cur) audioData[cur] ^= keyBox[cur & 0xff];
 
-    if (musicMeta.format === undefined) {
-        const [f, L, a, C] = audioData;
-        if (f === 0x66 && L === 0x4c && a === 0x61 && C === 0x43) {
-            musicMeta.format = "flac";
-        } else {
-            musicMeta.format = "mp3";
-        }
-    }
+    if (musicMeta.format === undefined) musicMeta.format = DetectAudioExt(audioData, "mp3");
+
     const mime = AudioMimeType[musicMeta.format];
 
     const artists = [];
-    musicMeta.artist.forEach(arr => {
-        artists.push(arr[0]);
-    });
-    if (musicMeta.format === "mp3") {
+    musicMeta.artist.forEach(arr => artists.push(arr[0]));
+    if (musicMeta.format === "mp3")
         audioData = await writeID3(audioData, artists, musicMeta.musicName, musicMeta.album, musicMeta.albumPic)
-    }
 
     const musicData = new Blob([audioData], {type: mime});
     return {
