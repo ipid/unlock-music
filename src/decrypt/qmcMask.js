@@ -158,14 +158,14 @@ export function QmcMaskCreate58(matrix, superA, superB) {
  */
 function getMaskConfidenceResult(confidence) {
     if (confidence.length === 0) throw "can not match at least one key";
-    let result = 0, conf = 0;
+    let result, conf = 0;
     for (let idx in confidence) {
         if (confidence[idx] > conf) {
             result = idx;
             conf = confidence[idx];
         }
     }
-    return result
+    return parseInt(result)
 }
 
 /**
