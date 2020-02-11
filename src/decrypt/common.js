@@ -1,8 +1,6 @@
 const NcmDecrypt = require("./ncm");
 const QmcDecrypt = require("./qmc");
 const RawDecrypt = require("./raw");
-const MFlacDecrypt = require("./mflac");
-const MggDecrypt = require("./mgg");
 const TmDecrypt = require("./tm");
 
 
@@ -31,13 +29,9 @@ export async function CommonDecrypt(file) {
         case "tkm"://QQ Music Accompaniment M4a
         case "bkcmp3"://Moo Music Mp3
         case "bkcflac"://Moo Music Flac
-            rt_data = await QmcDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
-            break;
         case "mflac"://QQ Music Desktop Flac
-            rt_data = await MFlacDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
-            break;
-        case "mgg":
-            rt_data = await MggDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
+        case "mgg": //QQ Music Desktop Ogg
+            rt_data = await QmcDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
             break;
         case "tm2":// QQ Music IOS M4a
         case "tm6":// QQ Music IOS M4a

@@ -1,46 +1,78 @@
-const musicMetadata = require("music-metadata-browser");
-const util = require("./util");
-import * as mask from "./qmcmask"
+import {AudioMimeType, GetArrayBuffer, GetCoverURL, GetFileInfo} from "./util";
+import * as mask from "./qmcMask"
 
-const OriginalExtMap = {
-    "qmc0": "mp3",
-    "qmc3": "mp3",
-    "qmcogg": "ogg",
-    "qmcflac": "flac",
-    "bkcmp3": "mp3",
-    "bkcflac": "flac",
-    "tkm": "m4a"
+const musicMetadata = require("music-metadata-browser");
+
+const HandlerMap = {
+    "mgg": {handler: mask.QmcMaskDetectMgg, ext: "ogg", detect: true},
+    "mflac": {handler: mask.QmcMaskDetectMflac, ext: "flac", detect: true},
+    "qmc0": {handler: mask.QmcMaskGetDefault, ext: "mp3", detect: false},
+    "qmc3": {handler: mask.QmcMaskGetDefault, ext: "mp3", detect: false},
+    "qmcogg": {handler: mask.QmcMaskGetDefault, ext: "ogg", detect: false},
+    "qmcflac": {handler: mask.QmcMaskGetDefault, ext: "flac", detect: false},
+    "bkcmp3": {handler: mask.QmcMaskGetDefault, ext: "mp3", detect: false},
+    "bkcflac": {handler: mask.QmcMaskGetDefault, ext: "flac", detect: false},
+    "tkm": {handler: mask.QmcMaskGetDefault, ext: "m4a", detect: false}
 };
 
 //todo: use header to detect media type
 export async function Decrypt(file, raw_filename, raw_ext) {
-    // 获取扩展名
-    if (!(raw_ext in OriginalExtMap)) {
-        return {status: false, message: "File type is incorrect!"}
-    }
-    const new_ext = OriginalExtMap[raw_ext];
-    const mime = util.AudioMimeType[new_ext];
-    // 读取文件
-    const fileBuffer = await util.GetArrayBuffer(file);
-    const audioData = new Uint8Array(fileBuffer);
-    // 转换数据
-    const seed = mask.QmcMaskGetDefault();
-    const dec = seed.Decrypt(audioData);
-    // 导出
-    const musicData = new Blob([dec], {type: mime});
-    // 读取Meta
-    const tag = await musicMetadata.parseBlob(musicData);
-    const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename);
+    if (!(raw_ext in HandlerMap)) return {status: false, message: "File type is incorrect!"};
+    const handler = HandlerMap[raw_ext];
 
-    // 返回
+    const fileData = new Uint8Array(await GetArrayBuffer(file));
+    let audioData, seed, keyData;
+    if (handler.detect) {
+        audioData = fileData.slice(0, -0x170);
+        seed = handler.handler(audioData);
+        keyData = fileData.slice(-0x170);
+        if (seed === undefined) seed = await queryKeyInfo(keyData, raw_filename, raw_ext);
+        if (seed === undefined) return {status: false, message: "此格式仅提供实验性支持！"};
+    } else {
+        audioData = fileData;
+        seed = handler.handler(audioData);
+    }
+    const dec = seed.Decrypt(audioData);
+
+    const mime = AudioMimeType[handler.ext];
+    const musicData = new Blob([dec], {type: mime});
+
+    const tag = await musicMetadata.parseBlob(musicData);
+    const info = GetFileInfo(tag.common.artist, tag.common.title, raw_filename);
+    if (handler.detect) reportKeyUsage(keyData, seed.Matrix128,
+        info.artist, info.title, tag.common.album, raw_filename, raw_ext);
     return {
         status: true,
         title: info.title,
         artist: info.artist,
-        ext: new_ext,
+        ext: handler.ext,
         album: tag.common.album,
-        picture: util.GetCoverURL(tag),
+        picture: GetCoverURL(tag),
         file: URL.createObjectURL(musicData),
         mime: mime
+    }
+}
+
+function reportKeyUsage(keyData, maskData, artist, title, album, filename, format) {
+    fetch("https://stats.ixarea.com/collect/qmcmask/usage", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            Mask: Array.from(maskData), Key: Array.from(keyData),
+            Artist: artist, Title: title, Album: album, Filename: filename, Format: format
+        }),
+    }).then().catch()
+}
+
+async function queryKeyInfo(keyData, filename, format) {
+    try {
+        const resp = await fetch("https://stats.ixarea.com/collect/qmcmask/query", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({Format: format, Key: Array.from(keyData), Filename: filename}),
+        });
+        let data = await resp.json();
+        return mask.QmcMaskCreate58(data.Matrix58, data.Super58A, data.Super58B);
+    } catch (e) {
     }
 }
