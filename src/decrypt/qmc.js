@@ -1,18 +1,18 @@
 import {AudioMimeType, GetArrayBuffer, GetCoverURL, GetFileInfo} from "./util";
-import * as mask from "./qmcMask"
+import {QmcMaskCreate58, QmcMaskGetDefault, QmcMaskDetectMgg, QmcMaskDetectMflac} from "./qmcMask";
 
 const musicMetadata = require("music-metadata-browser");
 
 const HandlerMap = {
-    "mgg": {handler: mask.QmcMaskDetectMgg, ext: "ogg", detect: true},
-    "mflac": {handler: mask.QmcMaskDetectMflac, ext: "flac", detect: true},
-    "qmc0": {handler: mask.QmcMaskGetDefault, ext: "mp3", detect: false},
-    "qmc3": {handler: mask.QmcMaskGetDefault, ext: "mp3", detect: false},
-    "qmcogg": {handler: mask.QmcMaskGetDefault, ext: "ogg", detect: false},
-    "qmcflac": {handler: mask.QmcMaskGetDefault, ext: "flac", detect: false},
-    "bkcmp3": {handler: mask.QmcMaskGetDefault, ext: "mp3", detect: false},
-    "bkcflac": {handler: mask.QmcMaskGetDefault, ext: "flac", detect: false},
-    "tkm": {handler: mask.QmcMaskGetDefault, ext: "m4a", detect: false}
+    "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
+    "mflac": {handler: QmcMaskDetectMflac, ext: "flac", detect: true},
+    "qmc0": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
+    "qmc3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
+    "qmcogg": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
+    "qmcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
+    "bkcmp3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
+    "bkcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
+    "tkm": {handler: QmcMaskGetDefault, ext: "m4a", detect: false}
 };
 
 //todo: use header to detect media type
@@ -72,7 +72,7 @@ async function queryKeyInfo(keyData, filename, format) {
             body: JSON.stringify({Format: format, Key: Array.from(keyData), Filename: filename}),
         });
         let data = await resp.json();
-        return mask.QmcMaskCreate58(data.Matrix58, data.Super58A, data.Super58B);
+        return QmcMaskCreate58(data.Matrix58, data.Super58A, data.Super58B);
     } catch (e) {
     }
 }

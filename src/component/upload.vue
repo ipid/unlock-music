@@ -27,10 +27,10 @@
         },
         mounted() {
             if (document.location.host !== "" && process.env.NODE_ENV === 'production') {
-                //todo: Fail on Hot Reload
                 const worker = require("workerize-loader!../decrypt/common");
                 this.thread_num = navigator.hardwareConcurrency || 1;
                 for (let i = 0; i < this.thread_num; i++) {
+                    //todo: Optimize for first loading
                     // noinspection JSValidateTypes,JSUnresolvedVariable
                     this.workers.push(worker().CommonDecrypt);
                     this.idle_workers.push(i);
