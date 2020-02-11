@@ -1,4 +1,4 @@
-import {AudioMimeType, GetArrayBuffer, GetCoverURL, GetFileInfo} from "./util";
+import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetCoverURL, GetFileInfo} from "./util";
 import {QmcMaskCreate58, QmcMaskGetDefault, QmcMaskDetectMgg, QmcMaskDetectMflac} from "./qmcMask";
 
 const musicMetadata = require("music-metadata-browser");
@@ -15,7 +15,6 @@ const HandlerMap = {
     "tkm": {handler: QmcMaskGetDefault, ext: "m4a", detect: false}
 };
 
-//todo: use header to detect media type
 export async function Decrypt(file, raw_filename, raw_ext) {
     if (!(raw_ext in HandlerMap)) return {status: false, message: "File type is incorrect!"};
     const handler = HandlerMap[raw_ext];
@@ -27,14 +26,16 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         seed = handler.handler(audioData);
         keyData = fileData.slice(-0x170);
         if (seed === undefined) seed = await queryKeyInfo(keyData, raw_filename, raw_ext);
-        if (seed === undefined) return {status: false, message: "此格式仅提供实验性支持！"};
+        if (seed === undefined) return {status: false, message: raw_ext + "格式仅提供实验性支持！"};
     } else {
         audioData = fileData;
         seed = handler.handler(audioData);
     }
     const dec = seed.Decrypt(audioData);
 
-    const mime = AudioMimeType[handler.ext];
+    const ext = DetectAudioExt(dec, handler.ext);
+    const mime = AudioMimeType[ext];
+
     const musicData = new Blob([dec], {type: mime});
 
     const tag = await musicMetadata.parseBlob(musicData);
@@ -45,7 +46,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         status: true,
         title: info.title,
         artist: info.artist,
-        ext: handler.ext,
+        ext: ext,
         album: tag.common.album,
         picture: GetCoverURL(tag),
         file: URL.createObjectURL(musicData),

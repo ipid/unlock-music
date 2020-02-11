@@ -3,7 +3,6 @@ const QmcDecrypt = require("./qmc");
 const RawDecrypt = require("./raw");
 const TmDecrypt = require("./tm");
 
-
 export async function CommonDecrypt(file) {
     let raw_ext = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length).toLowerCase();
     let raw_filename = file.name.substring(0, file.name.lastIndexOf("."));
