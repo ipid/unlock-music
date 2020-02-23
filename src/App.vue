@@ -7,10 +7,10 @@
             <el-row id="app-control">
                 <el-row style="padding-bottom: 1em; font-size: 14px">
                     歌曲命名格式：
-                    <el-radio name="format" v-model="download_format" label="1">歌曲名</el-radio>
-                    <el-radio name="format" v-model="download_format" label="2">歌手-歌曲名</el-radio>
-                    <el-radio name="format" v-model="download_format" label="3">歌曲名-歌手</el-radio>
-                    <el-checkbox v-model="instant_download" border>立即保存</el-checkbox>
+                    <el-radio label="1" name="format" v-model="download_format">歌手-歌曲名</el-radio>
+                    <el-radio label="2" name="format" v-model="download_format">歌曲名</el-radio>
+                    <el-radio label="3" name="format" v-model="download_format">歌曲名-歌手</el-radio>
+                    <el-radio label="4" name="format" v-model="download_format">同原文件名</el-radio>
                 </el-row>
                 <el-row>
                     <el-button @click="handleDownloadAll" icon="el-icon-download" plain>下载全部</el-button>
@@ -65,7 +65,7 @@
                 tableData: [],
                 playing_url: "",
                 playing_auto: false,
-                download_format: '2',
+                download_format: '1',
                 instant_download: false,
             }
         },
