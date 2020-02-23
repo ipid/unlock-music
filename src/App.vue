@@ -12,8 +12,11 @@
                     <el-radio name="format" v-model="download_format" label="3">歌曲名-歌手</el-radio>
                     <el-checkbox v-model="instant_download" border>立即保存</el-checkbox>
                 </el-row>
-                <el-button @click="handleDownloadAll" icon="el-icon-download" plain>下载全部</el-button>
-                <el-button @click="handleDeleteAll" icon="el-icon-delete" plain type="danger">删除全部</el-button>
+                <el-row>
+                    <el-button @click="handleDownloadAll" icon="el-icon-download" plain>下载全部</el-button>
+                    <el-button @click="handleDeleteAll" icon="el-icon-delete" plain type="danger">删除全部</el-button>
+                    <el-checkbox border style="margin-left: 1em" v-model="instant_download">立即保存</el-checkbox>
+                </el-row>
             </el-row>
             <audio :autoplay="playing_auto" :src="playing_url" controls/>
 
@@ -23,18 +26,19 @@
         </el-main>
         <el-footer id="app-footer">
             <el-row>
-                音乐解锁：移除已购音乐的加密保护。
-                目前支持网易云音乐(ncm)、QQ音乐(qmc, mflac, tkm)以及
-                <a href="https://github.com/ix64/unlock-music/blob/master/README.md" target="_blank">其他格式</a>。
+                <a href="https://github.com/ix64/unlock-music" target="_blank">音乐解锁</a>(v<span
+                    v-text="version"></span>)：移除已购音乐的加密保护。
                 <a href="https://github.com/ix64/unlock-music/wiki/使用提示" target="_blank">使用提示</a>
             </el-row>
             <el-row>
-                <span>Copyright &copy; 2019</span>
-                <a href="https://github.com/ix64" target="_blank">MengYX</a>
+                目前支持网易云音乐(ncm)、QQ音乐(qmc, mflac, mgg, tkm)以及
+                <a href="https://github.com/ix64/unlock-music/blob/master/README.md" target="_blank">其他格式</a>。
+            </el-row>
+            <el-row>
+                <span>Copyright &copy; 2019</span> MengYX
                 音乐解锁使用
                 <a href="https://github.com/ix64/unlock-music/blob/master/LICENSE" target="_blank">MIT许可协议</a>
-                开放
-                <a href="https://github.com/ix64/unlock-music" target="_blank">源代码</a>
+                开放源代码
             </el-row>
         </el-footer>
     </el-container>
