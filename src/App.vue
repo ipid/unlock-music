@@ -50,6 +50,7 @@
     import upload from "./component/upload"
     import preview from "./component/preview"
     import {DownloadBlobMusic, RemoveBlobMusic} from "./component/util"
+    import config from "../package"
 
     export default {
         name: 'app',
@@ -59,6 +60,7 @@
         },
         data() {
             return {
+                version: config.version,
                 activeIndex: '1',
                 tableData: [],
                 playing_url: "",
@@ -73,18 +75,39 @@
             });
         },
         methods: {
-            finishLoad() {
+            async finishLoad() {
                 const mask = document.getElementById("loader-mask");
                 if (!!mask) mask.remove();
-                this.$notify.info({
-                    title: '离线使用',
-                    message: '我们使用PWA技术，无网络也能使用<br/>' +
-                        '最近更新：提供实验性mgg支持<br/>' +
-                        '点击查看 <a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
-                    dangerouslyUseHTMLString: true,
-                    duration: 10000,
-                    position: 'top-left'
-                });
+                let updateInfo;
+                try {
+                    const resp = await fetch("https://stats.ixarea.com/collect/music/app-version", {
+                        method: "POST", headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({Version: this.version})
+                    });
+                    updateInfo = await resp.json();
+                } catch (e) {
+                }
+                if (!!updateInfo.Found) {
+                    this.$notify.warning({
+                        title: '发现更新',
+                        message: '发现新版本 v' + updateInfo.Version +
+                            '<br/>更新详情：' + updateInfo.Detail +
+                            '<br/><a target="_blank" href="' + updateInfo.URL + '">获取更新</a>',
+                        dangerouslyUseHTMLString: true,
+                        duration: 15000,
+                        position: 'top-left'
+                    });
+                } else {
+                    this.$notify.info({
+                        title: '离线使用',
+                        message: '我们使用PWA技术，无网络也能使用' +
+                            '<br/>最近更新：提供实验性mgg支持' +
+                            '<br/><a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
+                        dangerouslyUseHTMLString: true,
+                        duration: 10000,
+                        position: 'top-left'
+                    });
+                }
             },
             showSuccess(data) {
                 if (data.status) {
