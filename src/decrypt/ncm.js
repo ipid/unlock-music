@@ -32,7 +32,7 @@ export async function Decrypt(file) {
     const artists = [];
     musicMeta.artist.forEach(arr => artists.push(arr[0]));
     if (musicMeta.format === "mp3")
-        audioData = await writeID3(audioData, artists, musicMeta.musicName, musicMeta.album, musicMeta.albumPic)
+        audioData = await writeID3(audioData, artists, musicMeta.musicName, musicMeta.album, musicMeta.albumPic);
 
     const musicData = new Blob([audioData], {type: mime});
     return {
@@ -145,9 +145,12 @@ function getMetaData(dataView, fileBuffer, offset) {
         },
         META_KEY,
         {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7}
-    );
-
-    const result = JSON.parse(plainText.toString(CryptoJS.enc.Utf8).slice(6));
+    ).toString(CryptoJS.enc.Utf8);
+    const labelIndex = plainText.indexOf(":");
+    let result = JSON.parse(plainText.slice(labelIndex + 1));
+    if (plainText.slice(0, labelIndex) === "dj") {
+        result = result.mainMusic;
+    }
     result.albumPic = result.albumPic.replace("http:", "https:");
     return {data: result, offset: offset};
 }
