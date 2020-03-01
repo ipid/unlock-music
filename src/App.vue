@@ -2,7 +2,7 @@
 
     <el-container id="app">
         <el-main>
-            <x-upload v-on:handle_finish="showSuccess" v-on:handle_error="showFail"></x-upload>
+            <x-upload v-on:handle_error="showFail" v-on:handle_finish="showSuccess"></x-upload>
 
             <el-row id="app-control">
                 <el-row style="padding-bottom: 1em; font-size: 14px">
@@ -20,7 +20,7 @@
             </el-row>
             <audio :autoplay="playing_auto" :src="playing_url" controls/>
 
-            <x-preview :table-data="tableData" :download_format="download_format"
+            <x-preview :download_format="download_format" :table-data="tableData"
                        v-on:music_changed="changePlaying"></x-preview>
 
         </el-main>

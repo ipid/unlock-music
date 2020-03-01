@@ -1,5 +1,5 @@
 import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetCoverURL, GetFileInfo} from "./util";
-import {QmcMaskCreate58, QmcMaskGetDefault, QmcMaskDetectMgg, QmcMaskDetectMflac} from "./qmcMask";
+import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 
 const musicMetadata = require("music-metadata-browser");
 
