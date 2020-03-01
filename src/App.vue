@@ -87,7 +87,7 @@
                     updateInfo = await resp.json();
                 } catch (e) {
                 }
-                if (!!updateInfo.Found) {
+                if (!!updateInfo && !!updateInfo.Found) {
                     this.$notify.warning({
                         title: '发现更新',
                         message: '发现新版本 v' + updateInfo.Version +
