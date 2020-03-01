@@ -23,13 +23,45 @@
              src="https://stats.ixarea.com/ixarea-stats/report?idsite=2&rec=1&action_name=音乐解锁+-+By+IXarea"
              style="border:0"/>
     </noscript>
-    <strong>音乐解锁采用了一些新特性！建议使用
+    <strong id="tips">音乐解锁采用了一些新特性！建议使用
         <a href="https://www.google.cn/chrome/" target="_blank">Google Chrome</a>
         <a href="https://www.firefox.com.cn/" target="_blank">Mozilla Firefox</a>
-        <a href="https://www.microsoftedgeinsider.com/zh-cn/download" target="_blank">Mozilla Firefox</a>
+        <a href="https://www.microsoftedgeinsider.com/zh-cn/download" target="_blank">Microsoft Edge</a>
         | <a href="https://github.com/ix64/unlock-music/wiki/使用提示" target="_blank">使用提示</a>
     </strong>
 </div>
 <div id="app"></div>
+<script>
+(function () {
+    //判断UA以识别浏览器类型
+    var ua = navigator && navigator.userAgent;
+    var orzed = (function () {
+        var m;
+        if (!ua) return true;
+        if (/MSIE |Trident\//.exec(ua)) return true; // no IE
+        m = /Edge\/([\d.]+)/.exec(ua); // Edge >= 16
+        if (m && Number(m[1]) < 16) return true;
+        m = /Chrome\/([\d.]+)/.exec(ua); // Chrome >= 50
+        if (m && Number(m[1]) < 50) return true;
+        m = /Firefox\/([\d.]+)/.exec(ua); // Firefox >= 38
+        if (m && Number(m[1]) < 38) return true;
+
+        return false;
+    })();
+
+    //定义输出文本，使用HTML格式
+    var infoHTML =
+        '<h1>您可能在使用不受支持的<b style="color:#f00;">过时</b>浏览器，。</h1>' +
+        '<h2>如果您使用国产浏览器，请在右上方选择<b style="color:#f00;">“极速模式”</b>，而非“兼容模式”。</h2>' +
+        '<h2>推荐使用基于 Chromium 的最新版本的 <a target="_blank" href="https://www.microsoft.com/zh-cn/windows/microsoft-edge" style="color:#f62;">Microsoft Edge 浏览器</a> 访问本站</h2>' +
+        '<h4>UA调试区：' + ua + '</h4>';
+
+    var elem = document.getElementById('tips');
+    window.browser_orzed = orzed;
+    if (orzed) {
+        elem.innerHTML = infoHTML;
+    };
+})();
+</script>
 </body>
 </html>
