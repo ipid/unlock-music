@@ -5,16 +5,21 @@
 // now manually edit the dependency files
 
 const fs = require('fs');
-const filePath = "../node_modules/file-type/core.js";
+const filePath = "./node_modules/file-type/core.js";
 const regReplace = /{\s*([a-zA-Z0-9:,\s]*),\s*\.\.\.([a-zA-Z0-9]*)\s*};/m;
 if (fs.existsSync(filePath)) {
+    console.log("File Found!");
     let data = fs.readFileSync(filePath).toString();
     const regResult = regReplace.exec(data);
     if (regResult != null) {
         data = data.replace(regResult[0],
             "Object.assign({ " + regResult[1] + " }, " + regResult[2] + ");"
         );
+        fs.writeFileSync(filePath, data);
+        console.log("Object rest spread in file-type fixed!");
+    } else {
+        console.log("No fix needed.");
     }
-    fs.writeFileSync(filePath, data);
-    console.log("Object rest spread in file-type fixed!")
+} else {
+    console.log("File Not Found!");
 }

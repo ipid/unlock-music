@@ -15,6 +15,7 @@ steps:
   - name: build
     image: node:lts
     commands:
+      - npm run fix-compatibility
       - npm run build
       - tar -czf legacy.tar.gz -C ./dist .
       - npm run build -- --modern
