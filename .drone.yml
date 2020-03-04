@@ -45,8 +45,6 @@ steps:
       secret_key:
         from_secret: aws_secret_access_key
       source: dist/**/*
-      exclude:
-        - "**/*.map"
       strip_prefix: dist/
       target: /public
       path_style: true
