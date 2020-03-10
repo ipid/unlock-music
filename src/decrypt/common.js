@@ -9,7 +9,7 @@ export async function CommonDecrypt(file) {
     let rt_data;
     switch (raw_ext) {
         case "ncm":// Netease Mp3/Flac
-            rt_data = await NcmDecrypt.Decrypt(file.raw);
+            rt_data = await NcmDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
             break;
         case "mp3":// Raw Mp3
         case "flac"://Raw Flac
