@@ -140,8 +140,8 @@
                 });
                 if (process.env.NODE_ENV === 'production') {
                     window._paq.push(["trackEvent", "Error", errInfo, filename]);
-                    console.error(errInfo, filename);
                 }
+                console.error(errInfo, filename);
             },
             changePlaying(url) {
                 this.playing_url = url;
