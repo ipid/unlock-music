@@ -1,4 +1,4 @@
-import {FLAC_HEADER, IsBytesEqual} from "./util"
+import {FLAC_HEADER, IsBytesEqual, OGG_HEADER} from "./util"
 
 const QMOggConstHeader = [
     0x4F, 0x67, 0x67, 0x53, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -119,18 +119,18 @@ export function QmcMaskDetectMflac(data) {
         } catch (e) {
         }
     }
-    return mask
+    return mask;
 }
 
-export function QmcMaskDetectMgg(input) {
-    if (input.length < QMOggConstHeader.length) return;
+export function QmcMaskDetectMgg(data) {
+    if (data.length < QMOggConstHeader.length) return;
     let matrixConfidence = {};
     for (let i = 0; i < 58; i++) matrixConfidence[i] = {};
 
     for (let idx128 = 0; idx128 < QMOggConstHeader.length; idx128++) {
         if (QMOggConstHeaderConfidence[idx128] === 0) continue;
         let idx58 = GetMask58Index(idx128);
-        let mask = input[idx128] ^ QMOggConstHeader[idx128];
+        let mask = data[idx128] ^ QMOggConstHeader[idx128];
         let confidence = QMOggConstHeaderConfidence[idx128];
         if (mask in matrixConfidence[idx58]) {
             matrixConfidence[idx58][mask] += confidence
@@ -146,7 +146,9 @@ export function QmcMaskDetectMgg(input) {
     } catch (e) {
         return;
     }
-    return new QmcMask(matrix, superA, superB);
+    const mask = new QmcMask(matrix, superA, superB);
+    if (!IsBytesEqual(OGG_HEADER, mask.Decrypt(data.slice(0, OGG_HEADER.length)))) return;
+    return mask;
 }
 
 export function QmcMaskCreate128(mask128) {
