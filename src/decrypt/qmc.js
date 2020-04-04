@@ -7,6 +7,7 @@ const HandlerMap = {
     "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
     "mflac": {handler: QmcMaskDetectMflac, ext: "flac", detect: true},
     "qmc0": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
+    "qmc2": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
     "qmc3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
     "qmcogg": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
     "qmcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
