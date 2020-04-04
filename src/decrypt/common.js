@@ -22,6 +22,7 @@ export async function CommonDecrypt(file) {
             rt_data = await RawDecrypt.Decrypt(file.raw, raw_filename, "mp3");
             break;
         case "qmc3"://QQ Music Android Mp3
+        case "qmc2"://QQ Music Android Ogg
         case "qmc0"://QQ Music Android Mp3
         case "qmcflac"://QQ Music Android Flac
         case "qmcogg"://QQ Music Android Ogg

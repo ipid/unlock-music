@@ -8,7 +8,7 @@
 
 # Features
 - [x] Unlock in browser 在浏览器中解锁
-- [x] QQMusic Format QQ音乐格式 (.qmc0/.qmc3/.qmcflac/.qmcogg/.tkm)
+- [x] QQMusic Format QQ音乐格式 (.qmc0/.qmc2/.qmc3/.qmcflac/.qmcogg/.tkm)
 - [x] MooMusic Format Moo音乐格式 ([.bkcmp3/.bkcflac](https://github.com/ix64/unlock-music/issues/11))
 - [x] QQMusic Tm Format QQ音乐Tm格式 (.tm0/.tm2/.tm3/.tm6)
 - [x] QQMusic New Format QQ音乐新格式 (Experimental 实验性支持)
