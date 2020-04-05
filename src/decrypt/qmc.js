@@ -1,4 +1,4 @@
-import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetCoverURL, GetFileInfo} from "./util";
+import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetFileInfo, GetMetaCoverURL, RequestJsonp} from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 
 const musicMetadata = require("music-metadata-browser");
@@ -32,25 +32,32 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         audioData = fileData;
         seed = handler.handler(audioData);
     }
-    const dec = seed.Decrypt(audioData);
+    let musicDecoded = seed.Decrypt(audioData);
 
-    const ext = DetectAudioExt(dec, handler.ext);
+    const ext = DetectAudioExt(musicDecoded, handler.ext);
     const mime = AudioMimeType[ext];
 
-    const musicData = new Blob([dec], {type: mime});
+    let musicBlob = new Blob([musicDecoded], {type: mime});
 
-    const tag = await musicMetadata.parseBlob(musicData);
-    const info = GetFileInfo(tag.common.artist, tag.common.title, raw_filename);
+    const musicMeta = await musicMetadata.parseBlob(musicBlob);
+    const info = GetFileInfo(musicMeta.common.artist, musicMeta.common.title, raw_filename);
+
     if (handler.detect) reportKeyUsage(keyData, seed.Matrix128,
-        info.artist, info.title, tag.common.album, raw_filename, raw_ext);
+        info.artist, info.title, musicMeta.common.album, raw_filename, raw_ext);
+
+    let imgUrl = GetMetaCoverURL(musicMeta);
+    if (imgUrl === "") {
+        imgUrl = await queryAlbumCoverImage(info.artist, info.title, musicMeta.common.album);
+        //todo: 解决跨域获取图像的问题
+    }
     return {
         status: true,
         title: info.title,
         artist: info.artist,
         ext: ext,
-        album: tag.common.album,
-        picture: GetCoverURL(tag),
-        file: URL.createObjectURL(musicData),
+        album: musicMeta.common.album,
+        picture: imgUrl,
+        file: URL.createObjectURL(musicBlob),
         mime: mime
     }
 }
@@ -77,4 +84,29 @@ async function queryKeyInfo(keyData, filename, format) {
         return QmcMaskCreate58(data.Matrix58, data.Super58A, data.Super58B);
     } catch (e) {
     }
+}
+
+async function queryAlbumCoverImage(artist, title, album) {
+    let song_query_url = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?n=10&new_json=1&w=" +
+        encodeURIComponent(artist + " " + title + " " + album);
+    let jsonpData;
+    let queriedSong = undefined;
+    try {
+        jsonpData = await RequestJsonp(song_query_url, "callback");
+        queriedSong = jsonpData["data"]["song"]["list"][0];
+    } catch (e) {
+        console.error(e)
+    }
+    console.log(queriedSong);
+    let imgUrl = "";
+    if (undefined !== queriedSong && undefined !== queriedSong["album"]) {
+        if (queriedSong["album"]["pmid"] !== undefined) {
+            imgUrl = "https://y.gtimg.cn/music/photo_new/T002M000" + queriedSong["album"]["pmid"] + ".jpg"
+        } else if (queriedSong["album"]["id"] !== undefined) {
+            imgUrl = "https://imgcache.qq.com/music/photo/album/" +
+                queriedSong["album"]["id"] % 100 +
+                "/albumpic_" + queriedSong["album"]["id"] + "_0.jpg"
+        }
+    }
+    return imgUrl;
 }
