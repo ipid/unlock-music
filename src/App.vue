@@ -4,7 +4,7 @@
         <el-main>
             <x-upload v-on:handle_error="showFail" v-on:handle_finish="showSuccess"></x-upload>
 
-            <el-row id="app-control">
+            <div id="app-control">
                 <el-row style="padding-bottom: 1em; font-size: 14px">
                     歌曲命名格式：
                     <el-radio label="1" name="format" v-model="download_format">歌手-歌曲名</el-radio>
@@ -14,10 +14,20 @@
                 </el-row>
                 <el-row>
                     <el-button @click="handleDownloadAll" icon="el-icon-download" plain>下载全部</el-button>
-                    <el-button @click="handleDeleteAll" icon="el-icon-delete" plain type="danger">删除全部</el-button>
-                    <el-checkbox border style="margin-left: 1em" v-model="instant_download">立即保存</el-checkbox>
+                    <el-button @click="handleDeleteAll" icon="el-icon-delete" plain type="danger">清除全部</el-button>
+
+
+                    <el-tooltip class="item" effect="dark" placement="top-start">
+                        <div slot="content">
+                            当您使用此工具进行大量文件解锁的时候，建议开启此选项。<br/>
+                            开启后，解锁结果将不会存留于浏览器中，防止内存不足。
+                        </div>
+                        <el-checkbox border style="margin-left: 1em" v-model="instant_download">立即保存</el-checkbox>
+                    </el-tooltip>
+
+
                 </el-row>
-            </el-row>
+            </div>
             <audio :autoplay="playing_auto" :src="playing_url" controls/>
 
             <x-preview :download_format="download_format" :table-data="tableData"
