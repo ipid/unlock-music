@@ -45,7 +45,7 @@
                 <a href="https://github.com/ix64/unlock-music/blob/master/README.md" target="_blank">其他格式</a>。
             </el-row>
             <el-row>
-                <span>Copyright &copy; 2019</span> MengYX
+                <span>Copyright &copy; 2019-</span><span v-text="(new Date()).getFullYear()"></span> MengYX
                 音乐解锁使用
                 <a href="https://github.com/ix64/unlock-music/blob/master/LICENSE" target="_blank">MIT许可协议</a>
                 开放源代码
