@@ -9,6 +9,13 @@
         <i class="el-icon-upload"/>
         <div class="el-upload__text">将文件拖到此处，或<em>点击选择</em></div>
         <div class="el-upload__tip" slot="tip">本工具仅在浏览器内对文件进行解锁，无需消耗流量</div>
+        <transition name="el-fade-in">
+            <el-progress
+                    :format="progressFormat" :percentage="progress_percent" :stroke-width="16"
+                    :text-inside="true" style="margin: 16px 6px 0 6px"
+                    v-show="progress_show"
+            ></el-progress>
+        </transition>
     </el-upload>
 </template>
 
@@ -22,7 +29,13 @@
                 cacheQueue: [],
                 workers: [],
                 idle_workers: [],
-                thread_num: 1
+                thread_num: 1,
+
+                progress_show: false,
+
+                progress_finished: 0,
+                progress_all: 0,
+                progress_percent: 0,
             }
         },
         mounted() {
@@ -47,7 +60,25 @@
             }
         },
         methods: {
+            progressFormat() {
+                return this.progress_finished + "/" + (this.progress_all)
+            },
+            progressChange(finish, all) {
+                this.progress_all += all;
+                this.progress_finished += finish;
+                this.progress_percent = Math.round(this.progress_finished / this.progress_all * 100);
+                if (this.progress_finished === this.progress_all) {
+                    setTimeout(() => {
+                        this.progress_show = false;
+                        this.progress_finished = 0;
+                        this.progress_all = 0;
+                    }, 3000);
+                } else {
+                    this.progress_show = true;
+                }
+            },
             handleFile(file) {
+                this.progressChange(0, +1);
                 // 有空闲worker 立刻处理文件
                 if (this.idle_workers.length > 0) {
                     this.handleDoFile(file, this.idle_workers.shift());
@@ -70,9 +101,11 @@
                     this.$emit("handle_finish", data);
                     // 完成之后 执行新任务 todo: 可能导致call stack过长
                     this.handleCacheQueue(worker_id);
+                    this.progressChange(+1, 0);
                 }).catch(err => {
                     this.$emit("handle_error", err, file.name);
                     this.handleCacheQueue(worker_id);
+                    this.progressChange(+1, 0);
                 })
             },
         }

@@ -23,5 +23,8 @@ export function DownloadBlobMusic(data, format) {
 
 export function RemoveBlobMusic(data) {
     URL.revokeObjectURL(data.file);
-    URL.revokeObjectURL(data.picture);
+    if (data.picture.startsWith("blob:")) {
+        URL.revokeObjectURL(data.picture);
+    }
+
 }
