@@ -1,5 +1,5 @@
 const musicMetadata = require("music-metadata-browser");
-import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetCoverURL, GetFileInfo} from "./util";
+import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetMetaCoverURL, GetFileInfo} from "./util";
 
 export async function Decrypt(file, raw_filename, raw_ext, detect = true) {
     let ext = raw_ext;
@@ -16,7 +16,7 @@ export async function Decrypt(file, raw_filename, raw_ext, detect = true) {
         artist: info.artist,
         ext: ext,
         album: tag.common.album,
-        picture: GetCoverURL(tag),
+        picture: GetMetaCoverURL(tag),
         file: URL.createObjectURL(file),
         mime: AudioMimeType[ext]
     }
