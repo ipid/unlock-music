@@ -42,13 +42,14 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     let musicBlob = new Blob([musicDecoded], {type: mime});
 
     const musicMeta = await musicMetadata.parseBlob(musicBlob);
-    let isGbk = musicMeta.native["ID3v2.3"]
-        .some(item => item.id === "TCON" && item.value === "(12)");
-    if (isGbk) {
-        musicMeta.common.artist = decode(musicMeta.common.artist, "gbk");
-        musicMeta.common.title = decode(musicMeta.common.title, "gbk");
-        musicMeta.common.album = decode(musicMeta.common.album, "gbk");
+    for (let metaIdx in musicMeta.native) {
+        if (musicMeta.native[metaIdx].some(item => item.id === "TCON" && item.value === "(12)")) {
+            musicMeta.common.artist = decode(musicMeta.common.artist, "gbk");
+            musicMeta.common.title = decode(musicMeta.common.title, "gbk");
+            musicMeta.common.album = decode(musicMeta.common.album, "gbk");
+        }
     }
+
     //todo: Use artists list to replace artist
     const info = GetFileInfo(musicMeta.common.artist, musicMeta.common.title, raw_filename);
     if (handler.detect) reportKeyUsage(keyData, seed.Matrix128,
