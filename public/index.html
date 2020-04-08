@@ -22,7 +22,7 @@
     <div id="loader"></div>
     <noscript>
         <img alt=""
-             src="https://stats.ixarea.com/ixarea-stats/report?idsite=2&rec=1&action_name=音乐解锁+-+By+IXarea"
+             src="https://stats.ixarea.com/ixarea-stats/report?rec=1&action_name=音乐解锁-NoJS&idsite=2"
              style="border:0"/>
     </noscript>
     <div hidden id="loader-tips-outdated">
@@ -53,12 +53,12 @@
             var m;
             if (!ua) return true;
             if (/MSIE |Trident\//.exec(ua)) return true; // no IE
-            m = /Edge\/([\d.]+)/.exec(ua); // Edge >= 16
-            if (m && Number(m[1]) < 16) return true;
-            m = /Chrome\/([\d.]+)/.exec(ua); // Chrome >= 50
-            if (m && Number(m[1]) < 50) return true;
-            m = /Firefox\/([\d.]+)/.exec(ua); // Firefox >= 38
-            return m && Number(m[1]) < 38;
+            m = /Edge\/([\d.]+)/.exec(ua); // Edge >= 17
+            if (m && Number(m[1]) < 17) return true;
+            m = /Chrome\/([\d.]+)/.exec(ua); // Chrome >= 58
+            if (m && Number(m[1]) < 58) return true;
+            m = /Firefox\/([\d.]+)/.exec(ua); // Firefox >= 45
+            return m && Number(m[1]) < 45;
         })();
         if (detected) {
             document.getElementById('loader-tips-outdated').hidden = false;
