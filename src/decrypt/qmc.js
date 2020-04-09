@@ -29,7 +29,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         seed = handler.handler(audioData);
         keyData = fileData.slice(-0x170);
         if (seed === undefined) seed = await queryKeyInfo(keyData, raw_filename, raw_ext);
-        if (seed === undefined) return {status: false, message: raw_ext + "格式仅提供实验性支持！"};
+        if (seed === undefined) return {status: false, message: raw_ext + "格式仅提供实验性支持"};
     } else {
         audioData = fileData;
         seed = handler.handler(audioData);
