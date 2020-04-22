@@ -27,8 +27,9 @@
 - [x] Multi-threads 多线程 
 
 # 使用方法
-## 下载已构建版本
-- 已构建的版本发布在 [GitHub Release](https://github.com/ix64/unlock-music/releases/latest), 下载解压缩后即可部署或本地使用
+## 使用已构建版本
+- 从[GitHub Release](https://github.com/ix64/unlock-music/releases/latest)下载已构建的版本
+- 解压缩后即可部署或本地使用（**请勿直接运行源代码**）
 
 ## 自行构建
 - 环境要求 
