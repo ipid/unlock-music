@@ -1,15 +1,11 @@
 import {
     AudioMimeType,
-    DetectAudioExt, FLAC_HEADER,
+    DetectAudioExt,
     GetArrayBuffer,
     GetFileInfo,
     GetMetaCoverURL,
-    IsBytesEqual,
-    RequestJsonp
+    IsBytesEqual
 } from "./util";
-import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
-
-import {decode} from "iconv-lite"
 
 const musicMetadata = require("music-metadata-browser");
 const MagicHeader = [
