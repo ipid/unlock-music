@@ -106,15 +106,13 @@ async function queryAlbumCoverImage(artist, title, album) {
     } catch (e) {
         console.error(e)
     }
-    console.log(queriedSong);
     let imgUrl = "";
     if (!!queriedSong && !!queriedSong["album"]) {
         if (queriedSong["album"]["pmid"] !== undefined) {
             imgUrl = "https://y.gtimg.cn/music/photo_new/T002M000" + queriedSong["album"]["pmid"] + ".jpg"
         } else if (queriedSong["album"]["id"] !== undefined) {
             imgUrl = "https://imgcache.qq.com/music/photo/album/" +
-                queriedSong["album"]["id"] % 100 +
-                "/albumpic_" + queriedSong["album"]["id"] + "_0.jpg"
+                queriedSong["album"]["id"] % 100 + "/albumpic_" + queriedSong["album"]["id"] + "_0.jpg"
         }
     }
     return imgUrl;

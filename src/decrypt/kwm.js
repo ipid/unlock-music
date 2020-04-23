@@ -31,7 +31,6 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         return dataString
     }
 
-    console.log(Uint8ArrayToString(oriData.slice(0x30, 0x38)))
 
     let audioData = oriData.slice(0x400);
     let lenAudioData = audioData.length;
