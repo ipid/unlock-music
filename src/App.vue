@@ -92,12 +92,13 @@
                 try {
                     const resp = await fetch("https://stats.ixarea.com/collect/music/app-version", {
                         method: "POST", headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({Version: this.version})
+                        body: JSON.stringify({"Version": this.version})
                     });
                     updateInfo = await resp.json();
                 } catch (e) {
                 }
-                if (!!updateInfo && !!updateInfo.Found) {
+                if ((!!updateInfo && process.env.NODE_ENV === 'production') && (!!updateInfo.HttpsFound ||
+                    (!!updateInfo.Found && window.location.protocol !== "https:"))) {
                     this.$notify.warning({
                         title: '发现更新',
                         message: '发现新版本 v' + updateInfo.Version +
