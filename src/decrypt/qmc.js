@@ -50,7 +50,6 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         }
     }
 
-    //todo: Use artists list to replace artist
     const info = GetFileInfo(musicMeta.common.artist, musicMeta.common.title, raw_filename);
     if (handler.detect) reportKeyUsage(keyData, seed.Matrix128,
         info.artist, info.title, musicMeta.common.album, raw_filename, raw_ext);
@@ -109,7 +108,7 @@ async function queryAlbumCoverImage(artist, title, album) {
     }
     console.log(queriedSong);
     let imgUrl = "";
-    if (undefined !== queriedSong && undefined !== queriedSong["album"]) {
+    if (!!queriedSong && !!queriedSong["album"]) {
         if (queriedSong["album"]["pmid"] !== undefined) {
             imgUrl = "https://y.gtimg.cn/music/photo_new/T002M000" + queriedSong["album"]["pmid"] + ".jpg"
         } else if (queriedSong["album"]["id"] !== undefined) {
