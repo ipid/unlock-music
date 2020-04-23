@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
   "version": "1.4.1",
-  "updateInfo": "支持.qmc2；qq音乐显示封面图片；界面优化；修复GBK编码ID3信息",
+  "updateInfo": "支持.kwm",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
