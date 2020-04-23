@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
-  "version": "1.4.1",
-  "updateInfo": "支持.kwm",
+  "version": "1.5.0",
+  "updateInfo": "支持酷我.kwm;支持虾米.xm",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
