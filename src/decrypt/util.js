@@ -3,6 +3,10 @@ export const FLAC_HEADER = [0x66, 0x4C, 0x61, 0x43];
 export const MP3_HEADER = [0x49, 0x44, 0x33];
 export const OGG_HEADER = [0x4F, 0x67, 0x67, 0x53];
 export const M4A_HEADER = [0x66, 0x74, 0x79, 0x70];
+export const WMA_HEADER = [
+    0x30, 0x26, 0xB2, 0x75, 0x8E, 0x66, 0xCF, 0x11,
+    0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C,
+]
 export const AudioMimeType = {
     mp3: "audio/mpeg",
     flac: "audio/flac",
@@ -63,6 +67,7 @@ export function DetectAudioExt(data, fallbackExt) {
     if (IsBytesEqual(FLAC_HEADER, data.slice(0, FLAC_HEADER.length))) return "flac";
     if (IsBytesEqual(OGG_HEADER, data.slice(0, OGG_HEADER.length))) return "ogg";
     if (IsBytesEqual(M4A_HEADER, data.slice(4, 4 + M4A_HEADER.length))) return "m4a";
+    if (IsBytesEqual(WMA_HEADER, data.slice(0, WMA_HEADER.length))) return "wma";
     return fallbackExt;
 }
 
