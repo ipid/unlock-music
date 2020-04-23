@@ -104,7 +104,6 @@ async function queryAlbumCoverImage(artist, title, album) {
         jsonpData = await RequestJsonp(song_query_url, "callback");
         queriedSong = jsonpData["data"]["song"]["list"][0];
     } catch (e) {
-        console.error(e)
     }
     let imgUrl = "";
     if (!!queriedSong && !!queriedSong["album"]) {
