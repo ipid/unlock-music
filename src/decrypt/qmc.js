@@ -92,6 +92,7 @@ async function queryKeyInfo(keyData, filename, format) {
         let data = await resp.json();
         return QmcMaskCreate58(data.Matrix58, data.Super58A, data.Super58B);
     } catch (e) {
+        console.log(e);
     }
 }
 
