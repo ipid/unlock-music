@@ -41,7 +41,6 @@ class QmcMask {
             if (matrix.length === 44) {
                 this.Matrix44 = matrix
                 this.generateMask128from44()
-                debugger
             } else {
                 this.Matrix128 = matrix
                 this.generateMask44from128()
@@ -104,7 +103,7 @@ class QmcMask {
         mapping.forEach(it256 => {
             let it256Len = it256.length
             for (let i = 1; i < it256Len; i++) {
-                if (this.Matrix128[it256[0]] !== q.Matrix128[it256[i]]) {
+                if (this.Matrix128[it256[0]] !== this.Matrix128[it256[i]]) {
                     throw "decode mask-128 to mask-44 failed"
                 }
             }
@@ -189,7 +188,6 @@ export function QmcMaskDetectMgg(data) {
     const mask = new QmcMask(matrix);
     let dx = mask.Decrypt(data.slice(0, OGG_HEADER.length));
     if (!IsBytesEqual(OGG_HEADER, dx)) {
-        debugger
         return;
     }
 
