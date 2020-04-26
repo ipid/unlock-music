@@ -143,7 +143,7 @@ class QmcMask {
 }
 
 export function QmcMaskGetDefault() {
-    return new QmcMask(QMCDefaultMaskMatrix, QMCDefaultMaskSuperA, QMCDefaultMaskSuperB)
+    return new QmcMask(QMCDefaultMaskMatrix)
 }
 
 export function QmcMaskDetectMflac(data) {
