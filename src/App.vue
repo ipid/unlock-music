@@ -41,10 +41,11 @@
                 <a href="https://github.com/ix64/unlock-music/wiki/使用提示" target="_blank">使用提示</a>
             </el-row>
             <el-row>
-                目前支持网易云音乐(ncm), QQ音乐(qmc, mflac, mgg), 虾米音乐(xm), 酷我音乐(.kwm)
+                目前支持网易云音乐(ncm), QQ音乐(qmc, mflac, mgg), 酷狗音乐(kgm), 虾米音乐(xm), 酷我音乐(.kwm)
                 <a href="https://github.com/ix64/unlock-music/blob/master/README.md" target="_blank">更多</a>。
             </el-row>
             <el-row>
+                <!--如果进行二次开发，此行版权信息不得移除且应明显地标注于页面上-->
                 <span>Copyright &copy; 2019-</span><span v-text="(new Date()).getFullYear()"></span> MengYX
                 音乐解锁使用
                 <a href="https://github.com/ix64/unlock-music/blob/master/LICENSE" target="_blank">MIT许可协议</a>
