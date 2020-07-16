@@ -27,7 +27,10 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     let audioData = oriData.slice(headerLen)
     let dataLen = audioData.length
     if (audioData.byteLength > 1 << 26) {
-        return {status: false, message: "文件过大，请使用CLI版本进行解锁"}
+        return {
+            status: false,
+            message: "文件过大，请使用<a target='_blank' href='https://github.com/ix64/unlock-music/wiki/其他音乐格式工具'>CLI版本</a>进行解锁"
+        }
     }
 
     let key1 = new Uint8Array(17)

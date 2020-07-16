@@ -19,7 +19,7 @@
     - [x] 补全ncm的ID3信息
 - [x] 虾米音乐格式 (.xm) (测试阶段)
 - [x] 酷我音乐格式 (.kwm) (测试阶段)
-- [ ] 酷狗音乐格式 (.kgm) ([Alpha测试](https://github.com/ix64/unlock-music/wiki/%E5%85%B6%E4%BB%96%E9%9F%B3%E4%B9%90%E6%A0%BC%E5%BC%8F%E5%B7%A5%E5%85%B7#%E9%85%B7%E7%8B%97%E9%9F%B3%E4%B9%90-kgmvpr%E8%A7%A3%E9%94%81%E5%B7%A5%E5%85%B7))
+- [x] 酷狗音乐格式 (.kgm) ([CLI版本](https://github.com/ix64/unlock-music/wiki/%E5%85%B6%E4%BB%96%E9%9F%B3%E4%B9%90%E6%A0%BC%E5%BC%8F%E5%B7%A5%E5%85%B7#%E9%85%B7%E7%8B%97%E9%9F%B3%E4%B9%90-kgmvpr%E8%A7%A3%E9%94%81%E5%B7%A5%E5%85%B7))
 
 ## 其他特性
 - [x] 在浏览器中解锁
