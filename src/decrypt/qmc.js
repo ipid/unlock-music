@@ -1,8 +1,19 @@
-import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetFileInfo, GetMetaCoverURL, RequestJsonp} from "./util";
+import {
+    AudioMimeType,
+    DetectAudioExt,
+    GetArrayBuffer,
+    GetFileInfo,
+    GetMetaCoverURL,
+    GetWebImage,
+    RequestJsonp
+} from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
-
-
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
+
+const ID3Writer = require("browser-id3-writer");
+
+const iconv = require('iconv-lite');
+const decode = iconv.decode
 
 const musicMetadata = require("music-metadata-browser");
 
@@ -60,7 +71,21 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     let imgUrl = GetMetaCoverURL(musicMeta);
     if (imgUrl === "") {
         imgUrl = await queryAlbumCoverImage(info.artist, info.title, musicMeta.common.album);
-        //todo: 解决跨域获取图像的问题
+        if (imgUrl !== "") {
+            const imageInfo = await GetWebImage(imgUrl);
+            if (imageInfo.url !== "") {
+                imgUrl = imageInfo.url
+                if (ext === "mp3") {
+                    let writer = new ID3Writer(audioData)
+                    writer.setFrame('APIC', {
+                        type: 3,
+                        data: imageInfo.buffer,
+                        description: "Cover",
+                    })
+                    musicBlob = new Blob([musicDecoded], {type: mime});
+                }
+            }
+        }
     }
     return {
         status: true,
@@ -112,10 +137,9 @@ async function queryAlbumCoverImage(artist, title, album) {
     let imgUrl = "";
     if (!!queriedSong && !!queriedSong["album"]) {
         if (queriedSong["album"]["pmid"] !== undefined) {
-            imgUrl = "https://y.gtimg.cn/music/photo_new/T002M000" + queriedSong["album"]["pmid"] + ".jpg"
+            imgUrl = "https://stats.ixarea.com/collect/qq-cover/1/" + queriedSong["album"]["pmid"]
         } else if (queriedSong["album"]["id"] !== undefined) {
-            imgUrl = "https://imgcache.qq.com/music/photo/album/" +
-                queriedSong["album"]["id"] % 100 + "/albumpic_" + queriedSong["album"]["id"] + "_0.jpg"
+            imgUrl = "https://stats.ixarea.com/collect/music/qq-cover/2/" + queriedSong["album"]["id"]
         }
     }
     return imgUrl;
