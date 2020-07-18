@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
-  "version": "1.5.2",
-  "updateInfo": "改善.mgg解锁算法",
+  "version": "1.6.0",
+  "updateInfo": "增加对flac文件的meta写入；支持QQ音乐封面写入（实验性）",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
