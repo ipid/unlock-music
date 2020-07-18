@@ -91,7 +91,7 @@ export async function GetWebImage(pic_url) {
     return {"buffer": null, "url": "", "type": ""}
 }
 
-export async function WriteMp3Meta(audioData, artistList, title, album, pictureData = null, pictureDesc = "Cover") {
+export function WriteMp3Meta(audioData, artistList, title, album, pictureData = null, pictureDesc = "Cover") {
     const writer = new ID3Writer(audioData);
     writer.setFrame("TPE1", artistList)
         .setFrame("TIT2", title)
