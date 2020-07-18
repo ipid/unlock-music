@@ -76,12 +76,14 @@ export async function Decrypt(file, raw_filename, raw_ext) {
             if (imageInfo.url !== "") {
                 imgUrl = imageInfo.url
                 if (ext === "mp3") {
-                    let writer = new ID3Writer(audioData)
+                    let writer = new ID3Writer(musicDecoded)
                     writer.setFrame('APIC', {
                         type: 3,
                         data: imageInfo.buffer,
                         description: "Cover",
                     })
+                    writer.addTag();
+                    musicDecoded = writer.arrayBuffer
                     musicBlob = new Blob([musicDecoded], {type: mime});
                 }
             }
@@ -133,11 +135,12 @@ async function queryAlbumCoverImage(artist, title, album) {
         jsonpData = await RequestJsonp(song_query_url, "callback");
         queriedSong = jsonpData["data"]["song"]["list"][0];
     } catch (e) {
+        console.log(e)
     }
     let imgUrl = "";
     if (!!queriedSong && !!queriedSong["album"]) {
         if (queriedSong["album"]["pmid"] !== undefined) {
-            imgUrl = "https://stats.ixarea.com/collect/qq-cover/1/" + queriedSong["album"]["pmid"]
+            imgUrl = "https://stats.ixarea.com/collect/music/qq-cover/1/" + queriedSong["album"]["pmid"]
         } else if (queriedSong["album"]["id"] !== undefined) {
             imgUrl = "https://stats.ixarea.com/collect/music/qq-cover/2/" + queriedSong["album"]["id"]
         }
