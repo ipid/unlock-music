@@ -136,11 +136,12 @@ async function queryKeyInfo(keyData, filename, format) {
 async function queryAlbumCoverImage(artist, title, album) {
     const song_query_url = IXAREA_API_ENDPOINT + "/music/qq-cover"
     try {
-        const resp = await fetch(song_query_url, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({Artist: artist, Title: title, Album: album}),
-        })
+        const params = {Artist: artist, Title: title, Album: album};
+        let _url = song_query_url + "?";
+        for (let pKey in params) {
+            _url += pKey + "=" + encodeURIComponent(params[pKey]) + "&"
+        }
+        const resp = await fetch(_url)
         if (resp.ok) {
             let data = await resp.json();
             return song_query_url + "/" + data.Type + "/" + data.Id
