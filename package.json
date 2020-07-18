@@ -21,6 +21,7 @@
     "crypto-js": "^4.0.0",
     "element-ui": "^2.13.0",
     "iconv-lite": "^0.5.1",
+    "metaflac-js": "^1.0.5",
     "music-metadata-browser": "^2.0.5",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11"

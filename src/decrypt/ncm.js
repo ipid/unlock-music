@@ -1,4 +1,5 @@
 const CryptoJS = require("crypto-js");
+const MetaFlac = require('metaflac-js');
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
 const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
 const MagicHeader = [0x43, 0x54, 0x45, 0x4E, 0x46, 0x44, 0x41, 0x4D];
@@ -40,12 +41,23 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     if (musicMeta.format === undefined) musicMeta.format = DetectAudioExt(audioData, "mp3");
 
     const imageInfo = await GetWebImage(musicMeta.albumPic);
-    if (musicMeta.format === "mp3") audioData = await WriteMp3Meta(
-        audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic);
+    if (musicMeta.format === "mp3") {
+        audioData = await WriteMp3Meta(
+            audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic);
+    } else if (musicMeta.format === "flac") {
+        const writer = new MetaFlac(Buffer.from(audioData))
+        writer.setTag("TITLE=" + info.title);
+        writer.setTag("ALBUM=" + musicMeta.album);
+        artists.forEach(artist => writer.setTag("ARTIST=" + artist));
+        writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
+        audioData = writer.save()
+    }
+    console.log(imageInfo)
 
     const mime = AudioMimeType[musicMeta.format];
     const musicData = new Blob([audioData], {type: mime});
-    return {
+
+    let x = {
         status: true,
         title: info.title,
         artist: info.artist,
@@ -55,6 +67,8 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         file: URL.createObjectURL(musicData),
         mime: mime
     };
+    console.log(x)
+    return x;
 }
 
 

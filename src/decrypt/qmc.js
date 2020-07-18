@@ -7,6 +7,9 @@ import {
     GetWebImage,
     RequestJsonp
 } from "./util";
+
+const MetaFlac = require('metaflac-js');
+
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
 
@@ -84,6 +87,11 @@ export async function Decrypt(file, raw_filename, raw_ext) {
                     })
                     writer.addTag();
                     musicDecoded = writer.arrayBuffer
+                    musicBlob = new Blob([musicDecoded], {type: mime});
+                } else if (ext === 'flac') {
+                    const writer = new MetaFlac(Buffer.from(musicDecoded))
+                    writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
+                    musicDecoded = writer.save()
                     musicBlob = new Blob([musicDecoded], {type: mime});
                 }
             }
