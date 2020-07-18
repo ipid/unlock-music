@@ -62,6 +62,7 @@
     import preview from "./component/preview"
     import {DownloadBlobMusic, RemoveBlobMusic} from "./component/util"
     import config from "../package"
+    import {IXAREA_API_ENDPOINT} from "./decrypt/util";
 
     export default {
         name: 'app',
@@ -91,7 +92,7 @@
                 if (!!mask) mask.remove();
                 let updateInfo;
                 try {
-                    const resp = await fetch("https://stats.ixarea.com/collect/music/app-version", {
+                    const resp = await fetch(IXAREA_API_ENDPOINT + "/music/app-version", {
                         method: "POST", headers: {"Content-Type": "application/json"},
                         body: JSON.stringify({"Version": this.version})
                     });

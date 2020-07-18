@@ -1,4 +1,12 @@
-import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetFileInfo, GetMetaCoverURL, GetWebImage} from "./util";
+import {
+    AudioMimeType,
+    DetectAudioExt,
+    GetArrayBuffer,
+    GetFileInfo,
+    GetMetaCoverURL,
+    GetWebImage,
+    IXAREA_API_ENDPOINT
+} from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
 
@@ -101,7 +109,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
 }
 
 function reportKeyUsage(keyData, maskData, artist, title, album, filename, format) {
-    fetch("https://stats.ixarea.com/collect/qmcmask/usage", {
+    fetch(IXAREA_API_ENDPOINT + "/qmcmask/usage", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -113,7 +121,7 @@ function reportKeyUsage(keyData, maskData, artist, title, album, filename, forma
 
 async function queryKeyInfo(keyData, filename, format) {
     try {
-        const resp = await fetch("https://stats.ixarea.com/collect/qmcmask/query", {
+        const resp = await fetch(IXAREA_API_ENDPOINT + "/qmcmask/query", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({Format: format, Key: Base64Encode(keyData), Filename: filename, Type: 44}),
@@ -126,8 +134,7 @@ async function queryKeyInfo(keyData, filename, format) {
 }
 
 async function queryAlbumCoverImage(artist, title, album) {
-    //https://stats.ixarea.com/collect
-    const song_query_url = "http://localhost:6580/music/qq-cover"
+    const song_query_url = IXAREA_API_ENDPOINT + "/music/qq-cover"
     try {
         const resp = await fetch(song_query_url, {
             method: "POST",
