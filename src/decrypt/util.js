@@ -16,6 +16,7 @@ export const AudioMimeType = {
     wma: "audio/x-ms-wma",
     wav: "audio/x-wav"
 };
+export const IXAREA_API_ENDPOINT = "https://stats.ixarea.com/apis"
 
 // Also a new draft API: blob.arrayBuffer()
 export async function GetArrayBuffer(blobObject) {
