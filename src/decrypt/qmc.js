@@ -1,17 +1,8 @@
-import {
-    AudioMimeType,
-    DetectAudioExt,
-    GetArrayBuffer,
-    GetFileInfo,
-    GetMetaCoverURL,
-    GetWebImage,
-    RequestJsonp
-} from "./util";
-
-const MetaFlac = require('metaflac-js');
-
+import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetFileInfo, GetMetaCoverURL, GetWebImage} from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
+
+const MetaFlac = require('metaflac-js');
 
 const ID3Writer = require("browser-id3-writer");
 
@@ -135,23 +126,21 @@ async function queryKeyInfo(keyData, filename, format) {
 }
 
 async function queryAlbumCoverImage(artist, title, album) {
-    let song_query_url = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp?n=10&new_json=1&w=" +
-        encodeURIComponent(artist + " " + title + " " + album);
-    let jsonpData;
-    let queriedSong = undefined;
+    //https://stats.ixarea.com/collect
+    const song_query_url = "http://localhost:6580/music/qq-cover"
     try {
-        jsonpData = await RequestJsonp(song_query_url, "callback");
-        queriedSong = jsonpData["data"]["song"]["list"][0];
-    } catch (e) {
-        console.log(e)
-    }
-    let imgUrl = "";
-    if (!!queriedSong && !!queriedSong["album"]) {
-        if (queriedSong["album"]["pmid"] !== undefined) {
-            imgUrl = "https://stats.ixarea.com/collect/music/qq-cover/1/" + queriedSong["album"]["pmid"]
-        } else if (queriedSong["album"]["id"] !== undefined) {
-            imgUrl = "https://stats.ixarea.com/collect/music/qq-cover/2/" + queriedSong["album"]["id"]
+        const resp = await fetch(song_query_url, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({Artist: artist, Title: title, Album: album}),
+        })
+        if (resp.ok) {
+            let data = await resp.json();
+            return song_query_url + "/" + data.Type + "/" + data.Id
         }
+
+    } catch (e) {
+        console.log(e);
     }
-    return imgUrl;
+    return "";
 }
