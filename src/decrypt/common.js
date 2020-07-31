@@ -58,6 +58,6 @@ export async function CommonDecrypt(file) {
 
     if (!rt_data.rawExt) rt_data.rawExt = raw_ext;
     if (!rt_data.rawFilename) rt_data.rawFilename = raw_filename;
-
+    console.log(rt_data);
     return rt_data;
 }

@@ -39,25 +39,30 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     if (artists.length === 0) artists.push(info.artist);
 
     if (musicMeta.format === undefined) musicMeta.format = DetectAudioExt(audioData, "mp3");
+    console.log(musicMeta)
 
     const imageInfo = await GetWebImage(musicMeta.albumPic);
-    if (musicMeta.format === "mp3") {
-        audioData = await WriteMp3Meta(
-            audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic);
-    } else if (musicMeta.format === "flac") {
-        const writer = new MetaFlac(Buffer.from(audioData))
-        writer.setTag("TITLE=" + info.title);
-        writer.setTag("ALBUM=" + musicMeta.album);
-        artists.forEach(artist => writer.setTag("ARTIST=" + artist));
-        writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
-        audioData = writer.save()
-    }
     console.log(imageInfo)
+    try {
+        if (musicMeta.format === "mp3") {
+            audioData = await WriteMp3Meta(
+                audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic);
+        } else if (musicMeta.format === "flac") {
+            const writer = new MetaFlac(Buffer.from(audioData))
+            //writer.setTag("TITLE=" + info.title);
+            //writer.setTag("ALBUM=" + musicMeta.album);
+            //artists.forEach(artist => writer.setTag("ARTIST=" + artist));
+            writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
+            audioData = writer.save()
+        }
+    } catch (e) {
+        console.warn("Error while appending cover image to file " + e)
+    }
 
     const mime = AudioMimeType[musicMeta.format];
     const musicData = new Blob([audioData], {type: mime});
 
-    let x = {
+    return {
         status: true,
         title: info.title,
         artist: info.artist,
@@ -67,8 +72,6 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         file: URL.createObjectURL(musicData),
         mime: mime
     };
-    console.log(x)
-    return x;
 }
 
 
