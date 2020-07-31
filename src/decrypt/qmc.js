@@ -60,6 +60,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     const musicMeta = await musicMetadata.parseBlob(musicBlob);
     for (let metaIdx in musicMeta.native) {
         if (musicMeta.native[metaIdx].some(item => item.id === "TCON" && item.value === "(12)")) {
+            console.log("The metadata is using gbk encoding")
             musicMeta.common.artist = decode(musicMeta.common.artist, "gbk");
             musicMeta.common.title = decode(musicMeta.common.title, "gbk");
             musicMeta.common.album = decode(musicMeta.common.album, "gbk");
@@ -77,21 +78,25 @@ export async function Decrypt(file, raw_filename, raw_ext) {
             const imageInfo = await GetWebImage(imgUrl);
             if (imageInfo.url !== "") {
                 imgUrl = imageInfo.url
-                if (ext === "mp3") {
-                    let writer = new ID3Writer(musicDecoded)
-                    writer.setFrame('APIC', {
-                        type: 3,
-                        data: imageInfo.buffer,
-                        description: "Cover",
-                    })
-                    writer.addTag();
-                    musicDecoded = writer.arrayBuffer
-                    musicBlob = new Blob([musicDecoded], {type: mime});
-                } else if (ext === 'flac') {
-                    const writer = new MetaFlac(Buffer.from(musicDecoded))
-                    writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
-                    musicDecoded = writer.save()
-                    musicBlob = new Blob([musicDecoded], {type: mime});
+                try {
+                    if (ext === "mp3") {
+                        let writer = new ID3Writer(musicDecoded)
+                        writer.setFrame('APIC', {
+                            type: 3,
+                            data: imageInfo.buffer,
+                            description: "Cover",
+                        })
+                        writer.addTag();
+                        musicDecoded = writer.arrayBuffer
+                        musicBlob = new Blob([musicDecoded], {type: mime});
+                    } else if (ext === 'flac') {
+                        const writer = new MetaFlac(Buffer.from(musicDecoded))
+                        writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
+                        musicDecoded = writer.save()
+                        musicBlob = new Blob([musicDecoded], {type: mime});
+                    }
+                } catch (e) {
+                    console.warn("Error while appending cover image to file " + e)
                 }
             }
         }
