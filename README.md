@@ -1,5 +1,5 @@
 # Unlock Music 音乐解锁
-- 在浏览器中解锁加密的音乐文件。 Unlock encrypted music file in browser. 
+- 在浏览器中解锁加密的音乐文件。 Unlock encrypted music file in the browser. 
 - unlock-music项目是以学习和技术研究的初衷创建的，修改、再分发时请遵循[License](https://github.com/ix64/unlock-music/blob/master/LICENSE)
 - Unlock Music的CLI版本正在开发中。
 - 我们新建了Telegram群组，欢迎加入！[https://t.me/unlock_music_chat](https://t.me/unlock_music_chat)

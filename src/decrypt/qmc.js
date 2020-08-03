@@ -60,7 +60,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     const musicMeta = await musicMetadata.parseBlob(musicBlob);
     for (let metaIdx in musicMeta.native) {
         if (musicMeta.native[metaIdx].some(item => item.id === "TCON" && item.value === "(12)")) {
-            console.log("The metadata is using gbk encoding")
+            console.warn("The metadata is using gbk encoding")
             musicMeta.common.artist = decode(musicMeta.common.artist, "gbk");
             musicMeta.common.title = decode(musicMeta.common.title, "gbk");
             musicMeta.common.album = decode(musicMeta.common.album, "gbk");
