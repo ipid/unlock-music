@@ -3,6 +3,8 @@ const MetaFlac = require('metaflac-js');
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
 const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
 const MagicHeader = [0x43, 0x54, 0x45, 0x4E, 0x46, 0x44, 0x41, 0x4D];
+import jimp from 'jimp';
+
 import {
     AudioMimeType,
     DetectAudioExt,
@@ -42,6 +44,11 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     console.log(musicMeta)
 
     const imageInfo = await GetWebImage(musicMeta.albumPic);
+    while (!!imageInfo.buffer && imageInfo.buffer.byteLength >= 16 * 1024 * 1024) {
+        let img = await jimp.read(imageInfo.buffer)
+        await img.resize(Math.round(img.getHeight() / 2), jimp.AUTO)
+        imageInfo.buffer = await img.getBufferAsync("image/jpeg")
+    }
     console.log(imageInfo)
     try {
         if (musicMeta.format === "mp3") {
@@ -57,7 +64,6 @@ export async function Decrypt(file, raw_filename, raw_ext) {
             audioData = writer.save()
         }
     } catch (e) {
-        //todo: 图片过大，无法写入
         console.warn("Error while appending cover image to file " + e)
     }
 
