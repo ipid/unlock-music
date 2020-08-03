@@ -35,7 +35,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
 
     const artists = [];
     if (!!musicMeta.artist) musicMeta.artist.forEach(arr => artists.push(arr[0]));
-    const info = GetFileInfo(artists.join(" & "), musicMeta.musicName, raw_filename);
+    const info = GetFileInfo(artists.join("; "), musicMeta.musicName, raw_filename);
     if (artists.length === 0) artists.push(info.artist);
 
     if (musicMeta.format === undefined) musicMeta.format = DetectAudioExt(audioData, "mp3");
@@ -49,13 +49,15 @@ export async function Decrypt(file, raw_filename, raw_ext) {
                 audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic);
         } else if (musicMeta.format === "flac") {
             const writer = new MetaFlac(Buffer.from(audioData))
-            //writer.setTag("TITLE=" + info.title);
-            //writer.setTag("ALBUM=" + musicMeta.album);
-            //artists.forEach(artist => writer.setTag("ARTIST=" + artist));
+            if (writer.getTag("TITLE") === "") writer.setTag("TITLE=" + info.title)
+            if (writer.getTag("ALBUM") === "") writer.setTag("ALBUM=" + musicMeta.album)
+            writer.removeTag("ARTIST")
+            artists.forEach(artist => writer.setTag("ARTIST=" + artist))
             writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
             audioData = writer.save()
         }
     } catch (e) {
+        //todo: 图片过大，无法写入
         console.warn("Error while appending cover image to file " + e)
     }
 
