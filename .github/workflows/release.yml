@@ -40,14 +40,18 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
 
+    - name: Get current time
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
     - name: Create a Release
       id: create_release
       uses: actions/create-release@v1
       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
-        release_name: "Build $(date %Y/%m/%d)"
+        release_name: "Build ${{ steps.date.outputs.date }}"
         draft: true
 
     - name: Upload Release Assets - legacy.tar.gz
