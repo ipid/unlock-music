@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
-  "version": "1.6.1",
-  "updateInfo": "修复flac文件的meta写入",
+  "version": "1.6.2",
+  "updateInfo": ".ncm和.xm解锁的一些修复",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
