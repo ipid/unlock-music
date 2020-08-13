@@ -42,11 +42,12 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     const musicMeta = await musicMetadata.parseBlob(musicBlob);
     if (ext === "wav") {
         //todo:未知的编码方式
+        console.log(musicMeta.common)
         musicMeta.common.album = "";
         musicMeta.common.artist = "";
         musicMeta.common.title = "";
     }
-    let _sep = raw_filename.indexof("_") === -1 ? "-" : "_"
+    let _sep = raw_filename.indexOf("_") === -1 ? "-" : "_"
     const info = GetFileInfo(musicMeta.common.artist, musicMeta.common.title, raw_filename, _sep);
 
     const imgUrl = GetMetaCoverURL(musicMeta);
