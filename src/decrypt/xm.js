@@ -46,8 +46,8 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         musicMeta.common.artist = "";
         musicMeta.common.title = "";
     }
-
-    const info = GetFileInfo(musicMeta.common.artist, musicMeta.common.title, raw_filename, "_");
+    let _sep = raw_filename.indexof("_") === -1 ? "-" : "_"
+    const info = GetFileInfo(musicMeta.common.artist, musicMeta.common.title, raw_filename, _sep);
 
     const imgUrl = GetMetaCoverURL(musicMeta);
 
