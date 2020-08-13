@@ -29,7 +29,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     }
 
     let key = oriData[0xf]
-    let dataOffset = oriData[0xc] | oriData[0xd] << 8
+    let dataOffset = oriData[0xc] | oriData[0xd] << 8 | oriData[0xe] << 16
     let audioData = oriData.slice(0x10);
     let lenAudioData = audioData.length;
     for (let cur = dataOffset; cur < lenAudioData; ++cur)
