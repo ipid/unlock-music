@@ -42,7 +42,7 @@ jobs:
 
     - name: Get current time
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y/%m/%d')"
 
     - name: Create a Release
       id: create_release
