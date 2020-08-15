@@ -34,6 +34,7 @@
 # 使用方法
 ## 使用已构建版本
 - 从[GitHub Release](https://github.com/ix64/unlock-music/releases/latest)下载已构建的版本
+    - 本地使用请下载`legacy版本`（`modern版本`只能通过**http/https协议**访问）
 - 解压缩后即可部署或本地使用（**请勿直接运行源代码**）
 
 ## 自行构建
