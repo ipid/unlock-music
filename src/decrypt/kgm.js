@@ -10,9 +10,14 @@ const KgmHeader = [
 const VprMaskDiff = [0x25, 0xDF, 0xE8, 0xA6, 0x75, 0x1E, 0x75, 0x0E,
     0x2F, 0x80, 0xF3, 0x2D, 0xB8, 0xB6, 0xE3, 0x11,
     0x00]
-const PreDefinedKey = "MoOtOiTvINGwd2E6n0E1i7L5t2IoOoNk"
 
 export async function Decrypt(file, raw_filename, raw_ext) {
+    if (document.location.protocol === "file:") {
+        return {
+            status: false,
+            message: "请使用<a target='_blank' href='https://github.com/ix64/unlock-music/wiki/其他音乐格式工具'>CLI版本</a>进行解锁"
+        }
+    }
     const oriData = new Uint8Array(await GetArrayBuffer(file));
     if (raw_ext === "vpr") {
         if (!IsBytesEqual(VprHeader, oriData.slice(0, 0x10)))
