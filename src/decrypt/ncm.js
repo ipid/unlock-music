@@ -164,7 +164,9 @@ function getMetaData(dataView, fileBuffer, offset) {
     if (plainText.slice(0, labelIndex) === "dj") {
         result = result.mainMusic;
     }
-    if (!!result.albumPic) result.albumPic = result.albumPic.replace("http://", "https://");
+    if (!!result.albumPic && result.albumPic !== "")
+        result.albumPic = result.albumPic.replace("http://", "https://") + "?param=500y500";
+
     return {data: result, offset: offset};
 }
 
