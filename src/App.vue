@@ -100,16 +100,16 @@
                 } catch (e) {
                 }
                 if ((!!updateInfo && process.env.NODE_ENV === 'production') && (!!updateInfo.HttpsFound ||
-                    (!!updateInfo.Found && window.location.protocol !== "https:"))) {
-                    this.$notify.warning({
-                        title: '发现更新',
-                        message: '发现新版本 v' + updateInfo.Version +
-                            '<br/>更新详情：' + updateInfo.Detail +
-                            '<br/><a target="_blank" href="' + updateInfo.URL + '">获取更新</a>',
-                        dangerouslyUseHTMLString: true,
-                        duration: 15000,
-                        position: 'top-left'
-                    });
+                    (!!updateInfo.Found && document.location.protocol !== "https:"))) {
+                  this.$notify.warning({
+                    title: '发现更新',
+                    message: '发现新版本 v' + updateInfo.Version +
+                        '<br/>更新详情：' + updateInfo.Detail +
+                        '<br/><a target="_blank" href="' + updateInfo.URL + '">获取更新</a>',
+                    dangerouslyUseHTMLString: true,
+                    duration: 15000,
+                    position: 'top-left'
+                  });
                 } else {
                     this.$notify.info({
                         title: '离线使用',
