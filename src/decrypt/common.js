@@ -41,6 +41,11 @@ export async function CommonDecrypt(file) {
         case "bkcflac"://Moo Music Flac
         case "mflac"://QQ Music Desktop Flac
         case "mgg": //QQ Music Desktop Ogg
+        case "666c6163"://QQ Music Weiyun Flac
+        case "6d7033"://QQ Music Weiyun Mp3
+        case "6f6767"://QQ Music Weiyun Ogg
+        case "6d3461"://QQ Music Weiyun M4a
+        case "776176"://QQ Music Weiyun Wav
             rt_data = await QmcDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
             break;
         case "tm2":// QQ Music IOS M4a
