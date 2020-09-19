@@ -29,7 +29,12 @@ const HandlerMap = {
     "qmcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
     "bkcmp3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
     "bkcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
-    "tkm": {handler: QmcMaskGetDefault, ext: "m4a", detect: false}
+    "tkm": {handler: QmcMaskGetDefault, ext: "m4a", detect: false},
+    "666c6163": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
+    "6d7033": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
+    "6f6767": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
+    "6d3461": {handler: QmcMaskGetDefault, ext: "m4a", detect: false},
+    "776176": {handler: QmcMaskGetDefault, ext: "wav", detect: false}
 };
 
 export async function Decrypt(file, raw_filename, raw_ext) {
