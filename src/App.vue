@@ -100,7 +100,7 @@
                 } catch (e) {
                 }
                 if ((!!updateInfo && process.env.NODE_ENV === 'production') && (!!updateInfo.HttpsFound ||
-                    (!!updateInfo.Found && document.location.protocol !== "https:"))) {
+                    (!!updateInfo.Found && window.location.protocol !== "https:"))) {
                   this.$notify.warning({
                     title: '发现更新',
                     message: '发现新版本 v' + updateInfo.Version +
