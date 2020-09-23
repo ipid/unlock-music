@@ -12,11 +12,14 @@ const VprMaskDiff = [0x25, 0xDF, 0xE8, 0xA6, 0x75, 0x1E, 0x75, 0x0E,
     0x00]
 
 export async function Decrypt(file, raw_filename, raw_ext) {
-    if (window.location.protocol === "file:") {
-        return {
-            status: false,
-            message: "请使用<a target='_blank' href='https://github.com/ix64/unlock-music/wiki/其他音乐格式工具'>CLI版本</a>进行解锁"
+    try {
+        if (window.location.protocol === "file:") {
+            return {
+                status: false,
+                message: "请使用<a target='_blank' href='https://github.com/ix64/unlock-music/wiki/其他音乐格式工具'>CLI版本</a>进行解锁"
+            }
         }
+    } catch {
     }
     const oriData = new Uint8Array(await GetArrayBuffer(file));
     if (raw_ext === "vpr") {
