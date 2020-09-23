@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
-  "version": "1.6.3",
-  "updateInfo": ".ncm和.kgm解锁的一些优化",
+  "version": "1.6.4",
+  "updateInfo": "支持QQ音乐微云网盘格式；.kgm解锁的一些优化",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
