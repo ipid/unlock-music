@@ -21,6 +21,7 @@ import {
     Upload
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/base.css';
+import '@/scss/unlock-music.css' // dark mode file and global css
 
 Vue.use(Link);
 Vue.use(Image);

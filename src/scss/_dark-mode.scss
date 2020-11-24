@@ -1,0 +1,167 @@
+/*
+* 样式 - 夜间模式
+* @KyleBing
+* 2020-11-24
+*/
+
+@media (prefers-color-scheme: dark) {
+  #app{
+    color: $dark-color-text-info;
+  }
+  body{
+    background-color: $dark-bg;
+  }
+
+  // FORM
+  .el-radio{
+    &__label{
+      color: $dark-color-text;
+    }
+    &__input{
+      color: $dark-color-text-info;
+      .el-radio__inner{
+        border-color: $dark-color-border;
+        background-color: $dark-btn-bg;
+      }
+    }
+
+    &.is-checked{
+      .el-radio__inner{
+        background-color: $blue;
+      }
+      .el-radio__label{
+        font-weight: bold;
+      }
+    }
+  }
+
+  .el-checkbox.is-bordered{
+    border-color: $dark-color-border;
+    .el-checkbox__inner{
+      background-color: $dark-btn-bg;
+      border-color: $dark-color-border;
+    }
+    &:hover{
+      border-color: $dark-color-border-highlight;
+      .el-checkbox__inner{
+        background-color: $dark-btn-bg-highlight;
+        border-color: $dark-color-border-highlight;
+      }
+      .el-checkbox__label{
+        color: $dark-color-text-info;
+      }
+    }
+    &.is-checked{
+      background-color: $blue;
+      .el-checkbox__inner{
+        border-color: $dark-btn-bg-highlight;
+      }
+      .el-checkbox__label{
+        color: white;
+        font-weight: bold;
+      }
+    }
+  }
+
+
+
+  // BUTTON
+  .el-button{
+    background-color: $dark-btn-bg;
+    border-color: $dark-color-border;
+    color: $dark-color-text;
+
+    &:active{
+      transform: translateY(2px);
+    }
+
+    &--default{
+      &.is-plain {
+        background-color: $dark-btn-bg;
+        &:hover {
+          background-color: $blue;
+          border-color: $blue;
+          color: white;
+        }
+      }
+    }
+    &--danger{
+      &.is-plain{
+        border-color: $dark-color-border;
+        background-color: $dark-btn-bg;
+        &:hover{
+          background-color: $red;
+          border-color: $red;
+        }
+      }
+    }
+  }
+
+  // 文件拖放区
+  .el-upload__tip{
+    color: $dark-color-text-info;
+  }
+  .el-upload-dragger{
+    background-color: $dark-btn-bg;
+    border-color: $dark-color-border;
+    .el-upload__text{
+      color: $dark-color-text-info;
+    }
+    &:hover{
+      background: $dark-btn-bg;
+      border-color: $dark-color-border-highlight;
+    }
+  }
+
+  //TABLE
+  .el-table{
+    background-color: $dark-bg-td;
+    &:before{ // 去除表格末尾的横线
+      content: none;
+    }
+    &__header{
+      th{
+        border-bottom-color: $dark-color-border !important;
+      }
+    }
+    th{
+      background-color: $dark-bg-th;
+      color: $dark-color-text-info;
+    }
+    td{
+      border-bottom-color: $dark-color-border !important;
+    }
+    tr{
+      background-color: $dark-bg-td;
+      color: $dark-color-text;
+      &:hover{
+        td{
+          background-color: $dark-bg-th !important;
+        }
+      }
+    }
+  }
+
+
+  // LINKS
+  $dark-link: $green;
+  a{
+    text-decoration: none;
+    color: darken($dark-link, 15%);
+    &:hover{
+      color: $dark-link;
+    }
+  }
+
+  // ALERT
+  .el-notification{
+    background-color: $dark-btn-bg-highlight;
+    border-color: $dark-color-border;
+    &__title{
+      color: white;
+    }
+    &__content{
+      color: $dark-color-text-info;
+    }
+  }
+}
