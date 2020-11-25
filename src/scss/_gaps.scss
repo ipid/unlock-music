@@ -1,19 +1,18 @@
 /*
-* 间隔工具集
-*/
+ * 间隔工具集
+ */
 
-$timer: 5px;
-// common
+$gap: 5px;
 @for $item from 1 through 7 {
-  .mt-#{$item} { margin-top     : $timer * $item !important;}
-  .mb-#{$item} { margin-bottom  : $timer * $item !important;}
-  .ml-#{$item} { margin-left    : $timer * $item !important;}
-  .mr-#{$item} { margin-right   : $timer * $item !important;}
-   .m-#{$item} { margin         : $timer * $item !important;}
+  .mt-#{$item} { margin-top     : $gap * $item !important;}
+  .mb-#{$item} { margin-bottom  : $gap * $item !important;}
+  .ml-#{$item} { margin-left    : $gap * $item !important;}
+  .mr-#{$item} { margin-right   : $gap * $item !important;}
+   .m-#{$item} { margin         : $gap * $item !important;}
 
-  .pt-#{$item} { padding-top    : $timer * $item !important;}
-  .pb-#{$item} { padding-bottom : $timer * $item !important;}
-  .pl-#{$item} { padding-left   : $timer * $item !important;}
-  .pr-#{$item} { padding-right  : $timer * $item !important;}
-   .p-#{$item} { padding        : $timer * $item !important;}
+  .pt-#{$item} { padding-top    : $gap * $item !important;}
+  .pb-#{$item} { padding-bottom : $gap * $item !important;}
+  .pl-#{$item} { padding-left   : $gap * $item !important;}
+  .pr-#{$item} { padding-right  : $gap * $item !important;}
+   .p-#{$item} { padding        : $gap * $item !important;}
 }

@@ -1,13 +1,24 @@
-$dark-color-border                  : lighten(black, 30%);
-$dark-color-border-highlight        : lighten(black, 55%);
-$dark-bg                            : lighten(black, 8%);
-$dark-color-text                    : lighten(black, 90%);
-$dark-color-text-info               : lighten(black, 60%);
-$dark-btn-bg                        : lighten(black, 20%);
-$dark-btn-bg-highlight              : lighten(black, 30%);
-$dark-bg-th                         : lighten(black, 20%);
-$dark-bg-td                         : lighten(black, 15%);
+// COLORS
+$blue      : #409EFF;
+$red       : #F56C6C;
+$green     : #85ce61;
 
-$blue:  #409EFF;
-$red:   #F56C6C;
-$green: #85ce61;
+$text-main : #2C3E50;
+
+$color-link: $blue;
+
+// 暗黑模式
+$dark-border           : lighten(black, 30%);
+$dark-border-highlight : lighten(black, 55%);
+$dark-bg               : lighten(black, 8%);
+$dark-text-main        : lighten(black, 90%);
+$dark-text-info        : lighten(black, 60%);
+$dark-btn-bg           : lighten(black, 20%);
+$dark-btn-bg-highlight : lighten(black, 30%);
+$dark-bg-th            : lighten(black, 20%);
+$dark-bg-td            : lighten(black, 15%);
+$dark-color-link       : $green;
+
+
+// 字体大小
+$fz-main: 14px;

@@ -1,21 +1,5 @@
 @import "variables";
-@import "dark-mode";
 @import "gaps";
 
-body{
-  font-size: 14px;
-}
-
-// 播放控件与正文表格间隔
-audio{
-  margin-bottom: 15px;
-}
-
-$link: $blue;
-a{
-  //text-decoration: none;
-  color: darken($link, 15%);
-  &:hover{
-    color: $link;
-  }
-}
+@import "normal";
+@import "dark-mode"; // dark-mode 放在 normal 后面，以获得更高优先级
