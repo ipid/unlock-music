@@ -102,13 +102,13 @@
     color: $dark-text-info;
   }
   .el-upload-dragger{
-    background-color: $dark-btn-bg;
+    background-color: $dark-uploader-bg;
     border-color: $dark-border;
     .el-upload__text{
       color: $dark-text-info;
     }
     &:hover{
-      background: $dark-btn-bg;
+      background: $dark-uploader-bg-highlight;
       border-color: $dark-border-highlight;
     }
   }
