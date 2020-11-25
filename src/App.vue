@@ -176,35 +176,9 @@
                 }, 300);
             }
         },
-
     }
-
 </script>
 
-<style>
-    #app {
-        font-family: "Helvetica Neue", Helvetica, "PingFang SC",
-        "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-        padding-top: 30px;
-    }
-
-    #app-footer a {
-        padding-left: 0.2em;
-        padding-right: 0.2em;
-    }
-
-    #app-footer {
-        text-align: center;
-        font-size: small;
-    }
-
-    #app-control {
-        padding-top: 1em;
-        padding-bottom: 1em;
-    }
-
+<style lang="scss">
+   @import "scss/unlock-music";
 </style>

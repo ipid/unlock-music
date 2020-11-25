@@ -1,12 +1,12 @@
 /*
-* 样式 - 夜间模式
-* @KyleBing
-* 2020-11-24
-*/
+ * name:    样式 - 夜间模式
+ * author:  @KyleBing
+ * date:    2020-11-24
+ */
 
 @media (prefers-color-scheme: dark) {
   #app{
-    color: $dark-color-text-info;
+    color: $dark-text-info;
   }
   body{
     background-color: $dark-bg;
@@ -15,12 +15,12 @@
   // FORM
   .el-radio{
     &__label{
-      color: $dark-color-text;
+      color: $dark-text-main;
     }
     &__input{
-      color: $dark-color-text-info;
+      color: $dark-text-info;
       .el-radio__inner{
-        border-color: $dark-color-border;
+        border-color: $dark-border;
         background-color: $dark-btn-bg;
       }
     }
@@ -36,19 +36,19 @@
   }
 
   .el-checkbox.is-bordered{
-    border-color: $dark-color-border;
+    border-color: $dark-border;
     .el-checkbox__inner{
       background-color: $dark-btn-bg;
-      border-color: $dark-color-border;
+      border-color: $dark-border;
     }
     &:hover{
-      border-color: $dark-color-border-highlight;
+      border-color: $dark-border-highlight;
       .el-checkbox__inner{
         background-color: $dark-btn-bg-highlight;
-        border-color: $dark-color-border-highlight;
+        border-color: $dark-border-highlight;
       }
       .el-checkbox__label{
-        color: $dark-color-text-info;
+        color: $dark-text-info;
       }
     }
     &.is-checked{
@@ -68,8 +68,8 @@
   // BUTTON
   .el-button{
     background-color: $dark-btn-bg;
-    border-color: $dark-color-border;
-    color: $dark-color-text;
+    border-color: $dark-border;
+    color: $dark-text-main;
 
     &:active{
       transform: translateY(2px);
@@ -87,7 +87,7 @@
     }
     &--danger{
       &.is-plain{
-        border-color: $dark-color-border;
+        border-color: $dark-border;
         background-color: $dark-btn-bg;
         &:hover{
           background-color: $red;
@@ -99,17 +99,17 @@
 
   // 文件拖放区
   .el-upload__tip{
-    color: $dark-color-text-info;
+    color: $dark-text-info;
   }
   .el-upload-dragger{
     background-color: $dark-btn-bg;
-    border-color: $dark-color-border;
+    border-color: $dark-border;
     .el-upload__text{
-      color: $dark-color-text-info;
+      color: $dark-text-info;
     }
     &:hover{
       background: $dark-btn-bg;
-      border-color: $dark-color-border-highlight;
+      border-color: $dark-border-highlight;
     }
   }
 
@@ -121,19 +121,19 @@
     }
     &__header{
       th{
-        border-bottom-color: $dark-color-border !important;
+        border-bottom-color: $dark-border !important;
       }
     }
     th{
       background-color: $dark-bg-th;
-      color: $dark-color-text-info;
+      color: $dark-text-info;
     }
     td{
-      border-bottom-color: $dark-color-border !important;
+      border-bottom-color: $dark-border !important;
     }
     tr{
       background-color: $dark-bg-td;
-      color: $dark-color-text;
+      color: $dark-text-main;
       &:hover{
         td{
           background-color: $dark-bg-th !important;
@@ -144,24 +144,23 @@
 
 
   // LINKS
-  $dark-link: $green;
   a{
     text-decoration: none;
-    color: darken($dark-link, 15%);
+    color: darken($dark-color-link, 15%);
     &:hover{
-      color: $dark-link;
+      color: $dark-color-link;
     }
   }
 
   // ALERT
   .el-notification{
     background-color: $dark-btn-bg-highlight;
-    border-color: $dark-color-border;
+    border-color: $dark-border;
     &__title{
       color: white;
     }
     &__content{
-      color: $dark-color-text-info;
+      color: $dark-text-info;
     }
   }
 }
