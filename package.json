@@ -25,7 +25,9 @@
     "metaflac-js": "^1.0.5",
     "music-metadata-browser": "^2.1.6",
     "register-service-worker": "^1.7.1",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^10.0.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.8",
