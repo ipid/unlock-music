@@ -95,6 +95,8 @@ export async function Decrypt(file, raw_filename, raw_ext) {
                         writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
                         musicDecoded = writer.save()
                         musicBlob = new Blob([musicDecoded], {type: mime});
+                    } else {
+                        console.info("writing metadata for " + ext + " is not being supported for now")
                     }
                 } catch (e) {
                     console.warn("Error while appending cover image to file " + e)
