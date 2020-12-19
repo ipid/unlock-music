@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
-  "version": "1.7.1",
-  "updateInfo": "适配深色模式；修复.ncm解锁的一些问题",
+  "version": "1.7.2",
+  "updateInfo": "修复.qmc解锁的一些问题",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
@@ -17,15 +17,15 @@
   "dependencies": {
     "base64-js": "^1.5.1",
     "browser-id3-writer": "^4.4.0",
-    "core-js": "^3.8.0",
+    "core-js": "^3.8.1",
     "crypto-js": "^4.0.0",
     "element-ui": "^2.14.1",
     "iconv-lite": "^0.5.1",
     "jimp": "^0.14.0",
     "metaflac-js": "^1.0.5",
-    "music-metadata-browser": "^2.1.6",
+    "music-metadata-browser": "^2.1.7",
     "node-sass": "^4.14.1",
-    "register-service-worker": "^1.7.1",
+    "register-service-worker": "^1.7.2",
     "sass-loader": "^10.0.2",
     "vue": "^2.6.12"
   },
