@@ -3,7 +3,7 @@
 - unlock-music项目是以学习和技术研究的初衷创建的，修改、再分发时请遵循[License](https://github.com/ix64/unlock-music/blob/master/LICENSE)
 - Unlock Music的CLI版本正在开发中。
 - 我们新建了Telegram群组，欢迎加入！[https://t.me/unlock_music_chat](https://t.me/unlock_music_chat)
-- [其他测试版工具](https://github.com/ix64/unlock-music/wiki/%E5%85%B6%E4%BB%96%E9%9F%B3%E4%B9%90%E6%A0%BC%E5%BC%8F%E5%B7%A5%E5%85%B7)
+- [CLI版本 Alpha](https://github.com/unlock-music/cli) 大批量转换建议使用CLI版本
 - [相关的其他项目](https://github.com/ix64/unlock-music/wiki/%E5%92%8CUnlockMusic%E7%9B%B8%E5%85%B3%E7%9A%84%E9%A1%B9%E7%9B%AE)    
 - ![Release and GitHub Pages](https://github.com/ix64/unlock-music/workflows/Release%20and%20GitHub%20Pages/badge.svg)
 
