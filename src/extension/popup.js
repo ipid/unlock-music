@@ -1,2 +1,5 @@
 const bs = chrome || browser
-window.open(bs.runtime.getURL('./index.html'))
+bs.tabs.create({
+    url: bs.runtime.getURL('./index.html')
+}, tab => console.log(tab))
+
