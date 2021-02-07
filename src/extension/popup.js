@@ -1,1 +1,2 @@
-window.open(chrome.runtime.getURL('./index.html'));
+const bs = chrome || browser
+window.open(bs.runtime.getURL('./index.html'))
