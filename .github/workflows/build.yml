@@ -65,7 +65,9 @@ jobs:
         if: ${{ matrix.BUILD_EXTENSION }}
         run: |
           npm run make-extension
-          zip -rJ9 extension.zip ./dist
+          cd dist
+          zip -rJ9 ../extension.zip *
+          cd ..
 
       - name: Publish artifact
         uses: actions/upload-artifact@v2

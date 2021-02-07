@@ -36,9 +36,13 @@ jobs:
         run: |
           npm run build
           tar -czf legacy.tar.gz -C ./dist .
-          zip -rJ9 legacy.zip ./dist
+          cd dist
+          zip -rJ9 ../legacy.zip *
+          cd ..
           npm run make-extension
-          zip -rJ9 extension.zip ./dist
+          cd dist
+          zip -rJ9 ../extension.zip *
+          cd ..
 
       - name: Build Modern
         env:
@@ -46,7 +50,9 @@ jobs:
         run: |
           npm run build -- --modern
           tar -czf modern.tar.gz -C ./dist .
-          zip -rJ9 modern.zip ./dist
+          cd dist
+          zip -rJ9 ../modern.zip *
+          cd ..
 
       - name: Checksum
         run: sha256sum *.tar.gz *.zip > sha256sum.txt
