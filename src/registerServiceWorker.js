@@ -2,7 +2,8 @@
 
 import {register} from 'register-service-worker'
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && window.location.protocol === "https:") {
+
     register(`${process.env.BASE_URL}service-worker.js`, {
         ready() {
             console.log('App is being served from cache by a service worker.')

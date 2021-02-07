@@ -12,7 +12,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "fix-compatibility": "node ./src/fix-compatibility.js"
+    "fix-compatibility": "node ./src/fix-compatibility.js",
+    "make-extension": "node ./make-extension.js"
   },
   "dependencies": {
     "base64-js": "^1.5.1",

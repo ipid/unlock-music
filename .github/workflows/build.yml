@@ -27,9 +27,11 @@ jobs:
         build: [ legacy, modern ]
         include:
           - build: legacy
-            BUILD_ARGS:
+            BUILD_ARGS: ""
+            BUILD_EXTENSION: true
           - build: modern
             BUILD_ARGS: "-- --modern"
+            BUILD_EXTENSION: false
     steps:
       - uses: actions/checkout@v2
 
@@ -59,8 +61,21 @@ jobs:
           npm run build ${{ matrix.BUILD_ARGS }}
           tar -czvf dist.tar.gz -C ./dist .
 
+      - name: Build Extension
+        if: ${{ matrix.BUILD_EXTENSION }}
+        run: |
+          npm run make-extension
+          zip -rJ9 extension.zip ./dist
+
       - name: Publish artifact
         uses: actions/upload-artifact@v2
         with:
           name: unlock-music-${{ matrix.build }}.tar.gz
           path: ./dist.tar.gz
+
+      - name: Publish artifact - Extension
+        if: ${{ matrix.BUILD_EXTENSION }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: extension.zip
+          path: ./extension.zip
