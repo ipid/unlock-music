@@ -37,6 +37,8 @@ jobs:
           npm run build
           tar -czf legacy.tar.gz -C ./dist .
           zip -rJ9 legacy.zip ./dist
+          npm run make-extension
+          zip -rJ9 extension.zip ./dist
 
       - name: Build Modern
         env:
@@ -107,6 +109,16 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./modern.zip
           asset_name: modern.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Assets - extension.zip
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./extension.zip
+          asset_name: extension.zip
           asset_content_type: application/zip
 
       - name: Upload Release Assets - sha256sum.txt
