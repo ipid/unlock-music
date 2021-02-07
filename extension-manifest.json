@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "音乐解锁",
+  "short_name": "音乐解锁",
+  "icons": {
+    "128": "./img/icons/msapplication-icon-144x144.png"
+  },
+  "description": "在任何设备上解锁已购的加密音乐！",
+  "offline_enabled": true,
+  "options_page": "./index.html",
+  "homepage_url": "https://github.com/ix64/unlock-music",
+  "browser_action": {
+    "default_popup": "./popup.html"
+  }
+}
