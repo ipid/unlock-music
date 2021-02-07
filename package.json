@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
-  "version": "1.7.2",
-  "updateInfo": "修复.qmc解锁的一些问题",
+  "version": "1.8.0",
+  "updateInfo": "支持构建为浏览器扩展(Chrome & Firefox)",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
