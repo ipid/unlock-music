@@ -11,5 +11,6 @@
   "homepage_url": "https://github.com/ix64/unlock-music",
   "browser_action": {
     "default_popup": "./popup.html"
-  }
+  },
+  "content_security_policy": "script-src 'self' https://stats.ixarea.com; object-src 'self'"
 }
