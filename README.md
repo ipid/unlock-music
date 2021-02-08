@@ -6,7 +6,10 @@
 - 我们新建了Telegram群组，欢迎加入！[https://t.me/unlock_music_chat](https://t.me/unlock_music_chat)
 - [CLI版本 Alpha](https://github.com/unlock-music/cli) 大批量转换建议使用CLI版本
 - [相关的其他项目](https://github.com/ix64/unlock-music/wiki/%E5%92%8CUnlockMusic%E7%9B%B8%E5%85%B3%E7%9A%84%E9%A1%B9%E7%9B%AE)
-- ![Release and GitHub Pages](https://github.com/ix64/unlock-music/workflows/Release%20and%20GitHub%20Pages/badge.svg)
+
+![Test Build](https://github.com/ix64/unlock-music/workflows/Test%20Build/badge.svg)
+![GitHub releases](https://img.shields.io/github/downloads/ix64/unlock-music/total)
+![Docker Pulls](https://img.shields.io/docker/pulls/ix64/unlock-music)
 
 ## 特性
 
@@ -43,6 +46,12 @@
   - 本地使用请下载`legacy版本`（`modern版本`只能通过**http/https协议**访问）
 - 解压缩后即可部署或本地使用（**请勿直接运行源代码**）
 
+### 使用Docker镜像
+
+```shell
+docker run --name unlock-music -d -p 8080:80 ix64/unlock-music
+```
+
 ### 自行构建
 
 - 环境要求
@@ -51,5 +60,6 @@
 
 1. 获取项目源代码后执行 `npm install` 安装相关依赖
 2. 执行 `npm run build` 即可进行构建，构建输出为 dist 目录
-  - `npm run serve` 可用于开发
+
+- `npm run serve` 可用于开发
 3. 如需构建浏览器扩展，build完成后还需要执行`npm run make-extension`
