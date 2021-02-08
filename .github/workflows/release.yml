@@ -53,12 +53,6 @@ jobs:
       - name: Checksum
         run: sha256sum *.tar.gz *.zip > sha256sum.txt
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-
       - name: Get current time
         id: date
         run: echo "::set-output name=date::$(date +'%Y/%m/%d')"
