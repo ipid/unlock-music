@@ -30,6 +30,11 @@ jobs:
           cd dist
           zip -rJ9 ../legacy.zip *
           cd ..
+
+      - name: Build Extension (on legacy)
+        env:
+          GZIP: "--best"
+        run: |
           npm run make-extension
           cd dist
           zip -rJ9 ../extension.zip *
@@ -137,7 +142,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker and push
+      - name: Build docker and push (on modern)
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -146,4 +151,4 @@ jobs:
           push: true
           tags: |
             ix64/unlock-music:latest
-            ix64/unlock-music:${{ github.ref }}
+            ix64/unlock-music:${{ GITHUB_REF#refs/tags/ }}
