@@ -40,6 +40,12 @@
 
 ## 使用方法
 
+### 安装浏览器扩展
+
+[![Chrome Web Store](https://storage.googleapis.com/chrome-gcs-uploader.appspot.com/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png)](https://chrome.google.com/webstore/detail/gldlhhhmienbhlpkfanjpmffdjblmegd)
+[<img src="https://developer.microsoft.com/en-us/store/badges/images/Chinese_Simplified_get-it-from-MS.png" height="60" alt="Microsoft Edge Addons"/>](https://microsoftedge.microsoft.com/addons/detail/ggafoipegcmodfhakdkalpdpcdkiljmd)
+[![Firefox Browser Addons](https://ffp4g1ylyit3jdyti1hqcvtb-wpengine.netdna-ssl.com/addons/files/2015/11/get-the-addon.png)](https://addons.mozilla.org/zh-CN/firefox/addon/unlock-music/)
+
 ### 使用已构建版本
 
 - 从[GitHub Release](https://github.com/ix64/unlock-music/releases/latest)下载已构建的版本
