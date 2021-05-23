@@ -1,4 +1,6 @@
 import {IAudioMetadata} from "music-metadata-browser";
+import ID3Writer from "browser-id3-writer";
+import MetaFlac from "metaflac-js";
 
 export const FLAC_HEADER = [0x66, 0x4C, 0x61, 0x43];
 export const MP3_HEADER = [0x49, 0x44, 0x33];
@@ -18,6 +20,9 @@ export const AudioMimeType: { [key: string]: string } = {
     wma: "audio/x-ms-wma",
     wav: "audio/x-wav"
 };
+
+export const IXAREA_API_ENDPOINT = "https://stats.ixarea.com/apis"
+
 
 export function BytesHasPrefix(data: Uint8Array, prefix: number[]): boolean {
     if (prefix.length > data.length) return false
@@ -103,4 +108,59 @@ export async function GetImageFromURL(src: string):
     } catch (e) {
         console.warn(e)
     }
+}
+
+
+export interface IMusicMeta {
+    title: string
+    artists?: string[]
+    album?: string
+    picture?: ArrayBuffer
+    picture_desc?: string
+}
+
+export function WriteMetaToMp3(audioData: ArrayBuffer, info: IMusicMeta, original: IAudioMetadata) {
+    const writer = new ID3Writer(audioData);
+
+    // reserve original data
+    const frames = original.native['ID3v2.4'] || original.native['ID3v2.3'] || original.native['ID3v2.2'] || []
+    frames.forEach(frame => {
+        if (frame.id !== 'TPE1' && frame.id !== 'TIT2' && frame.id !== 'TALB') {
+            try {
+                writer.setFrame(frame.id, frame.value)
+            } catch (e) {
+            }
+        }
+    })
+
+    const old = original.common
+    writer.setFrame('TPE1', old?.artists || info.artists || [])
+        .setFrame('TIT2', old?.title || info.title)
+        .setFrame('TALB', old?.album || info.album || "");
+    if (info.picture) {
+        writer.setFrame('APIC', {
+            type: 3,
+            data: info.picture,
+            description: info.picture_desc || "Cover",
+        })
+    }
+    return writer.addTag();
+}
+
+export function WriteMetaToFlac(audioData: Buffer, info: IMusicMeta, original: IAudioMetadata) {
+    const writer = new MetaFlac(audioData)
+    const old = original.common
+    if (!old.title && !old.album && old.artists) {
+        writer.setTag("TITLE=" + info.title)
+        writer.setTag("ALBUM=" + info.album)
+        if (info.artists) {
+            writer.removeTag("ARTIST")
+            info.artists.forEach(artist => writer.setTag("ARTIST=" + artist))
+        }
+    }
+
+    if (info.picture) {
+        writer.importPictureFromBuffer(Buffer.from(info.picture))
+    }
+    return writer.save()
 }

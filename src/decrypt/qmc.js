@@ -1,7 +1,3 @@
-import {
-    IXAREA_API_ENDPOINT,
-    WriteMp3Meta
-} from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
 import {
@@ -9,12 +5,10 @@ import {
     GetArrayBuffer,
     GetCoverFromFile,
     GetImageFromURL,
-    GetMetaFromFile,
-    SniffAudioExt
+    GetMetaFromFile, IXAREA_API_ENDPOINT,
+    SniffAudioExt, WriteMetaToFlac, WriteMetaToMp3
 } from "@/decrypt/utils.ts";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
-
-const MetaFlac = require('metaflac-js');
 
 
 const iconv = require('iconv-lite');
@@ -85,15 +79,12 @@ export async function Decrypt(file, raw_filename, raw_ext) {
             if (imageInfo) {
                 imgUrl = imageInfo.url
                 try {
+                    const newMeta = {picture: imageInfo.buffer, title: info.title, artists: info.artist.split(" _ ")}
                     if (ext === "mp3") {
-                        musicDecoded = await WriteMp3Meta(musicDecoded,
-                            info.artist.split(" _ "), info.title, "",
-                            imageInfo.buffer, "Cover", musicMeta)
+                        musicDecoded = WriteMetaToMp3(musicDecoded, newMeta, musicMeta)
                         musicBlob = new Blob([musicDecoded], {type: mime});
                     } else if (ext === 'flac') {
-                        const writer = new MetaFlac(Buffer.from(musicDecoded))
-                        writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
-                        musicDecoded = writer.save()
+                        musicDecoded = WriteMetaToFlac(Buffer.from(musicDecoded), newMeta, musicMeta)
                         musicBlob = new Blob([musicDecoded], {type: mime});
                     } else {
                         console.info("writing metadata for " + ext + " is not being supported for now")
