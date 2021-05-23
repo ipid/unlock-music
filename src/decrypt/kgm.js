@@ -1,5 +1,5 @@
-import {AudioMimeType, GetArrayBuffer, GetFileInfo, GetMetaCoverURL} from "./util";
-import {BytesHasPrefix, SniffAudioExt} from "@/decrypt/utils.ts";
+import {AudioMimeType, GetFileInfo, GetMetaCoverURL} from "./util";
+import {BytesHasPrefix, GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
 
 const musicMetadata = require("music-metadata-browser");
 const VprHeader = [

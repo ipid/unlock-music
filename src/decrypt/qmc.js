@@ -1,6 +1,5 @@
 import {
     AudioMimeType,
-    GetArrayBuffer,
     GetFileInfo,
     GetMetaCoverURL,
     GetWebImage,
@@ -9,7 +8,7 @@ import {
 } from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
-import {SniffAudioExt} from "@/decrypt/utils.ts";
+import {GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
 
 const MetaFlac = require('metaflac-js');
 

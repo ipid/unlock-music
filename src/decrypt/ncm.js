@@ -1,4 +1,4 @@
-import {BytesHasPrefix, SniffAudioExt} from "@/decrypt/utils.ts";
+import {BytesHasPrefix, GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
 
 const CryptoJS = require("crypto-js");
 const MetaFlac = require('metaflac-js');
@@ -10,7 +10,6 @@ import jimp from 'jimp';
 
 import {
     AudioMimeType,
-    GetArrayBuffer,
     GetFileInfo,
     GetWebImage,
     WriteMp3Meta

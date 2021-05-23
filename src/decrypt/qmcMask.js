@@ -1,5 +1,4 @@
-import {FLAC_HEADER, OGG_HEADER} from "./util"
-import {BytesEquals, BytesHasPrefix} from "@/decrypt/utils.ts";
+import {BytesEquals, BytesHasPrefix, FLAC_HEADER, OGG_HEADER} from "@/decrypt/utils.ts";
 
 const QMOggPublicHeader1 = [
     0x4f, 0x67, 0x67, 0x53, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,

@@ -1,7 +1,7 @@
-import {SniffAudioExt} from "@/decrypt/utils.ts";
+import {GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
 
 const musicMetadata = require("music-metadata-browser");
-import {AudioMimeType, GetArrayBuffer, GetMetaCoverURL, GetFileInfo} from "./util";
+import {AudioMimeType, GetMetaCoverURL, GetFileInfo} from "./util";
 
 export async function Decrypt(file, raw_filename, raw_ext, detect = true) {
     let ext = raw_ext;
