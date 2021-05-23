@@ -11,10 +11,16 @@ import {
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
 
 
-const iconv = require('iconv-lite');
-const decode = iconv.decode
+import iconv from "iconv-lite";
 
-const HandlerMap = {
+interface Handler {
+    ext: string
+    detect: boolean
+
+    handler(data?: Uint8Array): QmcMask | undefined
+}
+
+const HandlerMap: { [key: string]: Handler } = {
     "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
     "mflac": {handler: QmcMaskDetectMflac, ext: "flac", detect: true},
     "qmc0": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
@@ -32,8 +38,8 @@ const HandlerMap = {
     "776176": {handler: QmcMaskGetDefault, ext: "wav", detect: false}
 };
 
-export async function Decrypt(file, raw_filename, raw_ext) {
-    if (!(raw_ext in HandlerMap)) return {status: false, message: "File type is incorrect!"};
+export async function Decrypt(file: File, raw_filename: string, raw_ext: string) {
+    if (!(raw_ext in HandlerMap)) throw "File type is incorrect!";
     const handler = HandlerMap[raw_ext];
 
     const fileData = new Uint8Array(await GetArrayBuffer(file));
@@ -44,11 +50,11 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         audioData = fileData.slice(0, keyPos);
         seed = handler.handler(audioData);
         keyData = fileData.slice(keyPos, keyPos + keyLen);
-        if (seed === undefined) seed = await queryKeyInfo(keyData, raw_filename, raw_ext);
-        if (seed === undefined) return {status: false, message: raw_ext + "格式仅提供实验性支持"};
+        if (!seed) seed = await queryKeyInfo(keyData, raw_filename, raw_ext);
+        if (!seed) throw raw_ext + "格式仅提供实验性支持";
     } else {
         audioData = fileData;
-        seed = handler.handler(audioData);
+        seed = handler.handler(audioData) as QmcMask;
     }
     let musicDecoded = seed.Decrypt(audioData);
 
@@ -59,29 +65,30 @@ export async function Decrypt(file, raw_filename, raw_ext) {
 
     const musicMeta = await metaParseBlob(musicBlob);
     for (let metaIdx in musicMeta.native) {
+        if (!musicMeta.native.hasOwnProperty(metaIdx)) continue
         if (musicMeta.native[metaIdx].some(item => item.id === "TCON" && item.value === "(12)")) {
-            console.warn("The metadata is using gbk encoding")
-            musicMeta.common.artist = decode(musicMeta.common.artist, "gbk");
-            musicMeta.common.title = decode(musicMeta.common.title, "gbk");
-            musicMeta.common.album = decode(musicMeta.common.album, "gbk");
+            console.warn("try using gbk encoding to decode meta")
+            musicMeta.common.artist = iconv.decode(new Buffer(musicMeta.common.artist ?? ""), "gbk");
+            musicMeta.common.title = iconv.decode(new Buffer(musicMeta.common.title ?? ""), "gbk");
+            musicMeta.common.album = iconv.decode(new Buffer(musicMeta.common.album ?? ""), "gbk");
         }
     }
 
     const info = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist)
-    if (handler.detect) reportKeyUsage(keyData, seed.getMatrix128(),
-        info.artist, info.title, musicMeta.common.album, raw_filename, raw_ext);
+    if (keyData) reportKeyUsage(keyData, seed.getMatrix128(),
+        raw_filename, raw_ext, info.title, info.artist, musicMeta.common.album);
 
     let imgUrl = GetCoverFromFile(musicMeta);
     if (!imgUrl) {
-        imgUrl = await queryAlbumCoverImage(info.artist, info.title, musicMeta.common.album);
+        imgUrl = await queryAlbumCoverImage(info.title, info.artist, musicMeta.common.album);
         if (imgUrl !== "") {
             const imageInfo = await GetImageFromURL(imgUrl);
             if (imageInfo) {
                 imgUrl = imageInfo.url
                 try {
-                    const newMeta = {picture: imageInfo.buffer, title: info.title, artists: info.artist.split(" _ ")}
+                    const newMeta = {picture: imageInfo.buffer, title: info.title, artists: info.artist?.split(" _ ")}
                     if (ext === "mp3") {
-                        musicDecoded = WriteMetaToMp3(musicDecoded, newMeta, musicMeta)
+                        musicDecoded = WriteMetaToMp3(Buffer.from(musicDecoded), newMeta, musicMeta)
                         musicBlob = new Blob([musicDecoded], {type: mime});
                     } else if (ext === 'flac') {
                         musicDecoded = WriteMetaToFlac(Buffer.from(musicDecoded), newMeta, musicMeta)
@@ -107,7 +114,8 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     }
 }
 
-function reportKeyUsage(keyData, maskData, artist, title, album, filename, format) {
+
+function reportKeyUsage(keyData: Uint8Array, maskData: number[], filename: string, format: string, title: string, artist?: string, album?: string) {
     fetch(IXAREA_API_ENDPOINT + "/qmcmask/usage", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -118,7 +126,7 @@ function reportKeyUsage(keyData, maskData, artist, title, album, filename, forma
     }).then().catch()
 }
 
-async function queryKeyInfo(keyData, filename, format) {
+async function queryKeyInfo(keyData: Uint8Array, filename: string, format: string) {
     try {
         const resp = await fetch(IXAREA_API_ENDPOINT + "/qmcmask/query", {
             method: "POST",
@@ -132,20 +140,15 @@ async function queryKeyInfo(keyData, filename, format) {
     }
 }
 
-async function queryAlbumCoverImage(artist, title, album) {
-    const song_query_url = IXAREA_API_ENDPOINT + "/music/qq-cover"
+async function queryAlbumCoverImage(title: string, artist?: string, album?: string) {
+    const song_query_url = "https://stats.ixarea.com/apis" + "/music/qq-cover"
     try {
-        const params = {Artist: artist, Title: title, Album: album};
-        let _url = song_query_url + "?";
-        for (let pKey in params) {
-            _url += pKey + "=" + encodeURIComponent(params[pKey]) + "&"
-        }
-        const resp = await fetch(_url)
+        const params = new URLSearchParams([["Title", title], ["Artist", artist ?? ""], ["Album", album ?? ""]])
+        const resp = await fetch(`${song_query_url}?${params.toString()}`)
         if (resp.ok) {
             let data = await resp.json();
             return song_query_url + "/" + data.Type + "/" + data.Id
         }
-
     } catch (e) {
         console.log(e);
     }
