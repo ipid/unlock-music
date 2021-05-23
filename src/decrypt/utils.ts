@@ -34,3 +34,19 @@ export function SniffAudioExt(data: Uint8Array, fallback_ext: string = "mp3"): s
     if (BytesHasPrefix(data, AAC_HEADER)) return ".aac"
     return fallback_ext;
 }
+
+export function GetArrayBuffer(obj: Blob): Promise<ArrayBuffer> {
+    if (!!obj.arrayBuffer) return obj.arrayBuffer()
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const rs = e.target?.result
+            if (!rs) {
+                reject("read file failed")
+            } else {
+                resolve(rs as ArrayBuffer)
+            }
+        };
+        reader.readAsArrayBuffer(obj);
+    });
+}
