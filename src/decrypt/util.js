@@ -1,5 +1,4 @@
 const ID3Writer = require("browser-id3-writer");
-const musicMetadata = require("music-metadata-browser");
 export const FLAC_HEADER = [0x66, 0x4C, 0x61, 0x43];
 export const MP3_HEADER = [0x49, 0x44, 0x33];
 export const OGG_HEADER = [0x4F, 0x67, 0x67, 0x53];
@@ -62,19 +61,6 @@ export function IsBytesEqual(first, second) {
     return first.every((val, idx) => {
         return val === second[idx];
     })
-}
-
-/**
- * @return {string}
- */
-export function DetectAudioExt(data, fallbackExt) {
-    if (IsBytesEqual(MP3_HEADER, data.slice(0, MP3_HEADER.length))) return "mp3";
-    if (IsBytesEqual(FLAC_HEADER, data.slice(0, FLAC_HEADER.length))) return "flac";
-    if (IsBytesEqual(OGG_HEADER, data.slice(0, OGG_HEADER.length))) return "ogg";
-    if (IsBytesEqual(M4A_HEADER, data.slice(4, 4 + M4A_HEADER.length))) return "m4a";
-    if (IsBytesEqual(WMA_HEADER, data.slice(0, WMA_HEADER.length))) return "wma";
-    if (IsBytesEqual(WAV_HEADER, data.slice(0, WAV_HEADER.length))) return "wav";
-    return fallbackExt;
 }
 
 

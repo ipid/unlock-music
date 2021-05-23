@@ -1,6 +1,7 @@
-import {AudioMimeType, GetArrayBuffer, GetFileInfo, GetMetaCoverURL, IsBytesEqual} from "./util";
+import {AudioMimeType, GetArrayBuffer, GetFileInfo, GetMetaCoverURL} from "./util";
 
 import {Decrypt as RawDecrypt} from "./raw";
+import {BytesHasPrefix} from "@/decrypt/utils.ts";
 
 const musicMetadata = require("music-metadata-browser");
 const MagicHeader = [0x69, 0x66, 0x6D, 0x74]
@@ -14,8 +15,7 @@ const FileTypeMap = {
 
 export async function Decrypt(file, raw_filename, raw_ext) {
     const oriData = new Uint8Array(await GetArrayBuffer(file));
-    if (!IsBytesEqual(MagicHeader, oriData.slice(0, 4)) ||
-        !IsBytesEqual(MagicHeader2, oriData.slice(8, 12))) {
+    if (!BytesHasPrefix(oriData, MagicHeader) || !BytesHasPrefix(oriData.slice(8, 12), MagicHeader2)) {
         if (raw_ext === "xm") {
             return {status: false, message: "此xm文件已损坏"}
         } else {
