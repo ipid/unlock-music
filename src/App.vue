@@ -60,7 +60,7 @@
     import preview from "./component/preview"
     import {DownloadBlobMusic, RemoveBlobMusic} from "./component/util"
     import config from "../package"
-    import {IXAREA_API_ENDPOINT} from "./decrypt/util";
+    import {IXAREA_API_ENDPOINT} from "@/decrypt/utils";
 
     export default {
         name: 'app',
