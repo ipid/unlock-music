@@ -1,4 +1,5 @@
-import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetFileInfo, GetMetaCoverURL, IsBytesEqual} from "./util";
+import {AudioMimeType, GetFileInfo, GetMetaCoverURL} from "./util";
+import {BytesHasPrefix, GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
 
 const musicMetadata = require("music-metadata-browser");
 const MagicHeader = [
@@ -7,9 +8,9 @@ const MagicHeader = [
 ]
 const PreDefinedKey = "MoOtOiTvINGwd2E6n0E1i7L5t2IoOoNk"
 
-export async function Decrypt(file, raw_filename, raw_ext) {
+export async function Decrypt(file, raw_filename, _) {
     const oriData = new Uint8Array(await GetArrayBuffer(file));
-    if (!IsBytesEqual(MagicHeader, oriData.slice(0, 0x10)))
+    if (!BytesHasPrefix(oriData, MagicHeader))
         return {status: false, message: "Not a valid kwm file!"}
 
     let fileKey = oriData.slice(0x18, 0x20)
@@ -20,7 +21,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         audioData[cur] ^= mask[cur % 0x20];
 
 
-    const ext = DetectAudioExt(audioData, "mp3");
+    const ext = SniffAudioExt(audioData);
     const mime = AudioMimeType[ext];
     let musicBlob = new Blob([audioData], {type: mime});
 
