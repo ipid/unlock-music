@@ -89,3 +89,18 @@ export function GetMetaFromFile(filename: string, exist_title?: string, exist_ar
     }
     return meta
 }
+
+export async function GetImageFromURL(src: string):
+    Promise<{ mime: string; buffer: ArrayBuffer; url: string } | undefined> {
+    try {
+        const resp = await fetch(src);
+        const mime = resp.headers.get("Content-Type");
+        if (mime?.startsWith("image/")) {
+            const buffer = await resp.arrayBuffer();
+            const url = URL.createObjectURL(new Blob([buffer], {type: mime}))
+            return {buffer, url, mime}
+        }
+    } catch (e) {
+        console.warn(e)
+    }
+}

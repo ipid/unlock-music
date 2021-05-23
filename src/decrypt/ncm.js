@@ -1,4 +1,11 @@
-import {AudioMimeType, BytesHasPrefix, GetArrayBuffer, GetMetaFromFile, SniffAudioExt} from "@/decrypt/utils.ts";
+import {
+    AudioMimeType,
+    BytesHasPrefix,
+    GetArrayBuffer,
+    GetImageFromURL,
+    GetMetaFromFile,
+    SniffAudioExt
+} from "@/decrypt/utils.ts";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
 
 const CryptoJS = require("crypto-js");
@@ -10,7 +17,6 @@ const MagicHeader = [0x43, 0x54, 0x45, 0x4E, 0x46, 0x44, 0x41, 0x4D];
 import jimp from 'jimp';
 
 import {
-    GetWebImage,
     WriteMp3Meta
 } from "./util"
 
@@ -41,8 +47,8 @@ export async function Decrypt(file, raw_filename, _) {
 
     if (musicMeta.format === undefined) musicMeta.format = SniffAudioExt(audioData);
 
-    const imageInfo = await GetWebImage(musicMeta.albumPic);
-    while (!!imageInfo.buffer && imageInfo.buffer.byteLength >= 16 * 1024 * 1024) {
+    const imageInfo = await GetImageFromURL(musicMeta.albumPic);
+    while (imageInfo && imageInfo.buffer.byteLength >= 1 << 24) {
         let img = await jimp.read(imageInfo.buffer)
         await img.resize(Math.round(img.getHeight() / 2), jimp.AUTO)
         imageInfo.buffer = await img.getBufferAsync("image/jpeg")
