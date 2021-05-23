@@ -4,21 +4,6 @@ const ID3Writer = require("browser-id3-writer");
 export const IXAREA_API_ENDPOINT = "https://stats.ixarea.com/apis"
 
 
-export async function GetWebImage(pic_url) {
-    try {
-        let resp = await fetch(pic_url);
-        let mime = resp.headers.get("Content-Type");
-        if (mime.startsWith("image/")) {
-            let buf = await resp.arrayBuffer();
-            let objBlob = new Blob([buf], {type: mime});
-            let objUrl = URL.createObjectURL(objBlob);
-            return {"buffer": buf, "src": pic_url, "url": objUrl, "type": mime};
-        }
-    } catch (e) {
-    }
-    return {"buffer": null, "src": pic_url, "url": "", "type": ""}
-}
-
 export async function WriteMp3Meta(audioData, artistList, title, album, pictureData = null, pictureDesc = "Cover", originalMeta = null) {
     const writer = new ID3Writer(audioData);
     if (originalMeta !== null) {

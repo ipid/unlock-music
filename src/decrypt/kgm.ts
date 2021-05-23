@@ -7,6 +7,7 @@ import {
     SniffAudioExt
 } from "@/decrypt/utils.ts";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
+import {DecryptResult} from "@/decrypt/entity";
 
 const VprHeader = [
     0x05, 0x28, 0xBC, 0x96, 0xE9, 0xE4, 0x5A, 0x43,
@@ -14,27 +15,22 @@ const VprHeader = [
 const KgmHeader = [
     0x7C, 0xD5, 0x32, 0xEB, 0x86, 0x02, 0x7F, 0x4B,
     0xA8, 0xAF, 0xA6, 0x8E, 0x0F, 0xFF, 0x99, 0x14]
-const VprMaskDiff = [0x25, 0xDF, 0xE8, 0xA6, 0x75, 0x1E, 0x75, 0x0E,
+const VprMaskDiff = [
+    0x25, 0xDF, 0xE8, 0xA6, 0x75, 0x1E, 0x75, 0x0E,
     0x2F, 0x80, 0xF3, 0x2D, 0xB8, 0xB6, 0xE3, 0x11,
     0x00]
 
-export async function Decrypt(file, raw_filename, raw_ext) {
-    try {
-        if (window.location.protocol === "file:") {
-            return {
-                status: false,
-                message: "请使用<a target='_blank' href='https://github.com/ix64/unlock-music/wiki/其他音乐格式工具'>CLI版本</a>进行解锁"
-            }
-        }
-    } catch {
+
+export async function Decrypt(file: File, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
+    if (window?.location?.protocol === "file:") {
+        throw Error("请使用 <a target='_blank' href='https://github.com/unlock-music/cli'>CLI版本</a> 进行解锁")
     }
+
     const oriData = new Uint8Array(await GetArrayBuffer(file));
     if (raw_ext === "vpr") {
-        if (!BytesHasPrefix(oriData, VprHeader))
-            return {status: false, message: "Not a valid vpr file!"}
+        if (!BytesHasPrefix(oriData, VprHeader)) throw Error("Not a valid vpr file!")
     } else {
-        if (!BytesHasPrefix(oriData, KgmHeader))
-            return {status: false, message: "Not a valid kgm/kgma file!"}
+        if (!BytesHasPrefix(oriData, KgmHeader)) throw Error("Not a valid kgm(a) file!")
     }
     let bHeaderLen = new DataView(oriData.slice(0x10, 0x14).buffer)
     let headerLen = bHeaderLen.getUint32(0, true)
@@ -42,18 +38,13 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     let audioData = oriData.slice(headerLen)
     let dataLen = audioData.length
     if (audioData.byteLength > 1 << 26) {
-        return {
-            status: false,
-            message: "文件过大，请使用<a target='_blank' href='https://github.com/ix64/unlock-music/wiki/其他音乐格式工具'>CLI版本</a>进行解锁"
-        }
+        throw Error("文件过大，请使用 <a target='_blank' href='https://github.com/unlock-music/cli'>CLI版本</a> 进行解锁")
     }
 
     let key1 = new Uint8Array(17)
     key1.set(oriData.slice(0x1c, 0x2c), 0)
-    if (MaskV2 == null) {
-        if (!await LoadMaskV2()) {
-            return {status: false, message: "加载Kgm/Vpr Mask数据失败"}
-        }
+    if (MaskV2.length === 0) {
+        if (!await LoadMaskV2()) throw Error("加载Kgm/Vpr Mask数据失败")
     }
 
     for (let i = 0; i < dataLen; i++) {
@@ -85,17 +76,16 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     }
 }
 
-function GetMask(pos) {
+
+function GetMask(pos: number) {
     return MaskV2PreDef[pos % 272] ^ MaskV2[pos >> 4]
 }
 
-let MaskV2 = null;
+let MaskV2: Uint8Array = new Uint8Array(0);
 
-async function LoadMaskV2() {
+async function LoadMaskV2(): Promise<boolean> {
     try {
-        let resp = await fetch("./static/kgm.mask", {
-            method: "GET"
-        })
+        const resp = await fetch("./static/kgm.mask", {method: "GET"})
         MaskV2 = new Uint8Array(await resp.arrayBuffer());
         return true
     } catch (e) {

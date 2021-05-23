@@ -1,11 +1,17 @@
 import {
-    GetWebImage,
     IXAREA_API_ENDPOINT,
     WriteMp3Meta
 } from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
-import {AudioMimeType, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile, SniffAudioExt} from "@/decrypt/utils.ts";
+import {
+    AudioMimeType,
+    GetArrayBuffer,
+    GetCoverFromFile,
+    GetImageFromURL,
+    GetMetaFromFile,
+    SniffAudioExt
+} from "@/decrypt/utils.ts";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
 
 const MetaFlac = require('metaflac-js');
@@ -75,8 +81,8 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     if (!imgUrl) {
         imgUrl = await queryAlbumCoverImage(info.artist, info.title, musicMeta.common.album);
         if (imgUrl !== "") {
-            const imageInfo = await GetWebImage(imgUrl);
-            if (imageInfo.url !== "") {
+            const imageInfo = await GetImageFromURL(imgUrl);
+            if (imageInfo) {
                 imgUrl = imageInfo.url
                 try {
                     if (ext === "mp3") {

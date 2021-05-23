@@ -1,22 +1,23 @@
-import {Decrypt as RawDecrypt} from "./raw";
+import {Decrypt as RawDecrypt} from "@/decrypt/raw";
+import {DecryptResult} from "@/decrypt/entity";
 import {AudioMimeType, BytesHasPrefix, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile} from "@/decrypt/utils.ts";
 
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
 
 const MagicHeader = [0x69, 0x66, 0x6D, 0x74]
 const MagicHeader2 = [0xfe, 0xfe, 0xfe, 0xfe]
-const FileTypeMap = {
+const FileTypeMap: { [key: string]: string } = {
     " WAV": ".wav",
     "FLAC": ".flac",
     " MP3": ".mp3",
     " A4M": ".m4a",
 }
 
-export async function Decrypt(file, raw_filename, raw_ext) {
+export async function Decrypt(file: File, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
     const oriData = new Uint8Array(await GetArrayBuffer(file));
     if (!BytesHasPrefix(oriData, MagicHeader) || !BytesHasPrefix(oriData.slice(8, 12), MagicHeader2)) {
         if (raw_ext === "xm") {
-            return {status: false, message: "此xm文件已损坏"}
+            throw Error("此xm文件已损坏")
         } else {
             return await RawDecrypt(file, raw_filename, raw_ext, true)
         }
@@ -24,7 +25,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
 
     let typeText = (new TextDecoder()).decode(oriData.slice(4, 8))
     if (!FileTypeMap.hasOwnProperty(typeText)) {
-        return {status: false, message: "未知的xm文件类型"}
+        throw Error("未知的.xm文件类型")
     }
 
     let key = oriData[0xf]
