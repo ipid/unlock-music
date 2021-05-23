@@ -1,7 +1,5 @@
-import {GetFileInfo, GetMetaCoverURL} from "./util";
-
 import {Decrypt as RawDecrypt} from "./raw";
-import {AudioMimeType, BytesHasPrefix, GetArrayBuffer} from "@/decrypt/utils.ts";
+import {AudioMimeType, BytesHasPrefix, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile} from "@/decrypt/utils.ts";
 
 const musicMetadata = require("music-metadata-browser");
 const MagicHeader = [0x69, 0x66, 0x6D, 0x74]
@@ -47,20 +45,19 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         musicMeta.common.artist = "";
         musicMeta.common.title = "";
     }
-    let _sep = raw_filename.indexOf("_") === -1 ? "-" : "_"
-    const info = GetFileInfo(musicMeta.common.artist, musicMeta.common.title, raw_filename, _sep);
-
-    const imgUrl = GetMetaCoverURL(musicMeta);
+    const {title, artist} = GetMetaFromFile(raw_filename,
+        musicMeta.common.title, musicMeta.common.artist,
+        raw_filename.indexOf("_") === -1 ? "-" : "_")
 
     return {
         status: true,
-        title: info.title,
-        artist: info.artist,
-        ext: ext,
+        title,
+        artist,
+        ext,
+        mime,
         album: musicMeta.common.album,
-        picture: imgUrl,
+        picture: GetCoverFromFile(musicMeta),
         file: URL.createObjectURL(musicBlob),
-        mime: mime,
         rawExt: "xm"
     }
 }

@@ -1,4 +1,4 @@
-import {AudioMimeType, BytesHasPrefix, GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
+import {AudioMimeType, BytesHasPrefix, GetArrayBuffer, GetMetaFromFile, SniffAudioExt} from "@/decrypt/utils.ts";
 
 const CryptoJS = require("crypto-js");
 const MetaFlac = require('metaflac-js');
@@ -9,7 +9,6 @@ const musicMetadata = require("music-metadata-browser");
 import jimp from 'jimp';
 
 import {
-    GetFileInfo,
     GetWebImage,
     WriteMp3Meta
 } from "./util"
@@ -36,11 +35,10 @@ export async function Decrypt(file, raw_filename, _) {
 
     const artists = [];
     if (!!musicMeta.artist) musicMeta.artist.forEach(arr => artists.push(arr[0]));
-    const info = GetFileInfo(artists.join("; "), musicMeta.musicName, raw_filename);
+    const info = GetMetaFromFile(raw_filename, musicMeta.musicName, artists.join("; "))
     if (artists.length === 0) artists.push(info.artist);
 
     if (musicMeta.format === undefined) musicMeta.format = SniffAudioExt(audioData);
-    console.log(musicMeta)
 
     const imageInfo = await GetWebImage(musicMeta.albumPic);
     while (!!imageInfo.buffer && imageInfo.buffer.byteLength >= 16 * 1024 * 1024) {
@@ -48,12 +46,10 @@ export async function Decrypt(file, raw_filename, _) {
         await img.resize(Math.round(img.getHeight() / 2), jimp.AUTO)
         imageInfo.buffer = await img.getBufferAsync("image/jpeg")
     }
-    console.log(imageInfo)
     const mime = AudioMimeType[musicMeta.format]
     try {
         let musicBlob = new Blob([audioData], {type: mime});
         const originalMeta = await musicMetadata.parseBlob(musicBlob);
-        console.log(originalMeta)
         let shouldWrite = !originalMeta.common.album && !originalMeta.common.artists && !originalMeta.common.title
         if (musicMeta.format === "mp3") {
             audioData = await WriteMp3Meta(
