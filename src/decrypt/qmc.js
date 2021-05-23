@@ -1,5 +1,4 @@
 import {
-    AudioMimeType,
     GetFileInfo,
     GetMetaCoverURL,
     GetWebImage,
@@ -8,11 +7,10 @@ import {
 } from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
-import {GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
+import {AudioMimeType, GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
 
 const MetaFlac = require('metaflac-js');
 
-const ID3Writer = require("browser-id3-writer");
 
 const iconv = require('iconv-lite');
 const decode = iconv.decode
