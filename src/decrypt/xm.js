@@ -1,7 +1,7 @@
-import {AudioMimeType, GetFileInfo, GetMetaCoverURL} from "./util";
+import {GetFileInfo, GetMetaCoverURL} from "./util";
 
 import {Decrypt as RawDecrypt} from "./raw";
-import {BytesHasPrefix, GetArrayBuffer} from "@/decrypt/utils.ts";
+import {AudioMimeType, BytesHasPrefix, GetArrayBuffer} from "@/decrypt/utils.ts";
 
 const musicMetadata = require("music-metadata-browser");
 const MagicHeader = [0x69, 0x66, 0x6D, 0x74]

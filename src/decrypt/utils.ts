@@ -8,6 +8,14 @@ export const WMA_HEADER = [
 ]
 export const WAV_HEADER = [0x52, 0x49, 0x46, 0x46]
 export const AAC_HEADER = [0xFF, 0xF1]
+export const AudioMimeType: { [key: string]: string } = {
+    mp3: "audio/mpeg",
+    flac: "audio/flac",
+    m4a: "audio/mp4",
+    ogg: "audio/ogg",
+    wma: "audio/x-ms-wma",
+    wav: "audio/x-wav"
+};
 
 export function BytesHasPrefix(data: Uint8Array, prefix: number[]): boolean {
     if (prefix.length > data.length) return false
@@ -24,14 +32,14 @@ export function BytesEquals(data: Uint8Array, another: Uint8Array): boolean {
 }
 
 export function SniffAudioExt(data: Uint8Array, fallback_ext: string = "mp3"): string {
-    if (BytesHasPrefix(data, MP3_HEADER)) return ".mp3"
-    if (BytesHasPrefix(data, FLAC_HEADER)) return ".flac"
-    if (BytesHasPrefix(data, OGG_HEADER)) return ".ogg"
+    if (BytesHasPrefix(data, MP3_HEADER)) return "mp3"
+    if (BytesHasPrefix(data, FLAC_HEADER)) return "flac"
+    if (BytesHasPrefix(data, OGG_HEADER)) return "ogg"
     if (data.length >= 4 + M4A_HEADER.length &&
-        BytesHasPrefix(data.slice(4), M4A_HEADER)) return ".m4a"
-    if (BytesHasPrefix(data, WAV_HEADER)) return ".wav"
-    if (BytesHasPrefix(data, WMA_HEADER)) return ".wma"
-    if (BytesHasPrefix(data, AAC_HEADER)) return ".aac"
+        BytesHasPrefix(data.slice(4), M4A_HEADER)) return "m4a"
+    if (BytesHasPrefix(data, WAV_HEADER)) return "wav"
+    if (BytesHasPrefix(data, WMA_HEADER)) return "wma"
+    if (BytesHasPrefix(data, AAC_HEADER)) return "aac"
     return fallback_ext;
 }
 

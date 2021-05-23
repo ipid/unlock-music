@@ -1,13 +1,6 @@
 const ID3Writer = require("browser-id3-writer");
 
-export const AudioMimeType = {
-    mp3: "audio/mpeg",
-    flac: "audio/flac",
-    m4a: "audio/mp4",
-    ogg: "audio/ogg",
-    wma: "audio/x-ms-wma",
-    wav: "audio/x-wav"
-};
+
 export const IXAREA_API_ENDPOINT = "https://stats.ixarea.com/apis"
 
 
