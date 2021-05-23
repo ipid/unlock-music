@@ -1,3 +1,5 @@
+import {BytesHasPrefix, GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
+
 const CryptoJS = require("crypto-js");
 const MetaFlac = require('metaflac-js');
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
@@ -8,19 +10,16 @@ import jimp from 'jimp';
 
 import {
     AudioMimeType,
-    DetectAudioExt,
-    GetArrayBuffer,
     GetFileInfo,
     GetWebImage,
-    IsBytesEqual,
     WriteMp3Meta
 } from "./util"
 
-export async function Decrypt(file, raw_filename, raw_ext) {
+export async function Decrypt(file, raw_filename, _) {
     const fileBuffer = await GetArrayBuffer(file);
     const dataView = new DataView(fileBuffer);
 
-    if (!IsBytesEqual(MagicHeader, new Uint8Array(fileBuffer, 0, 8)))
+    if (!BytesHasPrefix(new Uint8Array(fileBuffer, 0, 8), MagicHeader))
         return {status: false, message: "此ncm文件已损坏"};
 
     const keyDataObj = getKeyData(dataView, fileBuffer, 10);
@@ -41,7 +40,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     const info = GetFileInfo(artists.join("; "), musicMeta.musicName, raw_filename);
     if (artists.length === 0) artists.push(info.artist);
 
-    if (musicMeta.format === undefined) musicMeta.format = DetectAudioExt(audioData, "mp3");
+    if (musicMeta.format === undefined) musicMeta.format = SniffAudioExt(audioData);
     console.log(musicMeta)
 
     const imageInfo = await GetWebImage(musicMeta.albumPic);

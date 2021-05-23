@@ -1,4 +1,4 @@
-import {FLAC_HEADER, IsBytesEqual, OGG_HEADER} from "./util"
+import {BytesEquals, BytesHasPrefix, FLAC_HEADER, OGG_HEADER} from "@/decrypt/utils.ts";
 
 const QMOggPublicHeader1 = [
     0x4f, 0x67, 0x67, 0x53, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,
@@ -84,7 +84,7 @@ class QmcMask {
             }
             let rowLeft = this.Matrix128.slice(lenStart + 1, lenStart + 8);
             let rowRight = this.Matrix128.slice(lenRightStart + 1, lenRightStart + 8).reverse();
-            if (IsBytesEqual(rowLeft, rowRight)) {
+            if (BytesEquals(rowLeft, rowRight)) {
                 matrix58 = matrix58.concat(rowLeft);
             } else {
                 throw "decode mask-128 to mask-58 failed"
@@ -151,7 +151,9 @@ export function QmcMaskDetectMflac(data) {
     for (let block_idx = 0; block_idx < search_len; block_idx += 128) {
         try {
             mask = new QmcMask(data.slice(block_idx, block_idx + 128));
-            if (IsBytesEqual(FLAC_HEADER, mask.Decrypt(data.slice(0, FLAC_HEADER.length)))) break;
+            if (BytesHasPrefix(mask.Decrypt(data.slice(0, FLAC_HEADER.length)), FLAC_HEADER)) {
+                break;
+            }
         } catch (e) {
         }
     }
@@ -186,8 +188,7 @@ export function QmcMaskDetectMgg(data) {
         return;
     }
     const mask = new QmcMask(matrix);
-    let dx = mask.Decrypt(data.slice(0, OGG_HEADER.length));
-    if (!IsBytesEqual(OGG_HEADER, dx)) {
+    if (!BytesHasPrefix(mask.Decrypt(data.slice(0, OGG_HEADER.length)), OGG_HEADER)) {
         return;
     }
 
