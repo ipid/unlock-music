@@ -119,7 +119,7 @@ export interface IMusicMeta {
     picture_desc?: string
 }
 
-export function WriteMetaToMp3(audioData: ArrayBuffer, info: IMusicMeta, original: IAudioMetadata) {
+export function WriteMetaToMp3(audioData: Buffer, info: IMusicMeta, original: IAudioMetadata) {
     const writer = new ID3Writer(audioData);
 
     // reserve original data

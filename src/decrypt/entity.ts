@@ -9,7 +9,7 @@ export interface DecryptResult {
     ext: string
 
     file: string
-    picture: string
+    picture?: string
 
     message?: string
     rawExt?: string
