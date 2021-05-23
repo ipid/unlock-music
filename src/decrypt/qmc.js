@@ -1,6 +1,5 @@
 import {
     AudioMimeType,
-    DetectAudioExt,
     GetArrayBuffer,
     GetFileInfo,
     GetMetaCoverURL,
@@ -10,6 +9,7 @@ import {
 } from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
+import {SniffAudioExt} from "@/decrypt/utils.ts";
 
 const MetaFlac = require('metaflac-js');
 
@@ -58,7 +58,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     }
     let musicDecoded = seed.Decrypt(audioData);
 
-    const ext = DetectAudioExt(musicDecoded, handler.ext);
+    const ext = SniffAudioExt(musicDecoded, handler.ext);
     const mime = AudioMimeType[ext];
 
     let musicBlob = new Blob([musicDecoded], {type: mime});

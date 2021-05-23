@@ -1,4 +1,5 @@
-import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetFileInfo, GetMetaCoverURL, IsBytesEqual} from "./util";
+import {AudioMimeType, GetArrayBuffer, GetFileInfo, GetMetaCoverURL} from "./util";
+import {BytesHasPrefix, SniffAudioExt} from "@/decrypt/utils.ts";
 
 const musicMetadata = require("music-metadata-browser");
 const VprHeader = [
@@ -23,10 +24,10 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     }
     const oriData = new Uint8Array(await GetArrayBuffer(file));
     if (raw_ext === "vpr") {
-        if (!IsBytesEqual(VprHeader, oriData.slice(0, 0x10)))
+        if (!BytesHasPrefix(oriData, VprHeader))
             return {status: false, message: "Not a valid vpr file!"}
     } else {
-        if (!IsBytesEqual(KgmHeader, oriData.slice(0, 0x10)))
+        if (!BytesHasPrefix(oriData, KgmHeader))
             return {status: false, message: "Not a valid kgm/kgma file!"}
     }
     let bHeaderLen = new DataView(oriData.slice(0x10, 0x14).buffer)
@@ -61,7 +62,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         for (let i = 0; i < dataLen; i++) audioData[i] ^= VprMaskDiff[i % 17]
     }
 
-    const ext = DetectAudioExt(audioData, "mp3");
+    const ext = SniffAudioExt(audioData);
     const mime = AudioMimeType[ext];
     let musicBlob = new Blob([audioData], {type: mime});
     const musicMeta = await musicMetadata.parseBlob(musicBlob);
@@ -71,11 +72,11 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         status: true,
         title: info.title,
         artist: info.artist,
-        ext: ext,
         album: musicMeta.common.album,
         picture: imgUrl,
         file: URL.createObjectURL(musicBlob),
-        mime: mime
+        ext,
+        mime
     }
 }
 
