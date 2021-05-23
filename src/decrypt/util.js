@@ -4,23 +4,6 @@ const ID3Writer = require("browser-id3-writer");
 export const IXAREA_API_ENDPOINT = "https://stats.ixarea.com/apis"
 
 
-export function GetFileInfo(artist, title, filenameNoExt, separator = "-") {
-    let newArtist = "", newTitle = "";
-    let filenameArray = filenameNoExt.split(separator);
-    if (filenameArray.length > 1) {
-        newArtist = filenameArray[0].trim();
-        newTitle = filenameArray[1].trim();
-    } else if (filenameArray.length === 1) {
-        newTitle = filenameArray[0].trim();
-    }
-
-    if (typeof artist == "string" && artist !== "") newArtist = artist;
-    if (typeof title == "string" && title !== "") newTitle = title;
-    return {artist: newArtist, title: newTitle};
-}
-
-
-
 export async function GetWebImage(pic_url) {
     try {
         let resp = await fetch(pic_url);

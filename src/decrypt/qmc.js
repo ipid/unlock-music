@@ -6,14 +6,13 @@ import {
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
 import {AudioMimeType, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile, SniffAudioExt} from "@/decrypt/utils.ts";
+import {parseBlob as metaParseBlob} from "music-metadata-browser";
 
 const MetaFlac = require('metaflac-js');
 
 
 const iconv = require('iconv-lite');
 const decode = iconv.decode
-
-const musicMetadata = require("music-metadata-browser");
 
 const HandlerMap = {
     "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
@@ -58,7 +57,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
 
     let musicBlob = new Blob([musicDecoded], {type: mime});
 
-    const musicMeta = await musicMetadata.parseBlob(musicBlob);
+    const musicMeta = await metaParseBlob(musicBlob);
     for (let metaIdx in musicMeta.native) {
         if (musicMeta.native[metaIdx].some(item => item.id === "TCON" && item.value === "(12)")) {
             console.warn("The metadata is using gbk encoding")

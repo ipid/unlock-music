@@ -6,8 +6,8 @@ import {
     GetMetaFromFile,
     SniffAudioExt
 } from "@/decrypt/utils.ts";
+import {parseBlob as metaParseBlob} from "music-metadata-browser";
 
-const musicMetadata = require("music-metadata-browser");
 const VprHeader = [
     0x05, 0x28, 0xBC, 0x96, 0xE9, 0xE4, 0x5A, 0x43,
     0x91, 0xAA, 0xBD, 0xD0, 0x7A, 0xF5, 0x36, 0x31]
@@ -71,7 +71,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     const ext = SniffAudioExt(audioData);
     const mime = AudioMimeType[ext];
     let musicBlob = new Blob([audioData], {type: mime});
-    const musicMeta = await musicMetadata.parseBlob(musicBlob);
+    const musicMeta = await metaParseBlob(musicBlob);
     const {title, artist} = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist)
     return {
         status: true,
