@@ -1,4 +1,4 @@
-import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
+import {QmcMask, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
 import {
     AudioMimeType,
@@ -68,7 +68,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     }
 
     const info = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist)
-    if (handler.detect) reportKeyUsage(keyData, seed.Matrix128,
+    if (handler.detect) reportKeyUsage(keyData, seed.getMatrix128(),
         info.artist, info.title, musicMeta.common.album, raw_filename, raw_ext);
 
     let imgUrl = GetCoverFromFile(musicMeta);
@@ -126,7 +126,7 @@ async function queryKeyInfo(keyData, filename, format) {
             body: JSON.stringify({Format: format, Key: Base64Encode(keyData), Filename: filename, Type: 44}),
         });
         let data = await resp.json();
-        return QmcMaskCreate58(Base64Decode(data.Matrix44));
+        return new QmcMask(Base64Decode(data.Matrix44));
     } catch (e) {
         console.log(e);
     }
