@@ -19,17 +19,6 @@ export function GetFileInfo(artist, title, filenameNoExt, separator = "-") {
     return {artist: newArtist, title: newTitle};
 }
 
-/**
- * @return {string}
- */
-export function GetMetaCoverURL(metadata) {
-    let pic_url = "";
-    if (metadata.common.picture !== undefined && metadata.common.picture.length > 0) {
-        let pic = new Blob([metadata.common.picture[0].data], {type: metadata.common.picture[0].format});
-        pic_url = URL.createObjectURL(pic);
-    }
-    return pic_url;
-}
 
 
 export async function GetWebImage(pic_url) {

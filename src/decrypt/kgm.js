@@ -1,5 +1,11 @@
-import {GetFileInfo, GetMetaCoverURL} from "./util";
-import {AudioMimeType, BytesHasPrefix, GetArrayBuffer, SniffAudioExt} from "@/decrypt/utils.ts";
+import {
+    AudioMimeType,
+    BytesHasPrefix,
+    GetArrayBuffer,
+    GetCoverFromFile,
+    GetMetaFromFile,
+    SniffAudioExt
+} from "@/decrypt/utils.ts";
 
 const musicMetadata = require("music-metadata-browser");
 const VprHeader = [
@@ -66,17 +72,16 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     const mime = AudioMimeType[ext];
     let musicBlob = new Blob([audioData], {type: mime});
     const musicMeta = await musicMetadata.parseBlob(musicBlob);
-    const info = GetFileInfo(musicMeta.common.artist, musicMeta.common.title, raw_filename);
-    const imgUrl = GetMetaCoverURL(musicMeta);
+    const {title, artist} = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist)
     return {
         status: true,
-        title: info.title,
-        artist: info.artist,
         album: musicMeta.common.album,
-        picture: imgUrl,
+        picture: GetCoverFromFile(musicMeta),
         file: URL.createObjectURL(musicBlob),
         ext,
-        mime
+        mime,
+        title,
+        artist
     }
 }
 

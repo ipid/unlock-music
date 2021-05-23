@@ -1,3 +1,5 @@
+import {IAudioMetadata} from "music-metadata-browser";
+
 export const FLAC_HEADER = [0x66, 0x4C, 0x61, 0x43];
 export const MP3_HEADER = [0x49, 0x44, 0x33];
 export const OGG_HEADER = [0x4F, 0x67, 0x67, 0x53];
@@ -57,4 +59,33 @@ export function GetArrayBuffer(obj: Blob): Promise<ArrayBuffer> {
         };
         reader.readAsArrayBuffer(obj);
     });
+}
+
+export function GetCoverFromFile(metadata: IAudioMetadata): string {
+    if (metadata.common?.picture && metadata.common.picture.length > 0) {
+        return URL.createObjectURL(new Blob(
+            [metadata.common.picture[0].data],
+            {type: metadata.common.picture[0].format}
+        ));
+    }
+    return "";
+}
+
+export interface IMusicMetaBasic {
+    title: string
+    artist?: string
+}
+
+export function GetMetaFromFile(filename: string, exist_title?: string, exist_artist?: string, separator = "-")
+    : IMusicMetaBasic {
+    const meta: IMusicMetaBasic = {title: exist_title ?? "", artist: exist_artist}
+
+    const items = filename.split(separator);
+    if (items.length > 1) {
+        if (!meta.artist) meta.artist = items[0].trim();
+        if (!meta.title) meta.title = items[1].trim();
+    } else if (items.length === 1) {
+        if (!meta.title) meta.title = items[0].trim();
+    }
+    return meta
 }
