@@ -1,7 +1,8 @@
 import {Decrypt as RawDecrypt} from "./raw";
 import {AudioMimeType, BytesHasPrefix, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile} from "@/decrypt/utils.ts";
 
-const musicMetadata = require("music-metadata-browser");
+import {parseBlob as metaParseBlob} from "music-metadata-browser";
+
 const MagicHeader = [0x69, 0x66, 0x6D, 0x74]
 const MagicHeader2 = [0xfe, 0xfe, 0xfe, 0xfe]
 const FileTypeMap = {
@@ -37,7 +38,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     const mime = AudioMimeType[ext];
     let musicBlob = new Blob([audioData], {type: mime});
 
-    const musicMeta = await musicMetadata.parseBlob(musicBlob);
+    const musicMeta = await metaParseBlob(musicBlob);
     if (ext === "wav") {
         //todo:未知的编码方式
         console.log(musicMeta.common)
