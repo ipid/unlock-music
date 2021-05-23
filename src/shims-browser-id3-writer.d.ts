@@ -4,7 +4,7 @@ declare module "browser-id3-writer" {
 
         setFrame(name: string, value: string | object | string[])
 
-        addTag(): ArrayBuffer
+        addTag(): Uint8Array
     }
 }
 
