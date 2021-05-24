@@ -1,41 +1,12 @@
 <template>
-
     <el-container id="app">
         <el-main>
-            <file-selector @error="showFail" @success="showSuccess"/>
-
-            <div id="app-control">
-                <el-row class="mb-3">
-                    <span>歌曲命名格式：</span>
-                    <el-radio label="1" name="format" v-model="download_format">歌手-歌曲名</el-radio>
-                    <el-radio label="2" name="format" v-model="download_format">歌曲名</el-radio>
-                    <el-radio label="3" name="format" v-model="download_format">歌曲名-歌手</el-radio>
-                    <el-radio label="4" name="format" v-model="download_format">同原文件名</el-radio>
-                </el-row>
-                <el-row>
-                    <el-button @click="handleDownloadAll" icon="el-icon-download" plain>下载全部</el-button>
-                    <el-button @click="handleDeleteAll" icon="el-icon-delete" plain type="danger">清除全部</el-button>
-
-                    <el-tooltip class="item" effect="dark" placement="top-start">
-                        <div slot="content">
-                            当您使用此工具进行大量文件解锁的时候，建议开启此选项。<br/>
-                            开启后，解锁结果将不会存留于浏览器中，防止内存不足。
-                        </div>
-                        <el-checkbox border class="ml-2" v-model="instant_download">立即保存</el-checkbox>
-                    </el-tooltip>
-                </el-row>
-            </div>
-
-            <audio :autoplay="playing_auto" :src="playing_url" controls/>
-
-            <PreviewTable :filename_format="download_format" :table-data="tableData"
-                          @music_changed="changePlaying"></PreviewTable>
-
+            <Home/>
         </el-main>
         <el-footer id="app-footer">
             <el-row>
-                <a href="https://github.com/ix64/unlock-music" target="_blank">音乐解锁</a>
-                (v{{ version }})：移除已购音乐的加密保护。
+                <a href="https://github.com/ix64/unlock-music" target="_blank">音乐解锁</a>({{ version }})
+                ：移除已购音乐的加密保护。
                 <a href="https://github.com/ix64/unlock-music/wiki/使用提示" target="_blank">使用提示</a>
             </el-row>
             <el-row>
@@ -51,38 +22,30 @@
             </el-row>
         </el-footer>
     </el-container>
-
 </template>
 
 <script>
 
-import FileSelector from "./component/FileSelector"
-import PreviewTable from "./component/PreviewTable"
-import {DownloadBlobMusic, RemoveBlobMusic} from "./component/utils"
-import config from "../package"
-import {IXAREA_API_ENDPOINT} from "@/decrypt/utils";
+import FileSelector from "@/component/FileSelector"
+import PreviewTable from "@/component/PreviewTable"
+import config from "@/../package.json"
+import Home from "@/view/Home";
+import {checkUpdate} from "@/utils/api";
 
 export default {
     name: 'app',
     components: {
         FileSelector,
-        PreviewTable
+        PreviewTable,
+        Home
     },
     data() {
         return {
             version: config.version,
-            activeIndex: '1',
-            tableData: [],
-            playing_url: "",
-            playing_auto: false,
-            download_format: '1',
-            instant_download: false,
         }
     },
     created() {
-        this.$nextTick(function () {
-            this.finishLoad();
-        });
+        this.$nextTick(() => this.finishLoad());
     },
     methods: {
         async finishLoad() {
@@ -90,20 +53,15 @@ export default {
             if (!!mask) mask.remove();
             let updateInfo;
             try {
-                const resp = await fetch(IXAREA_API_ENDPOINT + "/music/app-version", {
-                    method: "POST", headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({"Version": this.version})
-                });
-                updateInfo = await resp.json();
+                updateInfo = await checkUpdate(this.version)
             } catch (e) {
+                console.warn("check version info failed", e)
             }
-            if ((!!updateInfo && process.env.NODE_ENV === 'production') && (!!updateInfo.HttpsFound ||
-                (!!updateInfo.Found && window.location.protocol !== "https:"))) {
+            if ((updateInfo && process.env.NODE_ENV === 'production') && (updateInfo.HttpsFound ||
+                (updateInfo.Found && window.location.protocol !== "https:"))) {
                 this.$notify.warning({
                     title: '发现更新',
-                    message: '发现新版本 v' + updateInfo.Version +
-                        '<br/>更新详情：' + updateInfo.Detail +
-                        '<br/><a target="_blank" href="' + updateInfo.URL + '">获取更新</a>',
+                    message: `发现新版本 v${updateInfo.Version}<br/>更新详情：${updateInfo.Detail}<br/> <a target="_blank" href="${updateInfo.URL}">获取更新</a>`,
                     dangerouslyUseHTMLString: true,
                     duration: 15000,
                     position: 'top-left'
@@ -111,65 +69,12 @@ export default {
             } else {
                 this.$notify.info({
                     title: '离线使用',
-                    message: '我们使用PWA技术，无网络也能使用' +
-                        '<br/>最近更新：' + config.updateInfo +
-                        '<br/><a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
+                    message: `我们使用PWA技术，无网络也能使用<br/>最近更新：${config.updateInfo}<br/><a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>`,
                     dangerouslyUseHTMLString: true,
                     duration: 10000,
                     position: 'top-left'
                 });
             }
-        },
-        showSuccess(data) {
-            if (this.instant_download) {
-                DownloadBlobMusic(data, this.download_format);
-                RemoveBlobMusic(data);
-            } else {
-                this.tableData.push(data);
-                this.$notify.success({
-                    title: '解锁成功',
-                    message: '成功解锁 ' + data.title,
-                    duration: 3000
-                });
-            }
-            if (process.env.NODE_ENV === 'production') {
-                let _rp_data = [data.title, data.artist, data.album];
-                window._paq.push(["trackEvent", "Unlock", data.rawExt + "," + data.mime, JSON.stringify(_rp_data)]);
-            }
-        },
-        showFail(errInfo, filename) {
-            this.$notify.error({
-                title: '出现问题',
-                message: errInfo + "，" + filename +
-                    '，参考<a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>',
-                dangerouslyUseHTMLString: true,
-                duration: 6000
-            });
-            if (process.env.NODE_ENV === 'production') {
-                window._paq.push(["trackEvent", "Error", errInfo, filename]);
-            }
-            console.error(errInfo, filename);
-        },
-        changePlaying(url) {
-            this.playing_url = url;
-            this.playing_auto = true;
-        },
-        handleDeleteAll() {
-            this.tableData.forEach(value => {
-                RemoveBlobMusic(value);
-            });
-            this.tableData = [];
-        },
-        handleDownloadAll() {
-            let index = 0;
-            let c = setInterval(() => {
-                if (index < this.tableData.length) {
-                    DownloadBlobMusic(this.tableData[index], this.download_format);
-                    index++;
-                } else {
-                    clearInterval(c);
-                }
-            }, 300);
         }
     },
 }
