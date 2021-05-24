@@ -31,12 +31,6 @@ export function BytesHasPrefix(data: Uint8Array, prefix: number[]): boolean {
     })
 }
 
-export function BytesEquals(data: Uint8Array, another: Uint8Array): boolean {
-    if (another.length != data.length) return false
-    return data.every((val, idx) => {
-        return val === another[idx];
-    })
-}
 
 export function SniffAudioExt(data: Uint8Array, fallback_ext: string = "mp3"): string {
     if (BytesHasPrefix(data, MP3_HEADER)) return "mp3"

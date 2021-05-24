@@ -41,7 +41,6 @@ export async function Decrypt(file: File, raw_filename: string, _: string): Prom
     const musicMeta = await metaParseBlob(musicBlob);
     const {title, artist} = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist)
     return {
-        status: true,
         album: musicMeta.common.album,
         picture: GetCoverFromFile(musicMeta),
         file: URL.createObjectURL(musicBlob),

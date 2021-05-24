@@ -1,6 +1,4 @@
 export interface DecryptResult {
-    status: boolean,//todo: remove & use Exception
-
     title: string
     album?: string
     artist?: string

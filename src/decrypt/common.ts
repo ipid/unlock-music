@@ -18,10 +18,10 @@ interface FileInfo {
 }
 
 
-export async function CommonDecrypt(file: FileInfo) {
+export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
     let raw_ext = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length).toLowerCase();
     let raw_filename = file.name.substring(0, file.name.lastIndexOf("."));
-    let rt_data: Partial<DecryptResult>;
+    let rt_data: DecryptResult;
     switch (raw_ext) {
         case "ncm":// Netease Mp3/Flac
             rt_data = await NcmDecrypt(file.raw, raw_filename, raw_ext);
@@ -70,7 +70,7 @@ export async function CommonDecrypt(file: FileInfo) {
             rt_data = await KgmDecrypt(file.raw, raw_filename, raw_ext);
             break
         default:
-            rt_data = {status: false, message: "不支持此文件格式",}
+            throw "不支持此文件格式"
     }
 
     if (!rt_data.rawExt) rt_data.rawExt = raw_ext;

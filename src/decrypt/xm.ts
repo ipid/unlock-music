@@ -52,7 +52,6 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
         raw_filename.indexOf("_") === -1 ? "-" : "_")
 
     return {
-        status: true,
         title,
         artist,
         ext,
