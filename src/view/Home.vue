@@ -144,9 +144,9 @@ export default {
             }
             try {
                 this.dir = await window.showDirectoryPicker()
-                window.dir = this.dir
-                window.f = await this.dir.getFileHandle("write-test.txt", {create: true})
-
+                const test_filename = "__unlock_music_write_test.txt"
+                await this.dir.getFileHandle(test_filename, {create: true})
+                await this.dir.removeEntry(test_filename)
             } catch (e) {
                 console.error(e)
             }
