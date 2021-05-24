@@ -21,8 +21,6 @@ export const AudioMimeType: { [key: string]: string } = {
     wav: "audio/x-wav"
 };
 
-export const IXAREA_API_ENDPOINT = "https://stats.ixarea.com/apis"
-
 
 export function BytesHasPrefix(data: Uint8Array, prefix: number[]): boolean {
     if (prefix.length > data.length) return false

@@ -1,20 +1,35 @@
 import {DecryptResult} from "@/decrypt/entity";
 
-export function DownloadBlobMusic(data: DecryptResult, format: string) {//todo: use enum
+export enum FilenamePolicy {
+    ArtistAndTitle,
+    TitleOnly,
+    TitleAndArtist,
+    SameAsOriginal,
+}
+
+export const FilenamePolicies: { key: FilenamePolicy, text: string }[] = [
+    {key: FilenamePolicy.ArtistAndTitle, text: "歌手-歌曲名"},
+    {key: FilenamePolicy.TitleOnly, text: "歌曲名"},
+    {key: FilenamePolicy.TitleAndArtist, text: "歌曲名-歌手"},
+    {key: FilenamePolicy.SameAsOriginal, text: "同源文件名"},
+]
+
+
+export function DownloadBlobMusic(data: DecryptResult, policy: FilenamePolicy) {
     const a = document.createElement('a');
     a.href = data.file;
-    switch (format) {
+    switch (policy) {
         default:
-        case "1":
+        case FilenamePolicy.ArtistAndTitle:
             a.download = data.artist + " - " + data.title + "." + data.ext;
             break;
-        case "2":
+        case FilenamePolicy.TitleOnly:
             a.download = data.title + "." + data.ext;
             break;
-        case "3":
+        case FilenamePolicy.TitleAndArtist:
             a.download = data.title + " - " + data.artist + "." + data.ext;
             break;
-        case "4":
+        case FilenamePolicy.SameAsOriginal:
             a.download = data.rawFilename + "." + data.ext;
             break;
     }
