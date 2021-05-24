@@ -1,21 +1,11 @@
-import {Decrypt as NcmDecrypt} from "./ncm";
-import {Decrypt as XmDecrypt} from "./xm";
-import {Decrypt as QmcDecrypt} from "./qmc";
-import {Decrypt as KgmDecrypt} from "./kgm";
+import {Decrypt as NcmDecrypt} from "@/decrypt/ncm";
+import {Decrypt as XmDecrypt} from "@/decrypt/xm";
+import {Decrypt as QmcDecrypt} from "@/decrypt/qmc";
+import {Decrypt as KgmDecrypt} from "@/decrypt/kgm";
 import {Decrypt as KwmDecrypt} from "@/decrypt/kwm";
 import {Decrypt as RawDecrypt} from "@/decrypt/raw";
 import {Decrypt as TmDecrypt} from "@/decrypt/tm";
-import {DecryptResult} from "@/decrypt/entity";
-
-
-interface FileInfo {
-    status: string
-    name: string,
-    size: number,
-    percentage: number,
-    uid: number,
-    raw: File
-}
+import {DecryptResult, FileInfo} from "@/decrypt/entity";
 
 
 export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
@@ -78,3 +68,4 @@ export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
     console.log(rt_data);
     return rt_data;
 }
+

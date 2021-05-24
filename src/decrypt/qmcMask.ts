@@ -177,7 +177,6 @@ export function QmcMaskDetectMgg(data: Uint8Array) {
 
 
 function calcMaskFromConfidence(confidence: { [key: number]: number }) {
-    console.log(confidence)
     const count = Object.keys(confidence).length
     if (count === 0) throw "can not match at least one key";
     if (count > 1) console.warn("There are 2 potential value for the mask!")

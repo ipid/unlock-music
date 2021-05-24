@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import App from './App.vue'
-import './registerServiceWorker'
+import App from '@/App.vue'
+import '@/registerServiceWorker'
 import {
     Button,
     Checkbox,

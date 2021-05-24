@@ -4,7 +4,7 @@
         <el-table-column label="封面">
             <template slot-scope="scope">
                 <el-image :src="scope.row.picture" style="width: 100px; height: 100px">
-                    <div class="image-slot el-image__error" slot="error">
+                    <div slot="error" class="image-slot el-image__error">
                         暂无封面
                     </div>
                 </el-image>
@@ -27,14 +27,14 @@
         </el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
-                <el-button @click="handlePlay(scope.$index, scope.row)"
-                           circle icon="el-icon-video-play" type="success">
+                <el-button circle
+                           icon="el-icon-video-play" type="success" @click="handlePlay(scope.$index, scope.row)">
                 </el-button>
-                <el-button @click="handleDownload(scope.row)"
-                           circle icon="el-icon-download">
+                <el-button circle
+                           icon="el-icon-download" @click="handleDownload(scope.row)">
                 </el-button>
-                <el-button @click="handleDelete(scope.$index, scope.row)"
-                           circle icon="el-icon-delete" type="danger">
+                <el-button circle
+                           icon="el-icon-delete" type="danger" @click="handleDelete(scope.$index, scope.row)">
                 </el-button>
             </template>
         </el-table-column>
@@ -42,28 +42,28 @@
 </template>
 
 <script>
-    import {DownloadBlobMusic, RemoveBlobMusic} from './util'
+import {DownloadBlobMusic, RemoveBlobMusic} from '@/component/utils'
 
-    export default {
-        name: "preview",
-        props: {
-            tableData: {type: Array, required: true},
-            download_format: {type: String, required: true}
+export default {
+    name: "PreviewTable",
+    props: {
+        tableData: {type: Array, required: true},
+        filename_format: {type: String, required: true}
+    },
+
+    methods: {
+        handlePlay(index, row) {
+            this.$emit("music_changed", row.file);
         },
-
-        methods: {
-            handlePlay(index, row) {
-                this.$emit("music_changed", row.file);
-            },
-            handleDelete(index, row) {
-                RemoveBlobMusic(row);
-                this.tableData.splice(index, 1);
-            },
-            handleDownload(row) {
-                DownloadBlobMusic(row, this.download_format)
-            },
-        }
+        handleDelete(index, row) {
+            RemoveBlobMusic(row);
+            this.tableData.splice(index, 1);
+        },
+        handleDownload(row) {
+            DownloadBlobMusic(row, this.download_format)
+        },
     }
+}
 </script>
 
 <style scoped>

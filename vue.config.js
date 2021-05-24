@@ -1,3 +1,4 @@
+const ThreadsPlugin = require('threads-plugin');
 module.exports = {
     publicPath: '',
     productionSourceMap: false,
@@ -35,5 +36,8 @@ module.exports = {
         workboxOptions: {
             skipWaiting: true
         }
+    },
+    configureWebpack: {
+        plugins: [new ThreadsPlugin()]
     }
 };
