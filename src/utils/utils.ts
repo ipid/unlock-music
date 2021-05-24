@@ -1,4 +1,5 @@
 import {DecryptResult} from "@/decrypt/entity";
+import {FileSystemDirectoryHandle} from "@/shims-fs";
 
 export enum FilenamePolicy {
     ArtistAndTitle,
@@ -14,25 +15,39 @@ export const FilenamePolicies: { key: FilenamePolicy, text: string }[] = [
     {key: FilenamePolicy.SameAsOriginal, text: "同源文件名"},
 ]
 
+export function GetDownloadFilename(data: DecryptResult, policy: FilenamePolicy): string {
+    switch (policy) {
+        case FilenamePolicy.TitleOnly:
+            return `${data.title}.${data.ext}`;
+        case FilenamePolicy.TitleAndArtist:
+            return `${data.title} - ${data.artist}.${data.ext}`;
+        case FilenamePolicy.SameAsOriginal:
+            return `${data.rawFilename}.${data.ext}`;
+        default:
+        case FilenamePolicy.ArtistAndTitle:
+            return `${data.artist} - ${data.title}.${data.ext}`;
+    }
+}
+
+export async function DirectlyWriteFile(data: DecryptResult, policy: FilenamePolicy, dir: FileSystemDirectoryHandle) {
+    let filename = GetDownloadFilename(data, policy)
+    // prevent filename exist
+    try {
+        await dir.getFileHandle(filename)
+        filename = `${new Date().getTime()} - ${filename}`
+    } catch (e) {
+    }
+    const file = await dir.getFileHandle(filename, {create: true})
+    const w = await file.createWritable()
+    await w.write(data.blob)
+    await w.close()
+
+}
 
 export function DownloadBlobMusic(data: DecryptResult, policy: FilenamePolicy) {
     const a = document.createElement('a');
     a.href = data.file;
-    switch (policy) {
-        default:
-        case FilenamePolicy.ArtistAndTitle:
-            a.download = data.artist + " - " + data.title + "." + data.ext;
-            break;
-        case FilenamePolicy.TitleOnly:
-            a.download = data.title + "." + data.ext;
-            break;
-        case FilenamePolicy.TitleAndArtist:
-            a.download = data.title + " - " + data.artist + "." + data.ext;
-            break;
-        case FilenamePolicy.SameAsOriginal:
-            a.download = data.rawFilename + "." + data.ext;
-            break;
-    }
+    a.download = GetDownloadFilename(data, policy)
     document.body.append(a);
     a.click();
     a.remove();

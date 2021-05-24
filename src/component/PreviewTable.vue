@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import {DownloadBlobMusic, RemoveBlobMusic} from '@/utils/utils'
+import {RemoveBlobMusic} from '@/utils/utils'
 
 export default {
     name: "PreviewTable",
@@ -60,7 +60,7 @@ export default {
             this.tableData.splice(index, 1);
         },
         handleDownload(row) {
-            DownloadBlobMusic(row, this.policy)
+            this.$emit("download", row)
         },
     }
 }
