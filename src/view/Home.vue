@@ -26,15 +26,15 @@
 
         <audio :autoplay="playing_auto" :src="playing_url" controls/>
 
-        <PreviewTable :policy="filename_policy" :table-data="tableData" @play="changePlaying"/>
+        <PreviewTable :policy="filename_policy" :table-data="tableData" @download="saveFile" @play="changePlaying"/>
     </div>
 </template>
 
 <script>
 
-import FileSelector from "../component/FileSelector"
-import PreviewTable from "../component/PreviewTable"
-import {DownloadBlobMusic, FilenamePolicy, FilenamePolicies, RemoveBlobMusic} from "@/utils/utils"
+import FileSelector from "@/component/FileSelector"
+import PreviewTable from "@/component/PreviewTable"
+import {DownloadBlobMusic, FilenamePolicy, FilenamePolicies, RemoveBlobMusic, DirectlyWriteFile} from "@/utils/utils"
 
 export default {
     name: 'Home',
@@ -44,19 +44,24 @@ export default {
     },
     data() {
         return {
-            activeIndex: '1',
             tableData: [],
             playing_url: "",
             playing_auto: false,
             filename_policy: FilenamePolicy.ArtistAndTitle,
             instant_download: false,
-            FilenamePolicies
+            FilenamePolicies,
+            dir: null
+        }
+    },
+    watch: {
+        instant_download(val) {
+            if (val) this.showDirectlySave()
         }
     },
     methods: {
-        showSuccess(data) {
+        async showSuccess(data) {
             if (this.instant_download) {
-                DownloadBlobMusic(data, this.filename_policy);
+                await this.saveFile(data)
                 RemoveBlobMusic(data);
             } else {
                 this.tableData.push(data);
@@ -81,7 +86,7 @@ export default {
                 duration: 6000
             });
             if (process.env.NODE_ENV === 'production') {
-                window._paq.push(["trackEvent", "Error", errInfo, filename]);
+                window._paq.push(["trackEvent", "Error", String(errInfo), filename]);
             }
         },
         changePlaying(url) {
@@ -98,12 +103,50 @@ export default {
             let index = 0;
             let c = setInterval(() => {
                 if (index < this.tableData.length) {
-                    DownloadBlobMusic(this.tableData[index], this.filename_policy);
+                    this.saveFile(this.tableData[index])
                     index++;
                 } else {
                     clearInterval(c);
                 }
             }, 300);
+        },
+
+        async saveFile(data) {
+            if (this.dir) {
+                await DirectlyWriteFile(data, this.filename_policy, this.dir)
+                this.$notify({
+                    title: "保存成功",
+                    message: data.title,
+                    position: "top-left",
+                    type: "success",
+                    duration: 3000
+                })
+            } else {
+                DownloadBlobMusic(data, this.filename_policy)
+            }
+        },
+        async showDirectlySave() {
+            if (!window.showDirectoryPicker) return
+            try {
+                await this.$confirm("您的浏览器支持文件直接保存到磁盘，是否使用？",
+                    "新特性提示", {
+                        confirmButtonText: "使用",
+                        cancelButtonText: "不使用",
+                        type: "warning",
+                        center: true
+                    })
+            } catch (e) {
+                console.log(e)
+                return
+            }
+            try {
+                this.dir = await window.showDirectoryPicker()
+                window.dir = this.dir
+                window.f = await this.dir.getFileHandle("write-test.txt", {create: true})
+
+            } catch (e) {
+                console.error(e)
+            }
         }
     },
 }

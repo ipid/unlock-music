@@ -22,6 +22,7 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string,
         album: tag.common.album,
         picture: GetCoverFromFile(tag),
         file: URL.createObjectURL(file),
+        blob: file,
         mime: AudioMimeType[ext]
     }
 }
