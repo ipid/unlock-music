@@ -136,7 +136,7 @@ async function queryKeyInfo(keyData: Uint8Array, filename: string, format: strin
         let data = await resp.json();
         return new QmcMask(Base64Decode(data.Matrix44));
     } catch (e) {
-        console.log(e);
+        console.warn(e);
     }
 }
 
@@ -150,7 +150,7 @@ async function queryAlbumCoverImage(title: string, artist?: string, album?: stri
             return song_query_url + "/" + data.Type + "/" + data.Id
         }
     } catch (e) {
-        console.log(e);
+        console.warn(e);
     }
     return "";
 }

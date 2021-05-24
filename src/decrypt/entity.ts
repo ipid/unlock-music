@@ -14,3 +14,12 @@ export interface DecryptResult {
     rawFilename?: string
 
 }
+
+export interface FileInfo {
+    status: string
+    name: string,
+    size: number,
+    percentage: number,
+    uid: number,
+    raw: File
+}
