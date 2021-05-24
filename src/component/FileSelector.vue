@@ -8,7 +8,27 @@
         multiple>
         <i class="el-icon-upload"/>
         <div class="el-upload__text">将文件拖到此处，或<em>点击选择</em></div>
-        <div slot="tip" class="el-upload__tip">本工具仅在浏览器内对文件进行解锁，无需消耗流量</div>
+        <div slot="tip" class="el-upload__tip">
+            <div>
+                仅在浏览器内对文件进行解锁，无需消耗流量
+                <el-tooltip effect="dark" placement="top-start">
+                    <div slot="content">
+                        算法在源代码中已经提供，所有运算都发生在本地
+                    </div>
+                    <i class="el-icon-info" style="font-size: 12px"/>
+                </el-tooltip>
+            </div>
+            <div>
+                工作模式: {{ parallel ? "多线程 Worker" : "单线程 Queue" }}
+                <el-tooltip effect="dark" placement="top-start">
+                    <div slot="content">
+                        将此工具部署在HTTPS环境下，可以启用Web Worker特性，<br/>
+                        从而更快的利用并行处理完成解锁
+                    </div>
+                    <i class="el-icon-info" style="font-size: 12px"/>
+                </el-tooltip>
+            </div>
+        </div>
         <transition name="el-fade-in"><!--todo: add delay to animation-->
             <el-progress
                 v-show="progress_show" :format="progress_string" :percentage="progress_value"
@@ -30,7 +50,8 @@ export default {
         return {
             task_all: 0,
             task_finished: 0,
-            queue: new DecryptQueue() // for http or file protocol
+            queue: new DecryptQueue(), // for http or file protocol
+            parallel: false
         }
     },
     computed: {
@@ -48,6 +69,7 @@ export default {
                 () => spawn(new Worker('@/utils/worker.ts')),
                 navigator.hardwareConcurrency || 1
             )
+            this.parallel = true
         } else {
             console.log("Using Queue in Main Thread")
         }

@@ -111,6 +111,7 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
         album: musicMeta.common.album,
         picture: imgUrl,
         file: URL.createObjectURL(musicBlob),
+        blob: musicBlob,
         mime: mime
     }
 }

@@ -7,6 +7,7 @@ export interface DecryptResult {
     ext: string
 
     file: string
+    blob: Blob
     picture?: string
 
     message?: string
