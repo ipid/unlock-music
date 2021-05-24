@@ -12,6 +12,7 @@ import {parseBlob as metaParseBlob} from "music-metadata-browser";
 
 
 import iconv from "iconv-lite";
+import {DecryptResult} from "@/decrypt/entity";
 
 interface Handler {
     ext: string
@@ -38,7 +39,7 @@ const HandlerMap: { [key: string]: Handler } = {
     "776176": {handler: QmcMaskGetDefault, ext: "wav", detect: false}
 };
 
-export async function Decrypt(file: File, raw_filename: string, raw_ext: string) {
+export async function Decrypt(file: File, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
     if (!(raw_ext in HandlerMap)) throw "File type is incorrect!";
     const handler = HandlerMap[raw_ext];
 
@@ -103,7 +104,6 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
         }
     }
     return {
-        status: true,
         title: info.title,
         artist: info.artist,
         ext: ext,

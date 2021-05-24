@@ -16,7 +16,6 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string,
     const {title, artist} = GetMetaFromFile(raw_filename, tag.common.title, tag.common.artist)
 
     return {
-        status: true,
         title,
         artist,
         ext,
