@@ -1,11 +1,11 @@
 import {QmcMask, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
-import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
+import {toByteArray as Base64Decode} from 'base64-js'
 import {
     AudioMimeType,
     GetArrayBuffer,
     GetCoverFromFile,
     GetImageFromURL,
-    GetMetaFromFile, IXAREA_API_ENDPOINT,
+    GetMetaFromFile,
     SniffAudioExt, WriteMetaToFlac, WriteMetaToMp3
 } from "@/decrypt/utils.ts";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
@@ -13,6 +13,7 @@ import {parseBlob as metaParseBlob} from "music-metadata-browser";
 
 import iconv from "iconv-lite";
 import {DecryptResult} from "@/decrypt/entity";
+import {queryAlbumCover, queryKeyInfo, reportKeyUsage} from "@/utils/api";
 
 interface Handler {
     ext: string
@@ -51,7 +52,7 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
         audioData = fileData.slice(0, keyPos);
         seed = handler.handler(audioData);
         keyData = fileData.slice(keyPos, keyPos + keyLen);
-        if (!seed) seed = await queryKeyInfo(keyData, raw_filename, raw_ext);
+        if (!seed) seed = await queryKey(keyData, raw_filename, raw_ext);
         if (!seed) throw raw_ext + "格式仅提供实验性支持";
     } else {
         audioData = fileData;
@@ -77,12 +78,12 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
 
     const info = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist)
     if (keyData) reportKeyUsage(keyData, seed.getMatrix128(),
-        raw_filename, raw_ext, info.title, info.artist, musicMeta.common.album);
+        raw_filename, raw_ext, info.title, info.artist, musicMeta.common.album).then().catch();
 
     let imgUrl = GetCoverFromFile(musicMeta);
     if (!imgUrl) {
-        imgUrl = await queryAlbumCoverImage(info.title, info.artist, musicMeta.common.album);
-        if (imgUrl !== "") {
+        imgUrl = await getCoverImage(info.title, info.artist, musicMeta.common.album);
+        if (imgUrl) {
             const imageInfo = await GetImageFromURL(imgUrl);
             if (imageInfo) {
                 imgUrl = imageInfo.url
@@ -115,42 +116,22 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
 }
 
 
-function reportKeyUsage(keyData: Uint8Array, maskData: number[], filename: string, format: string, title: string, artist?: string, album?: string) {
-    fetch(IXAREA_API_ENDPOINT + "/qmcmask/usage", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            Mask: Base64Encode(new Uint8Array(maskData)), Key: Base64Encode(keyData),
-            Artist: artist, Title: title, Album: album, Filename: filename, Format: format
-        }),
-    }).then().catch()
-}
-
-async function queryKeyInfo(keyData: Uint8Array, filename: string, format: string) {
+async function queryKey(keyData: Uint8Array, filename: string, format: string): Promise<QmcMask | undefined> {
     try {
-        const resp = await fetch(IXAREA_API_ENDPOINT + "/qmcmask/query", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({Format: format, Key: Base64Encode(keyData), Filename: filename, Type: 44}),
-        });
-        let data = await resp.json();
+        const data = await queryKeyInfo(keyData, filename, format)
         return new QmcMask(Base64Decode(data.Matrix44));
     } catch (e) {
         console.warn(e);
     }
 }
 
-async function queryAlbumCoverImage(title: string, artist?: string, album?: string) {
+async function getCoverImage(title: string, artist?: string, album?: string): Promise<string> {
     const song_query_url = "https://stats.ixarea.com/apis" + "/music/qq-cover"
     try {
-        const params = new URLSearchParams([["Title", title], ["Artist", artist ?? ""], ["Album", album ?? ""]])
-        const resp = await fetch(`${song_query_url}?${params.toString()}`)
-        if (resp.ok) {
-            let data = await resp.json();
-            return song_query_url + "/" + data.Type + "/" + data.Id
-        }
+        const data = await queryAlbumCover(title, artist, album)
+        return `${song_query_url}/${data.Type}/${data.Id}`
     } catch (e) {
         console.warn(e);
     }
-    return "";
+    return ""
 }

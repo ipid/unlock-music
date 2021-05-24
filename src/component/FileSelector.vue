@@ -22,7 +22,7 @@
 <script>
 import {spawn, Worker, Pool} from "threads"
 import {CommonDecrypt} from "@/decrypt/common.ts";
-import {DecryptQueue} from "@/component/utils";
+import {DecryptQueue} from "@/utils/utils";
 
 export default {
     name: "FileSelector",
@@ -42,10 +42,10 @@ export default {
         }
     },
     mounted() {
-        if (window.Worker) {
+        if (window.Worker && process.env.NODE_ENV === 'production') {
             console.log("Using Worker Pool")
             this.queue = Pool(
-                () => spawn(new Worker('@/component/worker.ts')),
+                () => spawn(new Worker('@/utils/worker.ts')),
                 navigator.hardwareConcurrency || 1
             )
         } else {
@@ -64,7 +64,7 @@ export default {
                     this.$emit("success", await dec(file));
                 } catch (e) {
                     console.error(e)
-                    this.$emit("error", file)
+                    this.$emit("error", e, file.name)
                 } finally {
                     this.task_finished++
                 }

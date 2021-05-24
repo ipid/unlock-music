@@ -11,22 +11,22 @@
             </template>
         </el-table-column>
         <el-table-column label="歌曲">
-            <template slot-scope="scope">
+            <template #default="scope">
                 <span>{{ scope.row.title }}</span>
             </template>
         </el-table-column>
         <el-table-column label="歌手">
-            <template slot-scope="scope">
+            <template #default="scope">
                 <p>{{ scope.row.artist }}</p>
             </template>
         </el-table-column>
         <el-table-column label="专辑">
-            <template slot-scope="scope">
+            <template #default="scope">
                 <p>{{ scope.row.album }}</p>
             </template>
         </el-table-column>
         <el-table-column label="操作">
-            <template slot-scope="scope">
+            <template #default="scope">
                 <el-button circle
                            icon="el-icon-video-play" type="success" @click="handlePlay(scope.$index, scope.row)">
                 </el-button>
@@ -42,25 +42,25 @@
 </template>
 
 <script>
-import {DownloadBlobMusic, RemoveBlobMusic} from '@/component/utils'
+import {DownloadBlobMusic, RemoveBlobMusic} from '@/utils/utils'
 
 export default {
     name: "PreviewTable",
     props: {
         tableData: {type: Array, required: true},
-        filename_format: {type: String, required: true}
+        policy: {type: Number, required: true}
     },
 
     methods: {
         handlePlay(index, row) {
-            this.$emit("music_changed", row.file);
+            this.$emit("play", row.file);
         },
         handleDelete(index, row) {
             RemoveBlobMusic(row);
             this.tableData.splice(index, 1);
         },
         handleDownload(row) {
-            DownloadBlobMusic(row, this.download_format)
+            DownloadBlobMusic(row, this.policy)
         },
     }
 }
