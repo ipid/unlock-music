@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
-  "version": "1.8.1",
-  "updateInfo": "添加构建为Docker镜像",
+  "version": "v1.9.0-beta",
+  "updateInfo": "新增写入本地文件系统; 优化.kwm解锁; 支持.acc嗅探; 使用Typescript重构",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
@@ -21,7 +21,7 @@
     "core-js": "^3.12.1",
     "crypto-js": "^4.0.0",
     "element-ui": "^2.15.1",
-    "iconv-lite": "^0.6.2",
+    "iconv-lite": "^0.6.3",
     "jimp": "^0.16.1",
     "metaflac-js": "^1.0.5",
     "music-metadata-browser": "^2.2.6",
