@@ -16,10 +16,13 @@
 
                 <el-tooltip class="item" effect="dark" placement="top-start">
                     <div slot="content">
-                        当您使用此工具进行大量文件解锁的时候，建议开启此选项。<br/>
-                        开启后，解锁结果将不会存留于浏览器中，防止内存不足。
+                        <span v-if="instant_save">工作模式: {{ dir ? "写入本地文件系统" : "调用浏览器下载" }}</span>
+                        <span v-else>
+                            当您使用此工具进行大量文件解锁的时候，建议开启此选项。<br/>
+                            开启后，解锁结果将不会存留于浏览器中，防止内存不足。
+                        </span>
                     </div>
-                    <el-checkbox v-model="instant_download" border class="ml-2">立即保存</el-checkbox>
+                    <el-checkbox v-model="instant_save" border class="ml-2">立即保存</el-checkbox>
                 </el-tooltip>
             </el-row>
         </div>
@@ -48,19 +51,19 @@ export default {
             playing_url: "",
             playing_auto: false,
             filename_policy: FilenamePolicy.ArtistAndTitle,
-            instant_download: false,
+            instant_save: false,
             FilenamePolicies,
             dir: null
         }
     },
     watch: {
-        instant_download(val) {
+        instant_save(val) {
             if (val) this.showDirectlySave()
         }
     },
     methods: {
         async showSuccess(data) {
-            if (this.instant_download) {
+            if (this.instant_save) {
                 await this.saveFile(data)
                 RemoveBlobMusic(data);
             } else {
