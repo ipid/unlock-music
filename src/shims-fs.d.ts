@@ -6,6 +6,10 @@ interface FileSystemCreateWritableOptions {
     keepExistingData?: boolean
 }
 
+interface FileSystemRemoveOptions {
+    recursive?: boolean
+}
+
 interface FileSystemFileHandle {
     getFile(): Promise<File>;
 
@@ -37,13 +41,16 @@ interface FileSystemWritableFileStream extends WritableStream {
     close(): Promise<undefined> // should be implemented in WritableStream
 }
 
+
 export declare interface FileSystemDirectoryHandle {
     getFileHandle(name: string, options?: FileSystemGetFileOptions): Promise<FileSystemFileHandle>
+
+    removeEntry(name: string, options?: FileSystemRemoveOptions): Promise<undefined>
+
 }
 
 declare global {
     interface Window {
-        FileSystemDirectoryHandle
 
         showDirectoryPicker?(): Promise<FileSystemDirectoryHandle>
     }
