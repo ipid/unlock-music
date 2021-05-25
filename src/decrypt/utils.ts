@@ -12,13 +12,16 @@ export const WMA_HEADER = [
 ]
 export const WAV_HEADER = [0x52, 0x49, 0x46, 0x46]
 export const AAC_HEADER = [0xFF, 0xF1]
+export const DFF_HEADER = [0x46, 0x52, 0x4D, 0x38]
+
 export const AudioMimeType: { [key: string]: string } = {
     mp3: "audio/mpeg",
     flac: "audio/flac",
     m4a: "audio/mp4",
     ogg: "audio/ogg",
     wma: "audio/x-ms-wma",
-    wav: "audio/x-wav"
+    wav: "audio/x-wav",
+    dff: "audio/x-dff"
 };
 
 
@@ -39,6 +42,7 @@ export function SniffAudioExt(data: Uint8Array, fallback_ext: string = "mp3"): s
     if (BytesHasPrefix(data, WAV_HEADER)) return "wav"
     if (BytesHasPrefix(data, WMA_HEADER)) return "wma"
     if (BytesHasPrefix(data, AAC_HEADER)) return "aac"
+    if (BytesHasPrefix(data, DFF_HEADER)) return "dff"
     return fallback_ext;
 }
 
