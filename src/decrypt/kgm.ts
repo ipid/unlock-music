@@ -22,7 +22,7 @@ const VprMaskDiff = [
 
 
 export async function Decrypt(file: File, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
-    if (window?.location?.protocol === "file:") {
+    if (self.location.protocol === "file:") {
         throw Error("请使用 <a target='_blank' href='https://github.com/unlock-music/cli'>CLI版本</a> 进行解锁")
     }
 
