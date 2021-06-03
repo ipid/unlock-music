@@ -22,7 +22,7 @@ interface Handler {
     handler(data?: Uint8Array): QmcMask | undefined
 }
 
-const HandlerMap: { [key: string]: Handler } = {
+export const HandlerMap: { [key: string]: Handler } = {
     "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
     "mflac": {handler: QmcMaskDetectMflac, ext: "flac", detect: true},
     "mgg.cache": {handler: QmcMaskDetectMgg, ext: "ogg", detect: false},
@@ -42,8 +42,8 @@ const HandlerMap: { [key: string]: Handler } = {
     "776176": {handler: QmcMaskGetDefault, ext: "wav", detect: false}
 };
 
-export async function Decrypt(file: File, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
-    if (!(raw_ext in HandlerMap)) throw "File type is incorrect!";
+export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
+    if (!(raw_ext in HandlerMap)) throw `Qmc cannot handle type: ${raw_ext}`;
     const handler = HandlerMap[raw_ext];
 
     const fileData = new Uint8Array(await GetArrayBuffer(file));
