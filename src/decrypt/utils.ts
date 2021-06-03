@@ -160,3 +160,11 @@ export function WriteMetaToFlac(audioData: Buffer, info: IMusicMeta, original: I
     }
     return writer.save()
 }
+
+export function SplitFilename(n: string): { name: string; ext: string } {
+    const pos = n.lastIndexOf(".")
+    return {
+        ext: n.substring(pos + 1).toLowerCase(),
+        name: n.substring(0, pos)
+    }
+}
