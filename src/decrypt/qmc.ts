@@ -25,6 +25,8 @@ interface Handler {
 const HandlerMap: { [key: string]: Handler } = {
     "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
     "mflac": {handler: QmcMaskDetectMflac, ext: "flac", detect: true},
+    "mgg.cache": {handler: QmcMaskDetectMgg, ext: "ogg", detect: false},
+    "mflac.cache": {handler: QmcMaskDetectMflac, ext: "flac", detect: false},
     "qmc0": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
     "qmc2": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
     "qmc3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
@@ -57,6 +59,7 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
     } else {
         audioData = fileData;
         seed = handler.handler(audioData) as QmcMask;
+        if (!seed) throw raw_ext + "格式仅提供实验性支持";
     }
     let musicDecoded = seed.Decrypt(audioData);
 
