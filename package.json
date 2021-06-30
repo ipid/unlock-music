@@ -18,16 +18,16 @@
   "dependencies": {
     "base64-js": "^1.5.1",
     "browser-id3-writer": "^4.4.0",
-    "core-js": "^3.12.1",
+    "core-js": "^3.15.2",
     "crypto-js": "^4.0.0",
-    "element-ui": "^2.15.1",
+    "element-ui": "^2.15.3",
     "iconv-lite": "^0.6.3",
     "jimp": "^0.16.1",
     "metaflac-js": "^1.0.5",
-    "music-metadata-browser": "^2.2.6",
+    "music-metadata-browser": "^2.2.7",
     "register-service-worker": "^1.7.2",
-    "threads": "^1.6.4",
-    "vue": "^2.6.12"
+    "threads": "^1.6.5",
+    "vue": "^2.6.14"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.0.1",
@@ -40,8 +40,8 @@
     "sass-loader": "^10.2.0",
     "semver": "^7.3.5",
     "threads-plugin": "^1.4.0",
-    "typescript": "~4.1.5",
+    "typescript": "~4.1.6",
     "vue-cli-plugin-element": "^1.0.1",
-    "vue-template-compiler": "^2.6.12"
+    "vue-template-compiler": "^2.6.14"
   }
 }
