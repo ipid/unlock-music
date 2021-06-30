@@ -63,7 +63,7 @@ export default {
         }
     },
     mounted() {
-        if (window.Worker && process.env.NODE_ENV === 'production') {
+        if (window.Worker && window.location.protocol !== "file:" && process.env.NODE_ENV === 'production') {
             console.log("Using Worker Pool")
             this.queue = Pool(
                 () => spawn(new Worker('@/utils/worker.ts')),
