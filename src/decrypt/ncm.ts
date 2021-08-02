@@ -11,11 +11,18 @@ import {
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
 import jimp from 'jimp';
 
-import CryptoJS from "crypto-js";
+import AES from "crypto-js/aes";
+import PKCS7 from "crypto-js/pad-pkcs7";
+import ModeECB from "crypto-js/mode-ecb";
+import WordArray from "crypto-js/lib-typedarrays";
+import Base64 from "crypto-js/enc-base64";
+import EncUTF8 from "crypto-js/enc-utf8";
+import EncHex from "crypto-js/enc-hex";
+
 import {DecryptResult} from "@/decrypt/entity";
 
-const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
-const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
+const CORE_KEY = EncHex.parse("687a4852416d736f356b496e62617857");
+const META_KEY = EncHex.parse("2331346C6A6B5F215C5D2630553C2728");
 const MagicHeader = [0x43, 0x54, 0x45, 0x4E, 0x46, 0x44, 0x41, 0x4D];
 
 
@@ -67,11 +74,11 @@ class NcmDecrypt {
             .map(uint8 => uint8 ^ 0x64);
         this.offset += keyLen;
 
-        const plainText = CryptoJS.AES.decrypt(
+        const plainText = AES.decrypt(
             // @ts-ignore
-            {ciphertext: CryptoJS.lib.WordArray.create(cipherText)},
+            {ciphertext: WordArray.create(cipherText)},
             CORE_KEY,
-            {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7}
+            {mode: ModeECB, padding: PKCS7}
         );
 
         const result = new Uint8Array(plainText.sigBytes);
@@ -115,17 +122,18 @@ class NcmDecrypt {
             .map(data => data ^ 0x63);
         this.offset += metaDataLen;
 
-        const plainText = CryptoJS.AES.decrypt(
-            //@ts-ignore
+        WordArray.create()
+        const plainText = AES.decrypt(
+            // @ts-ignore
             {
-                ciphertext: CryptoJS.enc.Base64.parse(
-                    //@ts-ignore
-                    CryptoJS.lib.WordArray.create(cipherText.slice(22)).toString(CryptoJS.enc.Utf8)
+                ciphertext: Base64.parse(
+                    // @ts-ignore
+                    WordArray.create(cipherText.slice(22)).toString(EncUTF8)
                 )
             },
             META_KEY,
-            {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7}
-        ).toString(CryptoJS.enc.Utf8);
+            {mode: ModeECB, padding: PKCS7}
+        ).toString(EncUTF8);
 
         const labelIndex = plainText.indexOf(":");
         let result: NcmMusicMeta;
