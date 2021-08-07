@@ -85,7 +85,7 @@ let MaskV2: Uint8Array = new Uint8Array(0);
 
 async function LoadMaskV2(): Promise<boolean> {
     try {
-        const resp = await fetch("./static/kgm.mask", {method: "GET"})
+        const resp = await fetch(process.env.NODE_ENV !== 'production'?"./static/kgm.mask":"../static/kgm.mask", {method: "GET"})
         MaskV2 = new Uint8Array(await resp.arrayBuffer());
         return true
     } catch (e) {
