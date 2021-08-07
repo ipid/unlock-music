@@ -8,6 +8,7 @@ import {
 } from "@/decrypt/utils.ts";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
 import {DecryptResult} from "@/decrypt/entity";
+import config from "@/../package.json"
 
 const VprHeader = [
     0x05, 0x28, 0xBC, 0x96, 0xE9, 0xE4, 0x5A, 0x43,
@@ -22,9 +23,6 @@ const VprMaskDiff = [
 
 
 export async function Decrypt(file: File, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
-    if (self.location.protocol === "file:") {
-        throw Error("请使用 <a target='_blank' href='https://github.com/unlock-music/cli'>CLI版本</a> 进行解锁")
-    }
 
     const oriData = new Uint8Array(await GetArrayBuffer(file));
     if (raw_ext === "vpr") {
@@ -84,8 +82,16 @@ function GetMask(pos: number) {
 let MaskV2: Uint8Array = new Uint8Array(0);
 
 async function LoadMaskV2(): Promise<boolean> {
+    let mask_url = `https://cdn.jsdelivr.net/gh/unlock-music/unlock-music@${config.version}/public/static/kgm.mask`
+    if (["http:", "https:"].some(v => v == self.location.protocol)) {
+        if (!!self.document) {// using Web Worker
+            mask_url = "./static/kgm.mask"
+        } else {// using Main thread
+            mask_url = "../static/kgm.mask"
+        }
+    }
     try {
-        const resp = await fetch(process.env.NODE_ENV !== 'production'?"./static/kgm.mask":"../static/kgm.mask", {method: "GET"})
+        const resp = await fetch(mask_url, {method: "GET"})
         MaskV2 = new Uint8Array(await resp.arrayBuffer());
         return true
     } catch (e) {
