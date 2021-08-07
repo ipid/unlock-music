@@ -1,6 +1,6 @@
 import {fromByteArray as Base64Encode} from "base64-js";
 
-export const IXAREA_API_ENDPOINT = "https://stats.ixarea.com/apis"
+export const IXAREA_API_ENDPOINT = "https://um-api.ixarea.com"
 
 export interface UpdateInfo {
     Found: boolean
