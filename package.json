@@ -1,6 +1,6 @@
 {
   "name": "unlock-music",
-  "version": "v1.9.0-beta",
+  "version": "v1.9.0",
   "updateInfo": "新增写入本地文件系统; 优化.kwm解锁; 支持.acc嗅探; 使用Typescript重构",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
@@ -18,19 +18,19 @@
   "dependencies": {
     "base64-js": "^1.5.1",
     "browser-id3-writer": "^4.4.0",
-    "core-js": "^3.15.2",
-    "crypto-js": "^4.0.0",
-    "element-ui": "^2.15.3",
+    "core-js": "^3.16.0",
+    "crypto-js": "^4.1.1",
+    "element-ui": "^2.15.5",
     "iconv-lite": "^0.6.3",
     "jimp": "^0.16.1",
     "metaflac-js": "^1.0.5",
-    "music-metadata-browser": "^2.2.7",
+    "music-metadata-browser": "^2.4.3",
     "register-service-worker": "^1.7.2",
     "threads": "^1.6.5",
     "vue": "^2.6.14"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.0.1",
+    "@types/crypto-js": "^4.0.2",
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-pwa": "^4.5.13",
     "@vue/cli-plugin-typescript": "^4.5.13",
