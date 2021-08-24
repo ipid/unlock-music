@@ -24,8 +24,8 @@
     "iconv-lite": "^0.6.3",
     "jimp": "^0.16.1",
     "metaflac-js": "^1.0.5",
-    "music-metadata": "7.9.1",
-    "music-metadata-browser": "^2.2.7",
+    "music-metadata": "7.9.0",
+    "music-metadata-browser": "2.2.7",
     "register-service-worker": "^1.7.2",
     "threads": "^1.6.5",
     "vue": "^2.6.14"
