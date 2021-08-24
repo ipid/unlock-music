@@ -128,17 +128,17 @@ export function QmcMaskGetDefault() {
 }
 
 export function QmcMaskDetectMflac(data: Uint8Array) {
-    let search_len = Math.min(0x8000, data.length), mask;
+    let search_len = Math.min(0x8000, data.length)
     for (let block_idx = 0; block_idx < search_len; block_idx += 128) {
         try {
-            mask = new QmcMask(data.slice(block_idx, block_idx + 128));
+            let mask = new QmcMask(data.slice(block_idx, block_idx + 128));
             if (BytesHasPrefix(mask.Decrypt(data.slice(0, FLAC_HEADER.length)), FLAC_HEADER)) {
-                break;
+                return mask
             }
         } catch (e) {
         }
     }
-    return mask;
+    return
 }
 
 export function QmcMaskDetectMgg(data: Uint8Array) {
@@ -166,13 +166,13 @@ export function QmcMaskDetectMgg(data: Uint8Array) {
         for (let i = 0; i < 44; i++)
             matrix[i] = calcMaskFromConfidence(matrixConfidence[i]);
     } catch (e) {
-        return;
+        return
     }
     const mask = new QmcMask(matrix);
-    if (!BytesHasPrefix(mask.Decrypt(data.slice(0, OGG_HEADER.length)), OGG_HEADER)) {
-        return;
+    if (BytesHasPrefix(mask.Decrypt(data.slice(0, OGG_HEADER.length)), OGG_HEADER)) {
+        return mask
     }
-    return mask;
+    return
 }
 
 
