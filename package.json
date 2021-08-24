@@ -24,7 +24,8 @@
     "iconv-lite": "^0.6.3",
     "jimp": "^0.16.1",
     "metaflac-js": "^1.0.5",
-    "music-metadata-browser": "^2.4.3",
+    "music-metadata": "7.9.1",
+    "music-metadata-browser": "^2.2.7",
     "register-service-worker": "^1.7.2",
     "threads": "^1.6.5",
     "vue": "^2.6.14"
@@ -36,7 +37,7 @@
     "@vue/cli-plugin-typescript": "^4.5.13",
     "@vue/cli-service": "^4.5.13",
     "babel-plugin-component": "^1.1.1",
-    "node-sass": "^5.0.0",
+    "sass": "^1.38.1",
     "sass-loader": "^10.2.0",
     "semver": "^7.3.5",
     "threads-plugin": "^1.4.0",
