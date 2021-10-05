@@ -1,5 +1,3 @@
-import {Decrypt as NcmDecrypt} from "@/decrypt/ncm";
-import {Decrypt as NcmCacheDecrypt} from "@/decrypt/ncmcache";
 import {Decrypt as XmDecrypt} from "@/decrypt/xm";
 import {Decrypt as QmcDecrypt} from "@/decrypt/qmc";
 import {Decrypt as QmcCacheDecrypt} from "@/decrypt/qmccache";
@@ -15,12 +13,6 @@ export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
     const raw = SplitFilename(file.name)
     let rt_data: DecryptResult;
     switch (raw.ext) {
-        case "ncm":// Netease Mp3/Flac
-            rt_data = await NcmDecrypt(file.raw, raw.name, raw.ext);
-            break;
-        case "uc":// Netease Cache
-            rt_data = await NcmCacheDecrypt(file.raw, raw.name, raw.ext);
-            break;
         case "kwm":// Kuwo Mp3/Flac
             rt_data = await KwmDecrypt(file.raw, raw.name, raw.ext);
             break

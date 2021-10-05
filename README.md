@@ -22,8 +22,6 @@
 - [x] QQ音乐新格式 (实验性支持)
   - [x] .mflac
   - [x] [.mgg](https://github.com/ix64/unlock-music/issues/3)
-- [x] 网易云音乐格式 (.ncm)
-  - [x] 补全ncm的ID3/FlacMeta信息
 - [x] 虾米音乐格式 (.xm) (测试阶段)
 - [x] 酷我音乐格式 (.kwm) (测试阶段)
 - [x] 酷狗音乐格式 (
