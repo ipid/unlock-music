@@ -5,7 +5,7 @@ import {
     GetMetaFromFile,
     SniffAudioExt,
     SplitFilename
-} from "@/decrypt/utils.ts";
+} from "@/decrypt/utils";
 
 import {Decrypt as QmcDecrypt, HandlerMap} from "@/decrypt/qmc";
 
