@@ -3,11 +3,12 @@ import {
     BytesHasPrefix,
     GetArrayBuffer,
     GetImageFromURL,
-    GetMetaFromFile, IMusicMeta,
+    GetMetaFromFile,
+    IMusicMeta,
     SniffAudioExt,
     WriteMetaToFlac,
     WriteMetaToMp3
-} from "@/decrypt/utils.ts";
+} from "@/decrypt/utils";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
 import jimp from 'jimp';
 
@@ -209,7 +210,7 @@ class NcmDecrypt {
     }
 
     gatherResult(): DecryptResult {
-        if (!this.newMeta) throw Error("bad sequence")
+        if (!this.newMeta || !this.blob) throw Error("bad sequence")
         return {
             title: this.newMeta.title,
             artist: this.newMeta.artists?.join("; "),
@@ -217,7 +218,7 @@ class NcmDecrypt {
             album: this.newMeta.album,
             picture: this.image?.url,
             file: URL.createObjectURL(this.blob),
-            blob: this.blob as Blob,
+            blob: this.blob,
             mime: this.mime
         }
     }

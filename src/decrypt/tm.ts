@@ -1,5 +1,5 @@
 import {Decrypt as RawDecrypt} from "./raw";
-import {GetArrayBuffer} from "@/decrypt/utils.ts";
+import {GetArrayBuffer} from "@/decrypt/utils";
 import {DecryptResult} from "@/decrypt/entity";
 
 const TM_HEADER = [0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70];

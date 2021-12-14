@@ -5,8 +5,8 @@ import {
     GetCoverFromFile,
     GetMetaFromFile,
     SniffAudioExt
-} from "@/decrypt/utils.ts";
-import {Decrypt as RawDecrypt} from "@/decrypt/raw.ts";
+} from "@/decrypt/utils";
+import {Decrypt as RawDecrypt} from "@/decrypt/raw";
 
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
 import {DecryptResult} from "@/decrypt/entity";

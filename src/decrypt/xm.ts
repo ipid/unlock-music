@@ -1,6 +1,6 @@
 import {Decrypt as RawDecrypt} from "@/decrypt/raw";
 import {DecryptResult} from "@/decrypt/entity";
-import {AudioMimeType, BytesHasPrefix, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile} from "@/decrypt/utils.ts";
+import {AudioMimeType, BytesHasPrefix, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile} from "@/decrypt/utils";
 
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
 

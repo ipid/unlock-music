@@ -1,4 +1,4 @@
-import {AudioMimeType, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile, SniffAudioExt} from "@/decrypt/utils.ts";
+import {AudioMimeType, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile, SniffAudioExt} from "@/decrypt/utils";
 
 import {DecryptResult} from "@/decrypt/entity";
 
