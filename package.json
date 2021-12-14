@@ -12,10 +12,12 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "test": "jest",
     "fix-compatibility": "node ./src/fix-compatibility.js",
     "make-extension": "node ./make-extension.js"
   },
   "dependencies": {
+    "@babel/preset-typescript": "^7.16.5",
     "base64-js": "^1.5.1",
     "browser-id3-writer": "^4.4.0",
     "core-js": "^3.16.0",
@@ -32,6 +34,7 @@
   },
   "devDependencies": {
     "@types/crypto-js": "^4.0.2",
+    "@types/jest": "^27.0.3",
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-pwa": "^4.5.13",
     "@vue/cli-plugin-typescript": "^4.5.13",
