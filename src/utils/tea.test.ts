@@ -6,6 +6,7 @@
 
 import {TeaCipher} from "@/utils/tea";
 
+
 test("key size", () => {
     const testKey = new Uint8Array([
         0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
@@ -52,6 +53,12 @@ const teaTests = [
     },
 ]
 
+test("rounds", () => {
+    const tt = teaTests[0];
+    expect(() => new TeaCipher(tt.key, tt.rounds - 1))
+        .toThrow()
+})
+
 
 test("encrypt & decrypt", () => {
     for (const tt of teaTests) {
@@ -67,3 +74,4 @@ test("encrypt & decrypt", () => {
         expect(buf).toStrictEqual(tt.plainText)
     }
 })
+

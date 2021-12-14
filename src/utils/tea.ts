@@ -51,9 +51,6 @@ export class TeaCipher {
 
 
     encrypt(dst: DataView, src: DataView) {
-        if (src.byteLength != 8) {
-            throw Error("src.byteLength != 8")
-        }
 
         let v0 = src.getUint32(0, false)
         let v1 = src.getUint32(4, false)
