@@ -9,6 +9,7 @@ import {
     SniffAudioExt, WriteMetaToFlac, WriteMetaToMp3
 } from "@/decrypt/utils";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
+import {decryptMGG} from "./qmcv2";
 
 
 import iconv from "iconv-lite";
@@ -42,31 +43,35 @@ export const HandlerMap: { [key: string]: Handler } = {
     "776176": {handler: QmcMaskGetDefault, ext: "wav", detect: false}
 };
 
+function mergeUint8(array: Uint8Array[]): Uint8Array {
+    // Get the total length of all arrays.
+    let length = 0;
+    array.forEach(item => {
+      length += item.length;
+    });
+
+    // Create a new array with total length and merge all source arrays.
+    let mergedArray = new Uint8Array(length);
+    let offset = 0;
+    array.forEach(item => {
+      mergedArray.set(item, offset);
+      offset += item.length;
+    });
+
+    return mergedArray;
+}
+
 export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
     if (!(raw_ext in HandlerMap)) throw `Qmc cannot handle type: ${raw_ext}`;
     const handler = HandlerMap[raw_ext];
 
-    const fileData = new Uint8Array(await GetArrayBuffer(file));
-    let audioData, seed, keyData;
-    if (handler.detect) {
-        const keyLen = new DataView(fileData.slice(fileData.length - 4).buffer).getUint32(0, true)
-        const keyPos = fileData.length - 4 - keyLen;
-        audioData = fileData.slice(0, keyPos);
-        seed = handler.handler(audioData);
-        keyData = fileData.slice(keyPos, keyPos + keyLen);
-        if (!seed) seed = await queryKey(keyData, raw_filename, raw_ext);
-        if (!seed) throw raw_ext + "格式仅提供实验性支持";
-    } else {
-        audioData = fileData;
-        seed = handler.handler(audioData) as QmcMask;
-        if (!seed) throw raw_ext + "格式仅提供实验性支持";
-    }
-    let musicDecoded = seed.Decrypt(audioData);
+    const decodedParts = await decryptMGG(await file.arrayBuffer());
+    let musicDecoded = mergeUint8(decodedParts);
 
     const ext = SniffAudioExt(musicDecoded, handler.ext);
     const mime = AudioMimeType[ext];
 
-    let musicBlob = new Blob([musicDecoded], {type: mime});
+    let musicBlob = new Blob(decodedParts, {type: mime});
 
     const musicMeta = await metaParseBlob(musicBlob);
     for (let metaIdx in musicMeta.native) {
@@ -80,8 +85,6 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
     }
 
     const info = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist)
-    if (keyData) reportKeyUsage(keyData, seed.getMatrix128(),
-        raw_filename, raw_ext, info.title, info.artist, musicMeta.common.album).then().catch();
 
     let imgUrl = GetCoverFromFile(musicMeta);
     if (!imgUrl) {
