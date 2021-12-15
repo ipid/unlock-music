@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@babel/preset-typescript": "^7.16.5",
-    "@jixun/qmc2-crypto": "^0.0.5-R2",
+    "@jixun/qmc2-crypto": "^0.0.5-R3",
     "base64-js": "^1.5.1",
     "browser-id3-writer": "^4.4.0",
     "core-js": "^3.16.0",
