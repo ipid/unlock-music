@@ -1,4 +1,4 @@
-import QMCCryptoModule from '@jixun/qmc2-crypto';
+import QMCCryptoModule from '@jixun/qmc2-crypto/QMC2-wasm-bundle';
 
 // EOF Magic detection.
 const DETECTION_SIZE = 40;
