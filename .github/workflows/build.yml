@@ -20,7 +20,6 @@ on:
       - "package.json"
 
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,38 +36,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Use Node.js 14.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: "14"
+          node-version: "16"
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Build
-        env:
-          GZIP: "--best"
-        run: |
-          npm run build ${{ matrix.BUILD_ARGS }}
-          tar -czvf dist.tar.gz -C ./dist .
-
-      - name: Build Extension
-        if: ${{ matrix.BUILD_EXTENSION }}
-        run: |
-          npm run make-extension
-          cd dist
-          zip -rJ9 ../extension.zip *
-          cd ..
+        run: npm run build ${{ matrix.BUILD_ARGS }}
 
       - name: Publish artifact
         uses: actions/upload-artifact@v2
         with:
-          name: unlock-music-${{ matrix.build }}.tar.gz
-          path: ./dist.tar.gz
+          name: ${{ matrix.build }}
+          path: ./dist
+
+      - name: Build Extension
+        if: ${{ matrix.BUILD_EXTENSION }}
+        run: npm run make-extension
 
       - name: Publish artifact - Extension
         if: ${{ matrix.BUILD_EXTENSION }}
         uses: actions/upload-artifact@v2
         with:
-          name: extension.zip
-          path: ./extension.zip
+          name: extension
+          path: ./dist
