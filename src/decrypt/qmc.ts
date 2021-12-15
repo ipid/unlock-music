@@ -1,4 +1,4 @@
-import {QmcMask, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
+import {QmcMask, QmcMaskGetDefault} from "./qmcMask";
 import {toByteArray as Base64Decode} from 'base64-js'
 import {
     AudioMimeType,
@@ -9,7 +9,7 @@ import {
     SniffAudioExt, WriteMetaToFlac, WriteMetaToMp3
 } from "@/decrypt/utils";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
-import {decryptMGG} from "./qmcv2";
+import {DecryptQMCv2} from "./qmcv2";
 
 
 import iconv from "iconv-lite";
@@ -18,60 +18,49 @@ import {queryAlbumCover, queryKeyInfo, reportKeyUsage} from "@/utils/api";
 
 interface Handler {
     ext: string
-    detect: boolean
-
-    handler(data?: Uint8Array): QmcMask | undefined
+    version: number
 }
 
 export const HandlerMap: { [key: string]: Handler } = {
-    "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
-    "mflac": {handler: QmcMaskDetectMflac, ext: "flac", detect: true},
-    "mgg.cache": {handler: QmcMaskDetectMgg, ext: "ogg", detect: false},
-    "mflac.cache": {handler: QmcMaskDetectMflac, ext: "flac", detect: false},
-    "qmc0": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
-    "qmc2": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
-    "qmc3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
-    "qmcogg": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
-    "qmcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
-    "bkcmp3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
-    "bkcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
-    "tkm": {handler: QmcMaskGetDefault, ext: "m4a", detect: false},
-    "666c6163": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
-    "6d7033": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
-    "6f6767": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
-    "6d3461": {handler: QmcMaskGetDefault, ext: "m4a", detect: false},
-    "776176": {handler: QmcMaskGetDefault, ext: "wav", detect: false}
+    "mgg": {ext: "ogg", version: 2},
+    "mgg1": {ext: "ogg", version: 2},
+    "mflac": {ext: "flac", version: 2},
+    "mflac0": {ext: "flac", version: 2},
+
+    "qmc0": {ext: "mp3", version: 1},
+    "qmc2": {ext: "ogg", version: 1},
+    "qmc3": {ext: "mp3", version: 1},
+    "qmcogg": {ext: "ogg", version: 1},
+    "qmcflac": {ext: "flac", version: 1},
+    "bkcmp3": {ext: "mp3", version: 1},
+    "bkcflac": {ext: "flac", version: 1},
+    "tkm": {ext: "m4a", version: 1},
+    "666c6163": {ext: "flac", version: 1},
+    "6d7033": {ext: "mp3", version: 1},
+    "6f6767": {ext: "ogg", version: 1},
+    "6d3461": {ext: "m4a", version: 1},
+    "776176": {ext: "wav", version: 1}
 };
-
-function mergeUint8(array: Uint8Array[]): Uint8Array {
-    // Get the total length of all arrays.
-    let length = 0;
-    array.forEach(item => {
-      length += item.length;
-    });
-
-    // Create a new array with total length and merge all source arrays.
-    let mergedArray = new Uint8Array(length);
-    let offset = 0;
-    array.forEach(item => {
-      mergedArray.set(item, offset);
-      offset += item.length;
-    });
-
-    return mergedArray;
-}
 
 export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
     if (!(raw_ext in HandlerMap)) throw `Qmc cannot handle type: ${raw_ext}`;
     const handler = HandlerMap[raw_ext];
 
-    const decodedParts = await decryptMGG(await file.arrayBuffer());
-    let musicDecoded = mergeUint8(decodedParts);
+    const fileBuffer = await GetArrayBuffer(file);
+    let musicDecoded: Uint8Array;
+    if (handler.version === 1) {
+        const seed = QmcMaskGetDefault();
+        musicDecoded = seed.Decrypt(new Uint8Array(fileBuffer));
+    } else if (handler.version === 2) {
+        musicDecoded = await DecryptQMCv2(fileBuffer);
+    } else {
+        throw new Error(`不支持的加密版本: ${handler.version} (${raw_ext})`);
+    }
 
     const ext = SniffAudioExt(musicDecoded, handler.ext);
     const mime = AudioMimeType[ext];
 
-    let musicBlob = new Blob(decodedParts, {type: mime});
+    let musicBlob = new Blob([musicDecoded], {type: mime});
 
     const musicMeta = await metaParseBlob(musicBlob);
     for (let metaIdx in musicMeta.native) {
