@@ -27,11 +27,14 @@ export const HandlerMap: { [key: string]: Handler } = {
     "mflac": {ext: "flac", version: 2},
     "mflac0": {ext: "flac", version: 2},
 
+    // qmcflac / qmcogg:
+    // 有可能是 v2 加密但混用同一个后缀名。
+    "qmcflac": {ext: "flac", version: 2},
+    "qmcogg": {ext: "ogg", version: 2},
+
     "qmc0": {ext: "mp3", version: 1},
     "qmc2": {ext: "ogg", version: 1},
     "qmc3": {ext: "mp3", version: 1},
-    "qmcogg": {ext: "ogg", version: 1},
-    "qmcflac": {ext: "flac", version: 1},
     "bkcmp3": {ext: "mp3", version: 1},
     "bkcflac": {ext: "flac", version: 1},
     "tkm": {ext: "m4a", version: 1},
@@ -45,16 +48,26 @@ export const HandlerMap: { [key: string]: Handler } = {
 export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
     if (!(raw_ext in HandlerMap)) throw `Qmc cannot handle type: ${raw_ext}`;
     const handler = HandlerMap[raw_ext];
+    let { version } = handler;
 
     const fileBuffer = await GetArrayBuffer(file);
-    let musicDecoded: Uint8Array;
-    if (handler.version === 1) {
+    let musicDecoded: Uint8Array|undefined;
+
+    if (version === 2) {
+        const v2Decrypted = await DecryptQMCv2(fileBuffer);
+        // 如果 v2 检测失败，降级到 v1 再尝试一次
+        if (v2Decrypted) {
+            musicDecoded = v2Decrypted;
+        } else {
+            version = 1;
+        }
+    }
+
+    if (version === 1) {
         const seed = QmcMaskGetDefault();
         musicDecoded = seed.Decrypt(new Uint8Array(fileBuffer));
-    } else if (handler.version === 2) {
-        musicDecoded = await DecryptQMCv2(fileBuffer);
-    } else {
-        throw new Error(`不支持的加密版本: ${handler.version} (${raw_ext})`);
+    } else if (!musicDecoded) {
+        throw new Error(`解密失败: ${raw_ext}`);
     }
 
     const ext = SniffAudioExt(musicDecoded, handler.ext);

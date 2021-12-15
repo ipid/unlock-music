@@ -28,7 +28,7 @@ function MergeUint8Array(array: Uint8Array[]): Uint8Array {
  * 如果检测并解密成功，返回解密后的 Uint8Array 数据。
  * @param  {ArrayBuffer} mggBlob 读入的文件 Blob
  * @param  {string}         name 文件名
- * @return {Promise<Uint8Array|null>}
+ * @return {Promise<Uint8Array|false>}
  */
 export async function DecryptQMCv2(mggBlob: ArrayBuffer) {
   // 初始化模组
@@ -53,14 +53,13 @@ export async function DecryptQMCv2(mggBlob: ArrayBuffer) {
   // (pos: i32; len: i32; error: char[??])
   const position = QMCCrypto.getValue(pDetectionResult, "i32");
   const len = QMCCrypto.getValue(pDetectionResult + 4, "i32");
-  const detectionError = QMCCrypto.UTF8ToString(pDetectionResult + 8);
 
   // 释放内存
   QMCCrypto._free(pDetectionBuf);
   QMCCrypto._free(pDetectionResult);
 
   if (!detectOK) {
-    throw new Error("解密失败: \n  " + detectionError);
+    return false;
   }
 
   // 计算解密后文件的大小。
