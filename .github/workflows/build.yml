@@ -43,9 +43,7 @@ jobs:
           node-version: "14"
 
       - name: Install Dependencies
-        run: |
-          npm ci
-          npm run fix-compatibility
+        run: npm ci
 
       - name: Build
         env:
