@@ -27,7 +27,6 @@ function MergeUint8Array(array: Uint8Array[]): Uint8Array {
  *
  * 如果检测并解密成功，返回解密后的 Uint8Array 数据。
  * @param  {ArrayBuffer} mggBlob 读入的文件 Blob
- * @param  {string}         name 文件名
  * @return {Promise<Uint8Array|false>}
  */
 export async function DecryptQMCv2(mggBlob: ArrayBuffer) {

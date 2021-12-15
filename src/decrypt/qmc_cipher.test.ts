@@ -1,0 +1,27 @@
+import {QmcStaticCipher} from "@/decrypt/qmc_cipher";
+
+test("static cipher [0x7ff8,0x8000) ", () => {
+  const expected = new Uint8Array([
+    0xD8, 0x52, 0xF7, 0x67, 0x90, 0xCA, 0xD6, 0x4A,
+    0x4A, 0xD6, 0xCA, 0x90, 0x67, 0xF7, 0x52, 0xD8,
+  ])
+
+  const c = new QmcStaticCipher()
+  const buf = new Uint8Array(16)
+  c.decrypt(buf, 0x7ff8)
+
+  expect(buf).toStrictEqual(expected)
+})
+
+test("static cipher [0,0x10) ", () => {
+  const expected = new Uint8Array([
+    0xC3, 0x4A, 0xD6, 0xCA, 0x90, 0x67, 0xF7, 0x52,
+    0xD8, 0xA1, 0x66, 0x62, 0x9F, 0x5B, 0x09, 0x00,
+  ])
+
+  const c = new QmcStaticCipher()
+  const buf = new Uint8Array(16)
+  c.decrypt(buf, 0)
+
+  expect(buf).toStrictEqual(expected)
+})
