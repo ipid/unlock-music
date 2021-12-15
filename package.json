@@ -10,6 +10,7 @@
   },
   "private": true,
   "scripts": {
+    "postinstall": "patch-package",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test": "jest",
@@ -18,6 +19,7 @@
   },
   "dependencies": {
     "@babel/preset-typescript": "^7.16.5",
+    "@jixun/qmc2-crypto": "^0.0.5-R4",
     "base64-js": "^1.5.1",
     "browser-id3-writer": "^4.4.0",
     "core-js": "^3.16.0",
@@ -41,6 +43,7 @@
     "@vue/cli-service": "^4.5.13",
     "babel-plugin-component": "^1.1.1",
     "jest": "^27.4.5",
+    "patch-package": "^6.4.7",
     "sass": "^1.38.1",
     "sass-loader": "^10.2.0",
     "semver": "^7.3.5",

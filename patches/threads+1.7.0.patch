@@ -1,0 +1,11 @@
+diff --git a/node_modules/threads/worker.mjs b/node_modules/threads/worker.mjs
+index c53ac7d..619007b 100644
+--- a/node_modules/threads/worker.mjs
++++ b/node_modules/threads/worker.mjs
+@@ -1,4 +1,5 @@
+-import WorkerContext from "./dist/worker/index.js"
++// Workaround: use of import seems to break minifier.
++const WorkerContext = require("./dist/worker/index.js")
+ 
+ export const expose = WorkerContext.expose
+ export const registerSerializer = WorkerContext.registerSerializer

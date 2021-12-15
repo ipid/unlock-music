@@ -1,4 +1,4 @@
-import {QmcMask, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
+import {QmcMask, QmcMaskGetDefault} from "./qmcMask";
 import {toByteArray as Base64Decode} from 'base64-js'
 import {
     AudioMimeType,
@@ -9,6 +9,7 @@ import {
     SniffAudioExt, WriteMetaToFlac, WriteMetaToMp3
 } from "@/decrypt/utils";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
+import {DecryptQMCv2} from "./qmcv2";
 
 
 import iconv from "iconv-lite";
@@ -17,51 +18,57 @@ import {queryAlbumCover, queryKeyInfo, reportKeyUsage} from "@/utils/api";
 
 interface Handler {
     ext: string
-    detect: boolean
-
-    handler(data?: Uint8Array): QmcMask | undefined
+    version: number
 }
 
 export const HandlerMap: { [key: string]: Handler } = {
-    "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
-    "mflac": {handler: QmcMaskDetectMflac, ext: "flac", detect: true},
-    "mgg.cache": {handler: QmcMaskDetectMgg, ext: "ogg", detect: false},
-    "mflac.cache": {handler: QmcMaskDetectMflac, ext: "flac", detect: false},
-    "qmc0": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
-    "qmc2": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
-    "qmc3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
-    "qmcogg": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
-    "qmcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
-    "bkcmp3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
-    "bkcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
-    "tkm": {handler: QmcMaskGetDefault, ext: "m4a", detect: false},
-    "666c6163": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
-    "6d7033": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
-    "6f6767": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
-    "6d3461": {handler: QmcMaskGetDefault, ext: "m4a", detect: false},
-    "776176": {handler: QmcMaskGetDefault, ext: "wav", detect: false}
+    "mgg": {ext: "ogg", version: 2},
+    "mgg1": {ext: "ogg", version: 2},
+    "mflac": {ext: "flac", version: 2},
+    "mflac0": {ext: "flac", version: 2},
+
+    // qmcflac / qmcogg:
+    // 有可能是 v2 加密但混用同一个后缀名。
+    "qmcflac": {ext: "flac", version: 2},
+    "qmcogg": {ext: "ogg", version: 2},
+
+    "qmc0": {ext: "mp3", version: 1},
+    "qmc2": {ext: "ogg", version: 1},
+    "qmc3": {ext: "mp3", version: 1},
+    "bkcmp3": {ext: "mp3", version: 1},
+    "bkcflac": {ext: "flac", version: 1},
+    "tkm": {ext: "m4a", version: 1},
+    "666c6163": {ext: "flac", version: 1},
+    "6d7033": {ext: "mp3", version: 1},
+    "6f6767": {ext: "ogg", version: 1},
+    "6d3461": {ext: "m4a", version: 1},
+    "776176": {ext: "wav", version: 1}
 };
 
 export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
     if (!(raw_ext in HandlerMap)) throw `Qmc cannot handle type: ${raw_ext}`;
     const handler = HandlerMap[raw_ext];
+    let { version } = handler;
 
-    const fileData = new Uint8Array(await GetArrayBuffer(file));
-    let audioData, seed, keyData;
-    if (handler.detect) {
-        const keyLen = new DataView(fileData.slice(fileData.length - 4).buffer).getUint32(0, true)
-        const keyPos = fileData.length - 4 - keyLen;
-        audioData = fileData.slice(0, keyPos);
-        seed = handler.handler(audioData);
-        keyData = fileData.slice(keyPos, keyPos + keyLen);
-        if (!seed) seed = await queryKey(keyData, raw_filename, raw_ext);
-        if (!seed) throw raw_ext + "格式仅提供实验性支持";
-    } else {
-        audioData = fileData;
-        seed = handler.handler(audioData) as QmcMask;
-        if (!seed) throw raw_ext + "格式仅提供实验性支持";
+    const fileBuffer = await GetArrayBuffer(file);
+    let musicDecoded: Uint8Array|undefined;
+
+    if (version === 2) {
+        const v2Decrypted = await DecryptQMCv2(fileBuffer);
+        // 如果 v2 检测失败，降级到 v1 再尝试一次
+        if (v2Decrypted) {
+            musicDecoded = v2Decrypted;
+        } else {
+            version = 1;
+        }
     }
-    let musicDecoded = seed.Decrypt(audioData);
+
+    if (version === 1) {
+        const seed = QmcMaskGetDefault();
+        musicDecoded = seed.Decrypt(new Uint8Array(fileBuffer));
+    } else if (!musicDecoded) {
+        throw new Error(`解密失败: ${raw_ext}`);
+    }
 
     const ext = SniffAudioExt(musicDecoded, handler.ext);
     const mime = AudioMimeType[ext];
@@ -80,8 +87,6 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
     }
 
     const info = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist)
-    if (keyData) reportKeyUsage(keyData, seed.getMatrix128(),
-        raw_filename, raw_ext, info.title, info.artist, musicMeta.common.album).then().catch();
 
     let imgUrl = GetCoverFromFile(musicMeta);
     if (!imgUrl) {
