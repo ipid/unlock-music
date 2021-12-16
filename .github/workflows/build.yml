@@ -26,8 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Test Coverage
-        uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
+      - run: npm ci
+      - uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
   build:
