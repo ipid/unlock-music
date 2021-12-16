@@ -33,11 +33,11 @@ const staticCipherBox = new Uint8Array([
   0xA5, 0x47, 0xF7, 0xF6, 0x00, 0x79, 0x4A, 0x11, //0xF8
 ])
 
-interface streamCipher {
+export interface StreamCipher {
   decrypt(buf: Uint8Array, offset: number): void
 }
 
-export class QmcStaticCipher implements streamCipher {
+export class QmcStaticCipher implements StreamCipher {
 
   public getMask(offset: number) {
     if (offset > 0x7FFF) offset %= 0x7FFF
@@ -51,3 +51,35 @@ export class QmcStaticCipher implements streamCipher {
   }
 }
 
+export class QmcMapCipher implements StreamCipher {
+  key: Uint8Array
+  n: number
+
+  constructor(key: Uint8Array) {
+    if (key.length == 0) throw Error("qmc/cipher_map: invalid key size")
+
+    this.key = key
+    this.n = key.length
+  }
+
+  private static rotate(value: number, bits: number) {
+    let rotate = (bits + 4) % 8;
+    let left = value << rotate;
+    let right = value >> rotate;
+    return (left | right) & 0xff;
+  }
+
+  decrypt(buf: Uint8Array, offset: number): void {
+    for (let i = 0; i < buf.length; i++) {
+      buf[i] ^= this.getMask(offset + i)
+    }
+  }
+
+  private getMask(offset: number) {
+    if (offset > 0x7fff) offset %= 0x7fff;
+
+    const idx = (offset * offset + 71214) % this.n;
+    return QmcMapCipher.rotate(this.key[idx], idx & 0x7)
+  }
+
+}
