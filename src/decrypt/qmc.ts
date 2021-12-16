@@ -10,7 +10,7 @@ import {
   WriteMetaToMp3
 } from "@/decrypt/utils";
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
-import {DecryptQMCv2} from "./qmcv2";
+import {DecryptQMCWasm} from "./qmc_wasm";
 
 
 import iconv from "iconv-lite";
@@ -55,22 +55,19 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
   const fileBuffer = await GetArrayBuffer(file);
   let musicDecoded: Uint8Array | undefined;
 
-  if (version === 2) {
-    const v2Decrypted = await DecryptQMCv2(fileBuffer);
+  if (version === 2 && globalThis.WebAssembly) {
+    console.log("qmc: using wasm decoder")
+    const v2Decrypted = await DecryptQMCWasm(fileBuffer);
     // 如果 v2 检测失败，降级到 v1 再尝试一次
     if (v2Decrypted) {
       musicDecoded = v2Decrypted;
-    } else {
-      version = 1;
     }
   }
-
-  if (version === 1) {
-    const seed = new QmcStaticCipher();
-    musicDecoded = new Uint8Array(fileBuffer)
-    seed.decrypt(musicDecoded, 0);
-  } else if (!musicDecoded) {
-    throw new Error(`解密失败: ${raw_ext}`);
+  if (!musicDecoded) {
+    // may throw error
+    console.log("qmc: using js decoder")
+    const d = new QmcDecoder(new Uint8Array(fileBuffer))
+    musicDecoded = d.decrypt()
   }
 
   const ext = SniffAudioExt(musicDecoded, handler.ext);
