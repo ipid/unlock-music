@@ -83,8 +83,9 @@ function decryptTencentTea(inBuf: Uint8Array, key: Uint8Array): Uint8Array {
   return outBuf
 }
 
-export function DecryptKey(raw: Uint8Array): Uint8Array {
-  const rawDec = Buffer.from(raw.toString(), 'base64')
+export function QmcDecryptKey(raw: Uint8Array): Uint8Array {
+  const textDec = new TextDecoder()
+  const rawDec = Buffer.from(textDec.decode(raw), 'base64')
   let n = rawDec.length;
   if (n < 16) {
     throw Error("key length is too short")
