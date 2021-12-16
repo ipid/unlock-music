@@ -83,3 +83,120 @@ export class QmcMapCipher implements StreamCipher {
   }
 
 }
+
+const FIRST_SEGMENT_SIZE = 0x80;
+const SEGMENT_SIZE = 5120
+
+export class QmcRC4Cipher implements StreamCipher {
+  S: Uint8Array
+  N: number
+  key: Uint8Array
+  hash: number
+
+  constructor(key: Uint8Array) {
+    if (key.length == 0) {
+      throw Error("invalid key size")
+    }
+
+    this.key = key
+    this.N = key.length
+
+    // init seed box
+    this.S = new Uint8Array(this.N);
+    for (let i = 0; i < this.N; ++i) {
+      this.S[i] = i & 0xff;
+    }
+    let j = 0;
+    for (let i = 0; i < this.N; ++i) {
+      j = (this.S[i] + j + this.key[i % this.N]) % this.N;
+      [this.S[i], this.S[j]] = [this.S[j], this.S[i]]
+    }
+
+    // init hash base
+    this.hash = 1;
+    for (let i = 0; i < this.N; i++) {
+      let value = this.key[i];
+
+      // ignore if key char is '\x00'
+      if (!value) continue;
+
+      const next_hash = (this.hash * value) & 0xffffffff;
+      if (next_hash == 0 || next_hash <= this.hash) break;
+
+      this.hash = next_hash;
+    }
+
+  }
+
+  decrypt(buf: Uint8Array, offset: number): void {
+    let toProcess = buf.length;
+    let processed = 0;
+    const postProcess = (len: number): boolean => {
+      toProcess -= len;
+      processed += len
+      offset += len
+      return toProcess == 0
+    }
+
+    // Initial segment
+    if (offset < FIRST_SEGMENT_SIZE) {
+      const len_segment = Math.min(buf.length, FIRST_SEGMENT_SIZE - offset);
+      this.encFirstSegment(buf.subarray(0, len_segment), offset);
+      if (postProcess(len_segment)) return
+    }
+
+    // align segment
+    if (offset % SEGMENT_SIZE != 0) {
+      const len_segment = Math.min(SEGMENT_SIZE - (offset % SEGMENT_SIZE), toProcess);
+      this.encASegment(buf.subarray(processed, processed + len_segment), offset);
+      if (postProcess(len_segment)) return
+    }
+
+    // Batch process segments
+    while (toProcess > SEGMENT_SIZE) {
+      this.encASegment(buf.subarray(processed, processed + SEGMENT_SIZE), offset);
+      postProcess(SEGMENT_SIZE)
+    }
+
+    // Last segment (incomplete segment)
+    if (toProcess > 0) {
+      this.encASegment(buf.subarray(processed), offset);
+    }
+
+  }
+
+  private encFirstSegment(buf: Uint8Array, offset: number) {
+    for (let i = 0; i < buf.length; i++) {
+
+      buf[i] ^= this.key[this.getSegmentSkip(offset + i)];
+    }
+  }
+
+  private encASegment(buf: Uint8Array, offset: number) {
+    // Initialise a new seed box
+    const S = this.S.slice(0)
+
+    // Calculate the number of bytes to skip.
+    // The initial "key" derived from segment id, plus the current offset.
+    const skipLen = (offset % SEGMENT_SIZE) + this.getSegmentSkip(offset / SEGMENT_SIZE)
+
+    // decrypt the block
+    let j = 0;
+    let k = 0;
+    for (let i = -skipLen; i < buf.length; i++) {
+      j = (j + 1) % this.N;
+      k = (S[j] + k) % this.N;
+      [S[k], S[j]] = [S[j], S[k]]
+
+      if (i >= 0) {
+        buf[i] ^= S[(S[j] + S[k]) % this.N];
+      }
+    }
+  }
+
+  private getSegmentSkip(id: number): number {
+    const seed = this.key[id % this.N]
+    const idx = (this.hash / ((id + 1) * seed) * 100.0) | 0;
+    return idx % this.N
+  }
+}
