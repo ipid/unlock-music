@@ -2,6 +2,7 @@ name: Test Build
 on:
   push:
     paths:
+      - ".github/workflows/*"
       - "**/*.js"
       - "**/*.ts"
       - "**/*.vue"
@@ -24,6 +25,7 @@ jobs:
   test-coverage:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Test Coverage
         uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
         with:
