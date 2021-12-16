@@ -32,13 +32,20 @@ export function BytesHasPrefix(data: Uint8Array, prefix: number[]): boolean {
     })
 }
 
+export function BytesEqual(a: Uint8Array, b: Uint8Array,): boolean {
+    if (a.length != b.length) return false
+    return a.every((val, idx) => {
+        return val === b[idx];
+    })
+}
+
 
 export function SniffAudioExt(data: Uint8Array, fallback_ext: string = "mp3"): string {
     if (BytesHasPrefix(data, MP3_HEADER)) return "mp3"
     if (BytesHasPrefix(data, FLAC_HEADER)) return "flac"
     if (BytesHasPrefix(data, OGG_HEADER)) return "ogg"
     if (data.length >= 4 + M4A_HEADER.length &&
-        BytesHasPrefix(data.slice(4), M4A_HEADER)) return "m4a"
+      BytesHasPrefix(data.slice(4), M4A_HEADER)) return "m4a"
     if (BytesHasPrefix(data, WAV_HEADER)) return "wav"
     if (BytesHasPrefix(data, WMA_HEADER)) return "wma"
     if (BytesHasPrefix(data, AAC_HEADER)) return "aac"

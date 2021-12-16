@@ -1,4 +1,4 @@
-import {QmcStaticCipher} from "./qmc_cipher";
+import {QmcMapCipher, QmcRC4Cipher, QmcStaticCipher, StreamCipher} from "./qmc_cipher";
 import {
   AudioMimeType,
   GetArrayBuffer,
@@ -16,6 +16,7 @@ import {DecryptQMCv2} from "./qmcv2";
 import iconv from "iconv-lite";
 import {DecryptResult} from "@/decrypt/entity";
 import {queryAlbumCover} from "@/utils/api";
+import {QmcDecryptKey} from "@/decrypt/qmc_key";
 
 interface Handler {
   ext: string
@@ -136,4 +137,64 @@ async function getCoverImage(title: string, artist?: string, album?: string): Pr
     console.warn(e);
   }
   return ""
+}
+
+export class QmcDecoder {
+  file: Uint8Array
+  size: number
+  decoded: boolean = false
+  audioSize?: number
+  cipher?: StreamCipher
+
+  constructor(file: Uint8Array) {
+    this.file = file
+    this.size = file.length
+    this.searchKey()
+  }
+
+  decrypt(): Uint8Array {
+    if (!this.cipher) {
+      throw new Error("no cipher found")
+    }
+    if (!this.audioSize || this.audioSize <= 0) {
+      throw new Error("invalid audio size")
+    }
+    const audioBuf = this.file.subarray(0, this.audioSize)
+
+    if (!this.decoded) {
+      this.cipher.decrypt(audioBuf, 0)
+      this.decoded = true
+    }
+
+    return audioBuf
+  }
+
+  private searchKey() {
+    const last4Byte = this.file.slice(this.size - 4);
+    const textEnc = new TextDecoder()
+    if (textEnc.decode(last4Byte) === 'QTag') {
+      const sizeBuf = this.file.slice(this.size - 8, this.size - 4)
+      const sizeView = new DataView(sizeBuf.buffer, sizeBuf.byteOffset)
+      const keySize = sizeView.getUint32(0, false)
+      this.audioSize = this.size - keySize - 8
+      const rawKey = this.file.subarray(this.audioSize, this.size - 8)
+      const keyEnd = rawKey.findIndex(v => v == ','.charCodeAt(0))
+      const keyDec = QmcDecryptKey(rawKey.subarray(0, keyEnd))
+      this.cipher = new QmcRC4Cipher(keyDec)
+    } else {
+      const sizeView = new DataView(last4Byte.buffer, last4Byte.byteOffset);
+      const keySize = sizeView.getUint32(0, true)
+      if (keySize < 0x300) {
+        this.audioSize = this.size - keySize - 4
+        const rawKey = this.file.subarray(this.audioSize, this.size - 4)
+        const keyDec = QmcDecryptKey(rawKey)
+        this.cipher = new QmcMapCipher(keyDec)
+      } else {
+        this.audioSize = this.size
+        this.cipher = new QmcStaticCipher()
+      }
+    }
+  }
+
+
 }
