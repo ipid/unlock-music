@@ -1,4 +1,4 @@
-import {QmcMapCipher, QmcStaticCipher} from "@/decrypt/qmc_cipher";
+import {QmcMapCipher, QmcRC4Cipher, QmcStaticCipher} from "@/decrypt/qmc_cipher";
 import fs from 'fs'
 
 test("static cipher [0x7ff8,0x8000) ", () => {
@@ -27,17 +27,6 @@ test("static cipher [0,0x10) ", () => {
   expect(buf).toStrictEqual(expected)
 })
 
-function loadTestDataMapCipher(name: string): {
-  key: Uint8Array,
-  cipherText: Uint8Array,
-  clearText: Uint8Array
-} {
-  return {
-    key: fs.readFileSync(`testdata/${name}_key.bin`),
-    cipherText: fs.readFileSync(`testdata/${name}_raw.bin`),
-    clearText: fs.readFileSync(`testdata/${name}_target.bin`)
-  }
-}
 
 test("map cipher: get mask", () => {
   const expected = new Uint8Array([
@@ -53,14 +42,74 @@ test("map cipher: get mask", () => {
   expect(buf).toStrictEqual(expected)
 })
 
+function loadTestDataCipher(name: string): {
+  key: Uint8Array,
+  cipherText: Uint8Array,
+  clearText: Uint8Array
+} {
+  return {
+    key: fs.readFileSync(`testdata/${name}_key.bin`),
+    cipherText: fs.readFileSync(`testdata/${name}_raw.bin`),
+    clearText: fs.readFileSync(`testdata/${name}_target.bin`)
+  }
+}
+
 test("map cipher: real file", async () => {
   const cases = ["mflac_map", "mgg_map"]
   for (const name of cases) {
-    const {key, clearText, cipherText} = loadTestDataMapCipher(name)
+    const {key, clearText, cipherText} = loadTestDataCipher(name)
     const c = new QmcMapCipher(key)
 
     c.decrypt(cipherText, 0)
 
     expect(cipherText).toStrictEqual(clearText)
+  }
+})
+
+test("rc4 cipher: real file", async () => {
+  const cases = ["mflac0_rc4"]
+  for (const name of cases) {
+    const {key, clearText, cipherText} = loadTestDataCipher(name)
+    const c = new QmcRC4Cipher(key)
+
+    c.decrypt(cipherText, 0)
+
+    expect(cipherText).toStrictEqual(clearText)
+  }
+})
+
+test("rc4 cipher: first segment", async () => {
+  const cases = ["mflac0_rc4"]
+  for (const name of cases) {
+    const {key, clearText, cipherText} = loadTestDataCipher(name)
+    const c = new QmcRC4Cipher(key)
+
+    const buf = cipherText.slice(0, 128)
+    c.decrypt(buf, 0)
+    expect(buf).toStrictEqual(clearText.slice(0, 128))
+  }
+})
+
+test("rc4 cipher: align block (128~5120)", async () => {
+  const cases = ["mflac0_rc4"]
+  for (const name of cases) {
+    const {key, clearText, cipherText} = loadTestDataCipher(name)
+    const c = new QmcRC4Cipher(key)
+
+    const buf = cipherText.slice(128, 5120)
+    c.decrypt(buf, 128)
+    expect(buf).toStrictEqual(clearText.slice(128, 5120))
+  }
+})
+
+test("rc4 cipher: simple block (5120~10240)", async () => {
+  const cases = ["mflac0_rc4"]
+  for (const name of cases) {
+    const {key, clearText, cipherText} = loadTestDataCipher(name)
+    const c = new QmcRC4Cipher(key)
+
+    const buf = cipherText.slice(5120, 10240)
+    c.decrypt(buf, 5120)
+    expect(buf).toStrictEqual(clearText.slice(5120, 10240))
   }
 })
