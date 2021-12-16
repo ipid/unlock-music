@@ -1,6 +1,6 @@
 {
   "name": "unlock-music",
-  "version": "v1.9.1",
+  "version": "v1.10.0-beta.1",
   "updateInfo": "新增写入本地文件系统; 优化.kwm解锁; 支持.acc嗅探; 使用Typescript重构",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
