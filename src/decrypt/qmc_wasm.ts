@@ -29,7 +29,7 @@ function MergeUint8Array(array: Uint8Array[]): Uint8Array {
  * @param  {ArrayBuffer} mggBlob 读入的文件 Blob
  * @return {Promise<Uint8Array|false>}
  */
-export async function DecryptQMCv2(mggBlob: ArrayBuffer) {
+export async function DecryptQMCWasm(mggBlob: ArrayBuffer) {
   // 初始化模组
   const QMCCrypto = await QMCCryptoModule();
 
