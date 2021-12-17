@@ -33,7 +33,7 @@ export function BytesHasPrefix(data: Uint8Array, prefix: number[]): boolean {
 }
 
 export function BytesEqual(a: Uint8Array, b: Uint8Array,): boolean {
-    if (a.length != b.length) return false
+    if (a.length !== b.length) return false
     return a.every((val, idx) => {
         return val === b[idx];
     })

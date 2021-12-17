@@ -1,5 +1,29 @@
 import {TeaCipher} from "@/utils/tea";
 
+const SALT_LEN = 2
+const ZERO_LEN = 7
+
+export function QmcDeriveKey(raw: Uint8Array): Uint8Array {
+  const textDec = new TextDecoder()
+  const rawDec = Buffer.from(textDec.decode(raw), 'base64')
+  let n = rawDec.length;
+  if (n < 16) {
+    throw Error("key length is too short")
+  }
+
+  const simpleKey = simpleMakeKey(106, 8)
+  let teaKey = new Uint8Array(16);
+  for (let i = 0; i < 8; i++) {
+    teaKey[i << 1] = simpleKey[i];
+    teaKey[(i << 1) + 1] = rawDec[i];
+  }
+  const sub = decryptTencentTea(rawDec.subarray(8), teaKey)
+  rawDec.set(sub, 8)
+  return rawDec.subarray(0, 8 + sub.length)
+
+}
+
+// simpleMakeKey exported only for unit test
 export function simpleMakeKey(salt: number, length: number): number[] {
   const keyBuf: number[] = []
   for (let i = 0; i < length; i++) {
@@ -9,8 +33,6 @@ export function simpleMakeKey(salt: number, length: number): number[] {
   return keyBuf
 }
 
-const SALT_LEN = 2
-const ZERO_LEN = 7
 
 function decryptTencentTea(inBuf: Uint8Array, key: Uint8Array): Uint8Array {
   if (inBuf.length % 8 != 0) {
@@ -83,22 +105,3 @@ function decryptTencentTea(inBuf: Uint8Array, key: Uint8Array): Uint8Array {
   return outBuf
 }
 
-export function QmcDecryptKey(raw: Uint8Array): Uint8Array {
-  const textDec = new TextDecoder()
-  const rawDec = Buffer.from(textDec.decode(raw), 'base64')
-  let n = rawDec.length;
-  if (n < 16) {
-    throw Error("key length is too short")
-  }
-
-  const simpleKey = simpleMakeKey(106, 8)
-  let teaKey = new Uint8Array(16);
-  for (let i = 0; i < 8; i++) {
-    teaKey[i << 1] = simpleKey[i];
-    teaKey[(i << 1) + 1] = rawDec[i];
-  }
-  const sub = decryptTencentTea(rawDec.subarray(8), teaKey)
-  rawDec.set(sub, 8)
-  return rawDec.subarray(0, 8 + sub.length)
-
-}
