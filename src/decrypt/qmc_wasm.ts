@@ -8,13 +8,13 @@ const DECRYPTION_BUF_SIZE = 2 * 1024 * 1024;
 
 function MergeUint8Array(array: Uint8Array[]): Uint8Array {
   let length = 0;
-  array.forEach(item => {
+  array.forEach((item) => {
     length += item.length;
   });
 
   let mergedArray = new Uint8Array(length);
   let offset = 0;
-  array.forEach(item => {
+  array.forEach((item) => {
     mergedArray.set(item, offset);
     offset += item.length;
   });
@@ -42,16 +42,12 @@ export async function DecryptQMCWasm(mggBlob: ArrayBuffer) {
   const pDetectionResult = QMCCrypto._malloc(QMCCrypto.sizeof_qmc_detection());
 
   // 进行检测
-  const detectOK = QMCCrypto.detectKeyEndPosition(
-    pDetectionResult,
-    pDetectionBuf,
-    detectionBuf.length
-  );
+  const detectOK = QMCCrypto.detectKeyEndPosition(pDetectionResult, pDetectionBuf, detectionBuf.length);
 
   // 提取结构体内容：
   // (pos: i32; len: i32; error: char[??])
-  const position = QMCCrypto.getValue(pDetectionResult, "i32");
-  const len = QMCCrypto.getValue(pDetectionResult + 4, "i32");
+  const position = QMCCrypto.getValue(pDetectionResult, 'i32');
+  const len = QMCCrypto.getValue(pDetectionResult + 4, 'i32');
 
   // 释放内存
   QMCCrypto._free(pDetectionBuf);
@@ -66,9 +62,7 @@ export async function DecryptQMCWasm(mggBlob: ArrayBuffer) {
   const decryptedSize = mggBlob.byteLength - DETECTION_SIZE + position;
 
   // 提取嵌入到文件的 EKey
-  const ekey = new Uint8Array(
-    mggBlob.slice(decryptedSize, decryptedSize + len)
-  );
+  const ekey = new Uint8Array(mggBlob.slice(decryptedSize, decryptedSize + len));
 
   // 解码 UTF-8 数据到 string
   const decoder = new TextDecoder();
@@ -85,9 +79,7 @@ export async function DecryptQMCWasm(mggBlob: ArrayBuffer) {
     const blockSize = Math.min(bytesToDecrypt, DECRYPTION_BUF_SIZE);
 
     // 解密一些片段
-    const blockData = new Uint8Array(
-      mggBlob.slice(offset, offset + blockSize)
-    );
+    const blockData = new Uint8Array(mggBlob.slice(offset, offset + blockSize));
     QMCCrypto.writeArrayToMemory(blockData, buf);
     QMCCrypto.decryptStream(hCrypto, buf, offset, blockSize);
     decryptedParts.push(QMCCrypto.HEAPU8.slice(buf, buf + blockSize));

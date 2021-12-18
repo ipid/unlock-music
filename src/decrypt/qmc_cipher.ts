@@ -1,9 +1,9 @@
 export interface QmcStreamCipher {
-  decrypt(buf: Uint8Array, offset: number): void
+  decrypt(buf: Uint8Array, offset: number): void;
 }
 
-
 export class QmcStaticCipher implements QmcStreamCipher {
+  //prettier-ignore
   private static readonly staticCipherBox: Uint8Array = new Uint8Array([
     0x77, 0x48, 0x32, 0x73, 0xDE, 0xF2, 0xC0, 0xC8, //0x00
     0x95, 0xEC, 0x30, 0xB2, 0x51, 0xC3, 0xE1, 0xA0, //0x08
@@ -40,26 +40,26 @@ export class QmcStaticCipher implements QmcStreamCipher {
   ])
 
   public getMask(offset: number) {
-    if (offset > 0x7FFF) offset %= 0x7FFF
-    return QmcStaticCipher.staticCipherBox[(offset * offset + 27) & 0xff]
+    if (offset > 0x7fff) offset %= 0x7fff;
+    return QmcStaticCipher.staticCipherBox[(offset * offset + 27) & 0xff];
   }
 
   public decrypt(buf: Uint8Array, offset: number) {
     for (let i = 0; i < buf.length; i++) {
-      buf[i] ^= this.getMask(offset + i)
+      buf[i] ^= this.getMask(offset + i);
     }
   }
 }
 
 export class QmcMapCipher implements QmcStreamCipher {
-  key: Uint8Array
-  n: number
+  key: Uint8Array;
+  n: number;
 
   constructor(key: Uint8Array) {
-    if (key.length == 0) throw Error("qmc/cipher_map: invalid key size")
+    if (key.length == 0) throw Error('qmc/cipher_map: invalid key size');
 
-    this.key = key
-    this.n = key.length
+    this.key = key;
+    this.n = key.length;
   }
 
   private static rotate(value: number, bits: number) {
@@ -71,7 +71,7 @@ export class QmcMapCipher implements QmcStreamCipher {
 
   decrypt(buf: Uint8Array, offset: number): void {
     for (let i = 0; i < buf.length; i++) {
-      buf[i] ^= this.getMask(offset + i)
+      buf[i] ^= this.getMask(offset + i);
     }
   }
 
@@ -79,27 +79,26 @@ export class QmcMapCipher implements QmcStreamCipher {
     if (offset > 0x7fff) offset %= 0x7fff;
 
     const idx = (offset * offset + 71214) % this.n;
-    return QmcMapCipher.rotate(this.key[idx], idx & 0x7)
+    return QmcMapCipher.rotate(this.key[idx], idx & 0x7);
   }
-
 }
 
 export class QmcRC4Cipher implements QmcStreamCipher {
   private static readonly FIRST_SEGMENT_SIZE = 0x80;
-  private static readonly SEGMENT_SIZE = 5120
+  private static readonly SEGMENT_SIZE = 5120;
 
-  S: Uint8Array
-  N: number
-  key: Uint8Array
-  hash: number
+  S: Uint8Array;
+  N: number;
+  key: Uint8Array;
+  hash: number;
 
   constructor(key: Uint8Array) {
     if (key.length == 0) {
-      throw Error("invalid key size")
+      throw Error('invalid key size');
     }
 
-    this.key = key
-    this.N = key.length
+    this.key = key;
+    this.N = key.length;
 
     // init seed box
     this.S = new Uint8Array(this.N);
@@ -109,7 +108,7 @@ export class QmcRC4Cipher implements QmcStreamCipher {
     let j = 0;
     for (let i = 0; i < this.N; ++i) {
       j = (this.S[i] + j + this.key[i % this.N]) % this.N;
-      [this.S[i], this.S[j]] = [this.S[j], this.S[i]]
+      [this.S[i], this.S[j]] = [this.S[j], this.S[i]];
     }
 
     // init hash base
@@ -125,7 +124,6 @@ export class QmcRC4Cipher implements QmcStreamCipher {
 
       this.hash = next_hash;
     }
-
   }
 
   decrypt(buf: Uint8Array, offset: number): void {
@@ -133,52 +131,50 @@ export class QmcRC4Cipher implements QmcStreamCipher {
     let processed = 0;
     const postProcess = (len: number): boolean => {
       toProcess -= len;
-      processed += len
-      offset += len
-      return toProcess == 0
-    }
+      processed += len;
+      offset += len;
+      return toProcess == 0;
+    };
 
     // Initial segment
     if (offset < QmcRC4Cipher.FIRST_SEGMENT_SIZE) {
       const len_segment = Math.min(buf.length, QmcRC4Cipher.FIRST_SEGMENT_SIZE - offset);
       this.encFirstSegment(buf.subarray(0, len_segment), offset);
-      if (postProcess(len_segment)) return
+      if (postProcess(len_segment)) return;
     }
 
     // align segment
     if (offset % QmcRC4Cipher.SEGMENT_SIZE != 0) {
       const len_segment = Math.min(QmcRC4Cipher.SEGMENT_SIZE - (offset % QmcRC4Cipher.SEGMENT_SIZE), toProcess);
       this.encASegment(buf.subarray(processed, processed + len_segment), offset);
-      if (postProcess(len_segment)) return
+      if (postProcess(len_segment)) return;
     }
 
     // Batch process segments
     while (toProcess > QmcRC4Cipher.SEGMENT_SIZE) {
       this.encASegment(buf.subarray(processed, processed + QmcRC4Cipher.SEGMENT_SIZE), offset);
-      postProcess(QmcRC4Cipher.SEGMENT_SIZE)
+      postProcess(QmcRC4Cipher.SEGMENT_SIZE);
     }
 
     // Last segment (incomplete segment)
     if (toProcess > 0) {
       this.encASegment(buf.subarray(processed), offset);
     }
-
   }
 
   private encFirstSegment(buf: Uint8Array, offset: number) {
     for (let i = 0; i < buf.length; i++) {
-
       buf[i] ^= this.key[this.getSegmentKey(offset + i)];
     }
   }
 
   private encASegment(buf: Uint8Array, offset: number) {
     // Initialise a new seed box
-    const S = this.S.slice(0)
+    const S = this.S.slice(0);
 
     // Calculate the number of bytes to skip.
     // The initial "key" derived from segment id, plus the current offset.
-    const skipLen = (offset % QmcRC4Cipher.SEGMENT_SIZE) + this.getSegmentKey(offset / QmcRC4Cipher.SEGMENT_SIZE)
+    const skipLen = (offset % QmcRC4Cipher.SEGMENT_SIZE) + this.getSegmentKey(offset / QmcRC4Cipher.SEGMENT_SIZE);
 
     // decrypt the block
     let j = 0;
@@ -186,7 +182,7 @@ export class QmcRC4Cipher implements QmcStreamCipher {
     for (let i = -skipLen; i < buf.length; i++) {
       j = (j + 1) % this.N;
       k = (S[j] + k) % this.N;
-      [S[k], S[j]] = [S[j], S[k]]
+      [S[k], S[j]] = [S[j], S[k]];
 
       if (i >= 0) {
         buf[i] ^= S[(S[j] + S[k]) % this.N];
@@ -195,8 +191,8 @@ export class QmcRC4Cipher implements QmcStreamCipher {
   }
 
   private getSegmentKey(id: number): number {
-    const seed = this.key[id % this.N]
-    const idx = (this.hash / ((id + 1) * seed) * 100.0) | 0;
-    return idx % this.N
+    const seed = this.key[id % this.N];
+    const idx = ((this.hash / ((id + 1) * seed)) * 100.0) | 0;
+    return idx % this.N;
   }
 }
