@@ -177,20 +177,27 @@ export class QmcDecoder {
       this.audioSize = this.size - keySize - 8
       const rawKey = this.file.subarray(this.audioSize, this.size - 8)
       const keyEnd = rawKey.findIndex(v => v == QmcDecoder.BYTE_COMMA)
-      const keyDec = QmcDeriveKey(rawKey.subarray(0, keyEnd))
-      this.cipher = new QmcRC4Cipher(keyDec)
+      this.setCipher(rawKey.subarray(0, keyEnd))
     } else {
       const sizeView = new DataView(last4Byte.buffer, last4Byte.byteOffset);
       const keySize = sizeView.getUint32(0, true)
       if (keySize < 0x300) {
         this.audioSize = this.size - keySize - 4
         const rawKey = this.file.subarray(this.audioSize, this.size - 4)
-        const keyDec = QmcDeriveKey(rawKey)
-        this.cipher = new QmcMapCipher(keyDec)
+        this.setCipher(rawKey)
       } else {
         this.audioSize = this.size
         this.cipher = new QmcStaticCipher()
       }
+    }
+  }
+
+  private setCipher(keyRaw: Uint8Array) {
+    const keyDec = QmcDeriveKey(keyRaw)
+    if (keyDec.length > 300) {
+      this.cipher = new QmcRC4Cipher(keyDec)
+    } else {
+      this.cipher = new QmcMapCipher(keyDec)
     }
   }
 
