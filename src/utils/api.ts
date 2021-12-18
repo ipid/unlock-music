@@ -1,5 +1,3 @@
-import { fromByteArray as Base64Encode } from 'base64-js';
-
 export const IXAREA_API_ENDPOINT = 'https://um-api.ixarea.com';
 
 export interface UpdateInfo {
@@ -15,43 +13,6 @@ export async function checkUpdate(version: string): Promise<UpdateInfo> {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ Version: version }),
-  });
-  return await resp.json();
-}
-
-export function reportKeyUsage(
-  keyData: Uint8Array,
-  maskData: number[],
-  filename: string,
-  format: string,
-  title: string,
-  artist?: string,
-  album?: string,
-) {
-  return fetch(IXAREA_API_ENDPOINT + '/qmcmask/usage', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      Mask: Base64Encode(new Uint8Array(maskData)),
-      Key: Base64Encode(keyData),
-      Artist: artist,
-      Title: title,
-      Album: album,
-      Filename: filename,
-      Format: format,
-    }),
-  });
-}
-
-interface KeyInfo {
-  Matrix44: string;
-}
-
-export async function queryKeyInfo(keyData: Uint8Array, filename: string, format: string): Promise<KeyInfo> {
-  const resp = await fetch(IXAREA_API_ENDPOINT + '/qmcmask/query', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ Format: format, Key: Base64Encode(keyData), Filename: filename, Type: 44 }),
   });
   return await resp.json();
 }
