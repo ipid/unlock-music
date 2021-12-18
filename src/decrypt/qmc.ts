@@ -49,7 +49,7 @@ export const HandlerMap: { [key: string]: Handler } = {
 export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
   if (!(raw_ext in HandlerMap)) throw `Qmc cannot handle type: ${raw_ext}`;
   const handler = HandlerMap[raw_ext];
-  let {version} = handler;
+  let { version } = handler;
 
   const fileBuffer = await GetArrayBuffer(file);
   let musicDecoded: Uint8Array | undefined;
