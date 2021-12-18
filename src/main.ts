@@ -1,25 +1,25 @@
-import Vue from 'vue'
-import App from '@/App.vue'
-import '@/registerServiceWorker'
+import Vue from 'vue';
+import App from '@/App.vue';
+import '@/registerServiceWorker';
 import {
-    Button,
-    Checkbox,
-    Col,
-    Container,
-    Footer,
-    Icon,
-    Image,
-    Link,
-    Main,
-    Notification,
-    Progress,
-    Radio,
-    Row,
-    Table,
-    TableColumn,
-    Tooltip,
-    Upload,
-    MessageBox
+  Button,
+  Checkbox,
+  Col,
+  Container,
+  Footer,
+  Icon,
+  Image,
+  Link,
+  Main,
+  Notification,
+  Progress,
+  Radio,
+  Row,
+  Table,
+  TableColumn,
+  Tooltip,
+  Upload,
+  MessageBox,
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/base.css';
 
@@ -44,5 +44,5 @@ Vue.prototype.$confirm = MessageBox.confirm;
 
 Vue.config.productionTip = false;
 new Vue({
-    render: h => h(App),
+  render: (h) => h(App),
 }).$mount('#app');
