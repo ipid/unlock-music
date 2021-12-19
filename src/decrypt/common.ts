@@ -5,6 +5,7 @@ import { Decrypt as KgmDecrypt } from '@/decrypt/kgm';
 import { Decrypt as KwmDecrypt } from '@/decrypt/kwm';
 import { Decrypt as RawDecrypt } from '@/decrypt/raw';
 import { Decrypt as TmDecrypt } from '@/decrypt/tm';
+import { Decrypt as JooxDecrypt } from '@/decrypt/joox';
 import { DecryptResult, FileInfo } from '@/decrypt/entity';
 import { SplitFilename } from '@/decrypt/utils';
 
@@ -59,6 +60,9 @@ export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
     case 'kgm':
     case 'kgma':
       rt_data = await KgmDecrypt(file.raw, raw.name, raw.ext);
+      break;
+    case 'ofl_en':
+      rt_data = await JooxDecrypt(file.raw, raw.name, raw.ext);
       break;
     default:
       throw '不支持此文件格式';

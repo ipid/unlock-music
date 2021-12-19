@@ -6,9 +6,13 @@ import {
   Checkbox,
   Col,
   Container,
+  Dialog,
+  Form,
+  FormItem,
   Footer,
   Icon,
   Image,
+  Input,
   Link,
   Main,
   Notification,
@@ -26,6 +30,10 @@ import 'element-ui/lib/theme-chalk/base.css';
 Vue.use(Link);
 Vue.use(Image);
 Vue.use(Button);
+Vue.use(Dialog);
+Vue.use(Form);
+Vue.use(FormItem);
+Vue.use(Input);
 Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Main);

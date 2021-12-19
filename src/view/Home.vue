@@ -10,6 +10,13 @@
         </el-radio>
       </el-row>
       <el-row>
+        <config-dialog :show="showConfigDialog" @done="showConfigDialog = false"></config-dialog>
+        <el-tooltip class="item" effect="dark" placement="top">
+          <div slot="content">
+            <span> 部分解密方案需要设定解密参数。 </span>
+          </div>
+          <el-button icon="el-icon-s-tools" plain @click="showConfigDialog = true">解密设定</el-button>
+        </el-tooltip>
         <el-button icon="el-icon-download" plain @click="handleDownloadAll">下载全部</el-button>
         <el-button icon="el-icon-delete" plain type="danger" @click="handleDeleteAll">清除全部</el-button>
 
@@ -35,6 +42,8 @@
 <script>
 import FileSelector from '@/component/FileSelector';
 import PreviewTable from '@/component/PreviewTable';
+import ConfigDialog from '@/component/ConfigDialog';
+
 import { DownloadBlobMusic, FilenamePolicy, FilenamePolicies, RemoveBlobMusic, DirectlyWriteFile } from '@/utils/utils';
 
 export default {
@@ -42,9 +51,11 @@ export default {
   components: {
     FileSelector,
     PreviewTable,
+    ConfigDialog,
   },
   data() {
     return {
+      showConfigDialog: false,
       tableData: [],
       playing_url: '',
       playing_auto: false,
@@ -102,6 +113,9 @@ export default {
         RemoveBlobMusic(value);
       });
       this.tableData = [];
+    },
+    handleDecryptionConfig() {
+      this.showConfigDialog = true;
     },
     handleDownloadAll() {
       let index = 0;
