@@ -4,7 +4,7 @@ declare var chrome: any;
 
 export default class ChromeExtensionStorage extends BaseStorage {
   static get works(): boolean {
-    return Boolean(chrome?.storage?.local?.set);
+    return typeof chrome !== 'undefined' && Boolean(chrome?.storage?.local?.set);
   }
 
   protected async load<T>(name: string, defaultValue: T): Promise<T> {
