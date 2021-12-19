@@ -1,26 +1,11 @@
 import QMCCryptoModule from '@jixun/qmc2-crypto/QMC2-wasm-bundle';
+import { MergeUint8Array } from '@/utils/MergeUint8Array';
 
 // 检测文件末端使用的缓冲区大小
 const DETECTION_SIZE = 40;
 
 // 每次处理 2M 的数据
 const DECRYPTION_BUF_SIZE = 2 * 1024 * 1024;
-
-function MergeUint8Array(array: Uint8Array[]): Uint8Array {
-  let length = 0;
-  array.forEach((item) => {
-    length += item.length;
-  });
-
-  let mergedArray = new Uint8Array(length);
-  let offset = 0;
-  array.forEach((item) => {
-    mergedArray.set(item, offset);
-    offset += item.length;
-  });
-
-  return mergedArray;
-}
 
 /**
  * 解密一个 QMC2 加密的文件。
