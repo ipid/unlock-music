@@ -8,14 +8,20 @@ export default class ChromeExtensionStorage extends BaseStorage {
   }
 
   protected async load<T>(name: string, defaultValue: T): Promise<T> {
-    const result = await chrome.storage.local.get({ [name]: defaultValue });
-    if (Object.prototype.hasOwnProperty.call(result, name)) {
-      return result[name];
-    }
-    return defaultValue;
+    return new Promise((resolve) => {
+      chrome.storage.local.get({ [name]: defaultValue }, (result: any) => {
+        if (Object.prototype.hasOwnProperty.call(result, name)) {
+          resolve(result[name]);
+        } else {
+          resolve(defaultValue);
+        }
+      });
+    });
   }
 
   protected async save<T>(name: string, value: T): Promise<void> {
-    return chrome.storage.local.set({ [name]: value });
+    return new Promise((resolve) => {
+      chrome.storage.local.set({ [name]: value }, resolve);
+    });
   }
 }
