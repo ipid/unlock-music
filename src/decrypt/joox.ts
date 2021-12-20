@@ -2,8 +2,8 @@ import { DecryptResult } from './entity';
 import { AudioMimeType, GetArrayBuffer, SniffAudioExt } from './utils';
 
 import jooxFactory from '@unlock-music/joox-crypto';
-import storage from '@/utils/storage';
 import { MergeUint8Array } from '@/utils/MergeUint8Array';
+import { storage } from '@/utils/storage';
 
 export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
   const uuid = await storage.loadJooxUUID('');

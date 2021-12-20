@@ -24,4 +24,16 @@ export default class ChromeExtensionStorage extends BaseStorage {
       chrome.storage.local.set({ [name]: value }, resolve);
     });
   }
+
+  public async getAll(): Promise<Record<string, any>> {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(null, resolve);
+    });
+  }
+
+  public async setAll(obj: Record<string, any>): Promise<void> {
+    return new Promise((resolve) => {
+      chrome.storage.local.set(obj, resolve);
+    });
+  }
 }
