@@ -6,6 +6,7 @@
     "128": "./img/icons/msapplication-icon-144x144.png"
   },
   "description": "在任何设备上解锁已购的加密音乐！",
+  "permissions": ["storage"],
   "offline_enabled": true,
   "options_page": "./index.html",
   "homepage_url": "https://github.com/ix64/unlock-music",
