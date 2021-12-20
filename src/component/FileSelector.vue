@@ -39,6 +39,7 @@
 import { spawn, Worker, Pool } from 'threads';
 import { CommonDecrypt } from '@/decrypt/common.ts';
 import { DecryptQueue } from '@/utils/utils';
+import { storage } from '@/utils/storage';
 
 export default {
   name: 'FileSelector',
@@ -76,7 +77,7 @@ export default {
       this.queue.queue(async (dec = CommonDecrypt) => {
         console.log('start handling', file.name);
         try {
-          this.$emit('success', await dec(file));
+          this.$emit('success', await dec(file, await storage.getAll()));
         } catch (e) {
           console.error(e);
           this.$emit('error', e, file.name);
