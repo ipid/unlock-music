@@ -1,9 +1,11 @@
+import jooxFactory from '@unlock-music/joox-crypto';
+
 import { DecryptResult } from './entity';
 import { AudioMimeType, GetArrayBuffer, SniffAudioExt } from './utils';
 
-import jooxFactory from '@unlock-music/joox-crypto';
 import { MergeUint8Array } from '@/utils/MergeUint8Array';
 import { storage } from '@/utils/storage';
+import { extractQQMusicMeta } from '@/utils/qm_meta';
 
 export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
   const uuid = await storage.loadJooxUUID('');
@@ -20,15 +22,21 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
   const musicDecoded = MergeUint8Array(decryptor.decryptFile(fileBuffer));
   const ext = SniffAudioExt(musicDecoded);
   const mime = AudioMimeType[ext];
-  const musicBlob = new Blob([musicDecoded], { type: mime });
+
+  const { album, artist, imgUrl, blob, title } = await extractQQMusicMeta(
+    new Blob([musicDecoded], { type: mime }),
+    raw_filename,
+    ext,
+  );
 
   return {
-    title: raw_filename.replace(/\.[^\.]+$/, ''),
-    artist: '未知',
-    album: '未知',
-    file: URL.createObjectURL(musicBlob),
-    blob: musicBlob,
-    mime: mime,
+    title: title,
+    artist: artist,
     ext: ext,
+    album: album,
+    picture: imgUrl,
+    file: URL.createObjectURL(blob),
+    blob: blob,
+    mime: mime,
   };
 }
