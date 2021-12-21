@@ -1,21 +1,10 @@
 import { QmcMapCipher, QmcRC4Cipher, QmcStaticCipher, QmcStreamCipher } from './qmc_cipher';
-import {
-  AudioMimeType,
-  GetArrayBuffer,
-  GetCoverFromFile,
-  GetImageFromURL,
-  GetMetaFromFile,
-  SniffAudioExt,
-  WriteMetaToFlac,
-  WriteMetaToMp3,
-} from '@/decrypt/utils';
-import { parseBlob as metaParseBlob } from 'music-metadata-browser';
+import { AudioMimeType, GetArrayBuffer, SniffAudioExt } from '@/decrypt/utils';
 import { DecryptQMCWasm } from './qmc_wasm';
 
-import iconv from 'iconv-lite';
 import { DecryptResult } from '@/decrypt/entity';
-import { queryAlbumCover } from '@/utils/api';
 import { QmcDeriveKey } from '@/decrypt/qmc_key';
+import { extractQQMusicMeta } from '@/utils/qm_meta';
 
 interface Handler {
   ext: string;
@@ -72,66 +61,22 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
   const ext = SniffAudioExt(musicDecoded, handler.ext);
   const mime = AudioMimeType[ext];
 
-  let musicBlob = new Blob([musicDecoded], { type: mime });
+  const { album, artist, imgUrl, blob, title } = await extractQQMusicMeta(
+    new Blob([musicDecoded], { type: mime }),
+    raw_filename,
+    ext,
+  );
 
-  const musicMeta = await metaParseBlob(musicBlob);
-  for (let metaIdx in musicMeta.native) {
-    if (!musicMeta.native.hasOwnProperty(metaIdx)) continue;
-    if (musicMeta.native[metaIdx].some((item) => item.id === 'TCON' && item.value === '(12)')) {
-      console.warn('try using gbk encoding to decode meta');
-      musicMeta.common.artist = iconv.decode(new Buffer(musicMeta.common.artist ?? ''), 'gbk');
-      musicMeta.common.title = iconv.decode(new Buffer(musicMeta.common.title ?? ''), 'gbk');
-      musicMeta.common.album = iconv.decode(new Buffer(musicMeta.common.album ?? ''), 'gbk');
-    }
-  }
-
-  const info = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist);
-
-  let imgUrl = GetCoverFromFile(musicMeta);
-  if (!imgUrl) {
-    imgUrl = await getCoverImage(info.title, info.artist, musicMeta.common.album);
-    if (imgUrl) {
-      const imageInfo = await GetImageFromURL(imgUrl);
-      if (imageInfo) {
-        imgUrl = imageInfo.url;
-        try {
-          const newMeta = { picture: imageInfo.buffer, title: info.title, artists: info.artist?.split(' _ ') };
-          if (ext === 'mp3') {
-            musicDecoded = WriteMetaToMp3(Buffer.from(musicDecoded), newMeta, musicMeta);
-            musicBlob = new Blob([musicDecoded], { type: mime });
-          } else if (ext === 'flac') {
-            musicDecoded = WriteMetaToFlac(Buffer.from(musicDecoded), newMeta, musicMeta);
-            musicBlob = new Blob([musicDecoded], { type: mime });
-          } else {
-            console.info('writing metadata for ' + ext + ' is not being supported for now');
-          }
-        } catch (e) {
-          console.warn('Error while appending cover image to file ' + e);
-        }
-      }
-    }
-  }
   return {
-    title: info.title,
-    artist: info.artist,
+    title: title,
+    artist: artist,
     ext: ext,
-    album: musicMeta.common.album,
+    album: album,
     picture: imgUrl,
-    file: URL.createObjectURL(musicBlob),
-    blob: musicBlob,
+    file: URL.createObjectURL(blob),
+    blob: blob,
     mime: mime,
   };
-}
-
-async function getCoverImage(title: string, artist?: string, album?: string): Promise<string> {
-  const song_query_url = 'https://stats.ixarea.com/apis' + '/music/qq-cover';
-  try {
-    const data = await queryAlbumCover(title, artist, album);
-    return `${song_query_url}/${data.Type}/${data.Id}`;
-  } catch (e) {
-    console.warn(e);
-  }
-  return '';
 }
 
 export class QmcDecoder {
