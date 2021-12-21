@@ -1,4 +1,4 @@
-import BaseStorage from './BaseStorage';
+import BaseStorage, { KEY_PREFIX } from './BaseStorage';
 
 declare var chrome: any;
 
@@ -27,7 +27,15 @@ export default class ChromeExtensionStorage extends BaseStorage {
 
   public async getAll(): Promise<Record<string, any>> {
     return new Promise((resolve) => {
-      chrome.storage.local.get(null, resolve);
+      chrome.storage.local.get(null, (obj: Record<string, any>) => {
+        const result: Record<string, any> = {};
+        for (const [key, value] of Object.entries(obj)) {
+          if (key.startsWith(KEY_PREFIX)) {
+            result[key] = value;
+          }
+        }
+        resolve(result);
+      });
     });
   }
 

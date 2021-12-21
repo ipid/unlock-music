@@ -1,4 +1,5 @@
-const KEY_JOOX_UUID = 'joox.uuid';
+export const KEY_PREFIX = 'um.conf.';
+const KEY_JOOX_UUID = `${KEY_PREFIX}joox.uuid`;
 
 export default abstract class BaseStorage {
   protected abstract save<T>(name: string, value: T): Promise<void>;
