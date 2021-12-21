@@ -1,4 +1,4 @@
-import BaseStorage from './BaseStorage';
+import BaseStorage, { KEY_PREFIX } from './BaseStorage';
 
 export default class BrowserNativeStorage extends BaseStorage {
   public static get works() {
@@ -10,7 +10,11 @@ export default class BrowserNativeStorage extends BaseStorage {
     if (result === null) {
       return defaultValue;
     }
-    return JSON.parse(result);
+    try {
+      return JSON.parse(result);
+    } catch {
+      return defaultValue;
+    }
   }
 
   protected async save<T>(name: string, value: T): Promise<void> {
@@ -20,14 +24,20 @@ export default class BrowserNativeStorage extends BaseStorage {
   public async getAll(): Promise<Record<string, any>> {
     const result = {};
     for (const [key, value] of Object.entries(localStorage)) {
-      Object.assign(result, { [key]: JSON.parse(value) });
+      if (key.startsWith(KEY_PREFIX)) {
+        try {
+          Object.assign(result, { [key]: JSON.parse(value) });
+        } catch {
+          // ignored
+        }
+      }
     }
     return result;
   }
 
   public async setAll(obj: Record<string, any>): Promise<void> {
     for (const [key, value] of Object.entries(obj)) {
-      localStorage.setItem(key, JSON.stringify(value));
+      await this.save(key, value);
     }
   }
 }
