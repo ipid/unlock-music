@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
 name: Test Build
 on:
   push:
@@ -27,7 +29,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm ci
-      - uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
+        # note: forks can not access to GITHUB_TOKEN for coverage update.
+        #       instead, we just ran the test in this case.
+      - name: Test only
+        if: github.event_name != 'push'
+        run: npm test
+      - name: Test + Publish Coverage
+        uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
+        if: github.event_name == 'push'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           annotations: none
