@@ -30,6 +30,7 @@ jobs:
       - uses: ArtiomTr/jest-coverage-report-action@v2.0-rc.6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          annotations: none
   build:
     runs-on: ubuntu-latest
     strategy:
