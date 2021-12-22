@@ -65,7 +65,6 @@ import { storage } from '@/utils/storage';
 
 // FIXME: 看起来不会触发这个验证提示？
 function validateJooxUUID(rule, value, callback) {
-  debugger;
   if (!value || !/^[\da-fA-F]{32}$/.test(value)) {
     callback(new Error('无效的 Joox UUID，请参考 Wiki 获取。'));
   } else {
