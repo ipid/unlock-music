@@ -26,8 +26,8 @@ form >>> input {
 </style>
 
 <template>
-  <el-dialog @close="cancel()" title="解密设定" :rules="rules" :visible="show" custom-class="um-config-dialog" center>
-    <el-form ref="form" status-icon :model="form" label-width="0">
+  <el-dialog @close="cancel()" title="解密设定" :visible="show" custom-class="um-config-dialog" center>
+    <el-form ref="form" :rules="rules" status-icon :model="form" label-width="0">
       <section>
         <label>
           <span>
@@ -74,7 +74,7 @@ function validateJooxUUID(rule, value, callback) {
 }
 
 const rules = {
-  jooxUUID: { validator: validateJooxUUID, trigger: 'blur' },
+  jooxUUID: { validator: validateJooxUUID, trigger: 'change' },
 };
 
 export default {
