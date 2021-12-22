@@ -32,12 +32,7 @@ form >>> input {
         <label>
           <span>
             JOOX Music ·
-            <ruby>
-              设备唯一识别码
-              <rp>(</rp>
-              <rt>Device Unique Identifier</rt>
-              <rp>)</rp></ruby
-            >
+            <Ruby caption="Unique Device Identifier">设备唯一识别码</Ruby>
           </span>
           <el-form-item prop="jooxUUID">
             <el-input type="text" v-model="form.jooxUUID" clearable maxlength="32" show-word-limit> </el-input>
@@ -62,6 +57,7 @@ form >>> input {
 
 <script>
 import { storage } from '@/utils/storage';
+import Ruby from './Ruby';
 
 // FIXME: 看起来不会触发这个验证提示？
 function validateJooxUUID(rule, value, callback) {
@@ -77,7 +73,9 @@ const rules = {
 };
 
 export default {
-  components: {},
+  components: {
+    Ruby,
+  },
   props: {
     show: { type: Boolean, required: true },
   },
