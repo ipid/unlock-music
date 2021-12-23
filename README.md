@@ -1,31 +1,36 @@
 # Unlock Music 音乐解锁
 
 - 在浏览器中解锁加密的音乐文件。 Unlock encrypted music file in the browser.
-- unlock-music项目是以学习和技术研究的初衷创建的，修改、再分发时请遵循[License](https://github.com/ix64/unlock-music/blob/master/LICENSE)
-- Unlock Music的CLI版本正在开发中。
-- 我们新建了Telegram群组，欢迎加入！[https://t.me/unlock_music_chat](https://t.me/unlock_music_chat)
-- [CLI版本 Alpha](https://github.com/unlock-music/cli) 大批量转换建议使用CLI版本
-- [相关的其他项目](https://github.com/ix64/unlock-music/wiki/%E5%92%8CUnlockMusic%E7%9B%B8%E5%85%B3%E7%9A%84%E9%A1%B9%E7%9B%AE)
+- Unlock Music 项目是以学习和技术研究的初衷创建的，修改、再分发时请遵循 [License][license]
+- Unlock Music 的 CLI 版本可以在 [unlock-music/cli][repo_cli] 找到，大批量转换建议使用 CLI 版本。
+- 我们新建了 Telegram 群组 [`@unlock_music_chat`][tg_group] ，欢迎加入！
+- [相关的其他项目][related_projects]
 
-![Test Build](https://github.com/ix64/unlock-music/workflows/Test%20Build/badge.svg)
-![GitHub releases](https://img.shields.io/github/downloads/ix64/unlock-music/total)
-![Docker Pulls](https://img.shields.io/docker/pulls/ix64/unlock-music)
+![Test Build](https://github.com/unlock-music/unlock-music/workflows/Test%20Build/badge.svg)
+![GitHub releases](https://img.shields.io/github/downloads/unlock-music/unlock-music/total)
+![Docker Pulls](https://img.shields.io/docker/pulls/unlock-music/unlock-music)
+
+[license]: https://github.com/unlock-music/unlock-music/blob/master/LICENSE
+[repo_cli]: https://github.com/unlock-music/cli
+[tg_group]: https://t.me/unlock_music_chat
+[related_projects]: https://github.com/unlock-music/unlock-music/wiki/和UnlockMusic相关的项目
 
 ## 特性
 
 ### 支持的格式
 
-- [x] QQ音乐 (.qmc0/.qmc2/.qmc3/.qmcflac/.qmcogg/[.tkm](https://github.com/ix64/unlock-music/issues/9))
+- [x] QQ 音乐 (.qmc0/.qmc2/.qmc3/.qmcflac/.qmcogg/[.tkm](https://github.com/unlock-music/unlock-music/issues/9))
   - [x] 写入封面图片
-- [x] Moo音乐格式 ([.bkcmp3/.bkcflac](https://github.com/ix64/unlock-music/issues/11))
-- [x] QQ音乐Tm格式 (.tm0/.tm2/.tm3/.tm6)
-- [x] QQ音乐新格式 (实验性支持)
-  - [x] .mflac
-  - [x] [.mgg](https://github.com/ix64/unlock-music/issues/3)
+- [x] Moo 音乐格式 ([.bkcmp3/.bkcflac](https://github.com/unlock-music/unlock-music/issues/11))
+- [x] QQ 音乐 Tm 格式 (.tm0/.tm2/.tm3/.tm6)
+- [x] QQ 音乐新格式 ([.mflac/.mgg](https://github.com/unlock-music/unlock-music/issues/3))
+- [x] <ruby>QQ 音乐海外版<rt>JOOX Music</rt></ruby> (.)
 - [x] 虾米音乐格式 (.xm) (测试阶段)
 - [x] 酷我音乐格式 (.kwm) (测试阶段)
-- [x] 酷狗音乐格式 (
-  .kgm) ([CLI版本](https://github.com/ix64/unlock-music/wiki/%E5%85%B6%E4%BB%96%E9%9F%B3%E4%B9%90%E6%A0%BC%E5%BC%8F%E5%B7%A5%E5%85%B7#%E9%85%B7%E7%8B%97%E9%9F%B3%E4%B9%90-kgmvpr%E8%A7%A3%E9%94%81%E5%B7%A5%E5%85%B7))
+- [x] 酷狗音乐格式 (.kgm) ([CLI 版本][kgm_cli])
+
+[kgm_cli]: https://github.com/unlock-music/unlock-music/wiki/其他音乐格式工具#酷狗音乐-kgmvpr解锁工具
+[joox_wiki]: https://github.com/unlock-music/joox-crypto/wiki/加密格式
 
 ### 其他特性
 
@@ -33,7 +38,7 @@
 - [x] 拖放文件
 - [x] 在线播放
 - [x] 批量解锁
-- [x] 渐进式Web应用
+- [x] 渐进式 Web 应用 (PWA)
 - [x] 多线程
 
 ## 使用方法
@@ -46,24 +51,38 @@
 
 ### 使用已构建版本
 
-- 从[GitHub Release](https://github.com/ix64/unlock-music/releases/latest)下载已构建的版本
-  - 本地使用请下载`legacy版本`（`modern版本`只能通过**http/https协议**访问）
+- 从[GitHub Release](https://github.com/unlock-music/unlock-music/releases/latest)下载已构建的版本
+  - 本地使用请下载`legacy版本`（`modern版本`只能通过**http/https 协议**访问）
 - 解压缩后即可部署或本地使用（**请勿直接运行源代码**）
 
-### 使用Docker镜像
+### 使用 Docker 镜像
 
 ```shell
-docker run --name unlock-music -d -p 8080:80 ix64/unlock-music
+docker run --name unlock-music -d -p 8080:80 unlock-music/unlock-music
 ```
 
 ### 自行构建
 
 - 环境要求
-  - nodejs
+  - nodejs (v16.x)
   - npm
 
-1. 获取项目源代码后执行 `npm install` 安装相关依赖
-2. 执行 `npm run build` 即可进行构建，构建输出为 dist 目录
+1. 获取项目源代码后安装相关依赖：
 
-- `npm run serve` 可用于开发
-3. 如需构建浏览器扩展，build完成后还需要执行`npm run make-extension`
+   ```sh
+   npm ci
+   ```
+
+2. 然后进行构建。编译后的文件保存到 dist 目录下：
+
+   ```sh
+   npm run build
+   ```
+
+   - 如果是用于开发，可以执行 `npm run serve`。
+
+3. 如需构建浏览器扩展，build 完成后还需要执行：
+
+   ```sh
+   npm run make-extension
+   ```
