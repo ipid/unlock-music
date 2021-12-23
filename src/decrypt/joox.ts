@@ -23,10 +23,12 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
   const ext = SniffAudioExt(musicDecoded);
   const mime = AudioMimeType[ext];
 
+  const songId = raw_filename.match(/^(\d+)\s\[mqms\d*]$/i)?.[1];
   const { album, artist, imgUrl, blob, title } = await extractQQMusicMeta(
     new Blob([musicDecoded], { type: mime }),
     raw_filename,
     ext,
+    songId,
   );
 
   return {
