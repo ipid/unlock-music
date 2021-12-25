@@ -145,7 +145,7 @@ export class QmcDecoder {
       if (keyEnd < 0) {
         throw new Error('invalid key: search song id failed');
       }
-      this._songID = parseInt(textEnc.decode(idBuf.subarray(0, idEnd)));
+      this._songID = parseInt(textEnc.decode(idBuf.subarray(0, idEnd)), 10);
     } else {
       const sizeView = new DataView(last4Byte.buffer, last4Byte.byteOffset);
       const keySize = sizeView.getUint32(0, true);
