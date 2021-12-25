@@ -3,6 +3,7 @@ import { AudioMimeType, GetArrayBuffer, SniffAudioExt } from '@/decrypt/utils';
 
 import { DecryptResult } from '@/decrypt/entity';
 import { QmcDeriveKey } from '@/decrypt/qmc_key';
+import { DecryptQMCWasm } from '@/decrypt/qmc_wasm';
 import { extractQQMusicMeta } from '@/utils/qm_meta';
 
 interface Handler {
@@ -41,17 +42,20 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
 
   const fileBuffer = await GetArrayBuffer(file);
   let musicDecoded: Uint8Array | undefined;
-  let musicID: number | undefined;
+  let musicID: number | string | undefined;
 
-  // todo: wasm decoder doesn't support extract the song id for .mgg1/.mflac0 currently
-  // if (version === 2 && globalThis.WebAssembly) {
-  //   console.log('qmc: using wasm decoder');
-  //   const v2Decrypted = await DecryptQMCWasm(fileBuffer);
-  //   // 如果 v2 检测失败，降级到 v1 再尝试一次
-  //   if (v2Decrypted) {
-  //     musicDecoded = v2Decrypted;
-  //   }
-  // }
+  if (version === 2 && globalThis.WebAssembly) {
+    console.log('qmc: using wasm decoder');
+
+    const v2Decrypted = await DecryptQMCWasm(fileBuffer);
+    // 若 v2 检测失败，降级到 v1 再尝试一次
+    if (v2Decrypted.success) {
+      musicDecoded = v2Decrypted.data;
+      musicID = v2Decrypted.songId;
+    } else {
+      console.warn('qmc2-wasm failed with error %s', v2Decrypted.error || '(no error)');
+    }
+  }
 
   if (!musicDecoded) {
     // may throw error

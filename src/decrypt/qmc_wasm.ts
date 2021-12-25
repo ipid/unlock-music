@@ -1,5 +1,6 @@
 import QMCCryptoModule from '@jixun/qmc2-crypto/QMC2-wasm-bundle';
 import { MergeUint8Array } from '@/utils/MergeUint8Array';
+import { QMCCrypto } from '@jixun/qmc2-crypto/QMCCrypto';
 
 // 检测文件末端使用的缓冲区大小
 const DETECTION_SIZE = 40;
@@ -7,14 +8,22 @@ const DETECTION_SIZE = 40;
 // 每次处理 2M 的数据
 const DECRYPTION_BUF_SIZE = 2 * 1024 * 1024;
 
+export interface QMC2DecryptionResult {
+  success: boolean;
+  data: Uint8Array;
+  songId: string | number;
+  error: string;
+}
+
 /**
  * 解密一个 QMC2 加密的文件。
  *
  * 如果检测并解密成功，返回解密后的 Uint8Array 数据。
  * @param  {ArrayBuffer} mggBlob 读入的文件 Blob
- * @return {Promise<Uint8Array|false>}
  */
-export async function DecryptQMCWasm(mggBlob: ArrayBuffer) {
+export async function DecryptQMCWasm(mggBlob: ArrayBuffer): Promise<QMC2DecryptionResult> {
+  const result: QMC2DecryptionResult = { success: false, data: new Uint8Array(), songId: 0, error: '' };
+
   // 初始化模组
   const QMCCrypto = await QMCCryptoModule();
 
@@ -34,12 +43,26 @@ export async function DecryptQMCWasm(mggBlob: ArrayBuffer) {
   const position = QMCCrypto.getValue(pDetectionResult, 'i32');
   const len = QMCCrypto.getValue(pDetectionResult + 4, 'i32');
 
+  result.success = detectOK;
+  result.error = QMCCrypto.UTF8ToString(
+    pDetectionResult + QMCCrypto.offsetof_error_msg(),
+    QMCCrypto.sizeof_error_msg(),
+  );
+  const songId = QMCCrypto.UTF8ToString(pDetectionResult + QMCCrypto.offsetof_song_id(), QMCCrypto.sizeof_song_id());
+  if (!songId) {
+    console.debug('qmc2-wasm: songId not found');
+  } else if (/^\d+$/.test(songId)) {
+    result.songId = songId;
+  } else {
+    console.warn('qmc2-wasm: Invalid songId: %s', songId);
+  }
+
   // 释放内存
   QMCCrypto._free(pDetectionBuf);
   QMCCrypto._free(pDetectionResult);
 
   if (!detectOK) {
-    return false;
+    return result;
   }
 
   // 计算解密后文件的大小。
@@ -75,5 +98,7 @@ export async function DecryptQMCWasm(mggBlob: ArrayBuffer) {
   QMCCrypto._free(buf);
   hCrypto.delete();
 
-  return MergeUint8Array(decryptedParts);
+  result.data = MergeUint8Array(decryptedParts);
+
+  return result;
 }
