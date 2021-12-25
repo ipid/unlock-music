@@ -108,7 +108,6 @@ export async function querySongInfoById(id: string | number): Promise<SongInfoRe
   throw new Error('请求信息失败');
 }
 
-const QQ_MUSIC_COVER_URI = 'https://stats.ixarea.com/apis/music/qq-cover';
 export function getQMImageURLFromPMID(pmid: string, type = 1): string {
-  return `${QQ_MUSIC_COVER_URI}/${type}/${pmid}`;
+  return `${IXAREA_API_ENDPOINT}/music/qq-cover/${type}/${pmid}`;
 }
