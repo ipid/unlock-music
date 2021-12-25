@@ -8,20 +8,22 @@
 
 ![Test Build](https://github.com/unlock-music/unlock-music/workflows/Test%20Build/badge.svg)
 ![GitHub releases](https://img.shields.io/github/downloads/unlock-music/unlock-music/total)
-![Docker Pulls](https://img.shields.io/docker/pulls/unlock-music/unlock-music)
+![Docker Pulls](https://img.shields.io/docker/pulls/ix64/unlock-music)
 
 [license]: https://github.com/unlock-music/unlock-music/blob/master/LICENSE
+
 [repo_cli]: https://github.com/unlock-music/cli
+
 [tg_group]: https://t.me/unlock_music_chat
+
 [related_projects]: https://github.com/unlock-music/unlock-music/wiki/和UnlockMusic相关的项目
 
 ## 特性
 
 ### 支持的格式
 
-- [x] QQ 音乐 (.qmc0/.qmc2/.qmc3/.qmcflac/.qmcogg/[.tkm](https://github.com/unlock-music/unlock-music/issues/9))
-  - [x] 写入封面图片
-- [x] Moo 音乐格式 ([.bkcmp3/.bkcflac](https://github.com/unlock-music/unlock-music/issues/11))
+- [x] QQ 音乐 (.qmc0/.qmc2/.qmc3/.qmcflac/.qmcogg/.tkm)
+- [x] Moo 音乐格式 (.bkcmp3/.bkcflac)
 - [x] QQ 音乐 Tm 格式 (.tm0/.tm2/.tm3/.tm6)
 - [x] QQ 音乐新格式 ([.mflac/.mgg](https://github.com/unlock-music/unlock-music/issues/3))
 - [x] <ruby>QQ 音乐海外版<rt>JOOX Music</rt></ruby> (.)
@@ -30,16 +32,17 @@
 - [x] 酷狗音乐格式 (.kgm) ([CLI 版本][kgm_cli])
 
 [kgm_cli]: https://github.com/unlock-music/unlock-music/wiki/其他音乐格式工具#酷狗音乐-kgmvpr解锁工具
+
 [joox_wiki]: https://github.com/unlock-music/joox-crypto/wiki/加密格式
 
 ### 其他特性
 
 - [x] 在浏览器中解锁
 - [x] 拖放文件
-- [x] 在线播放
 - [x] 批量解锁
 - [x] 渐进式 Web 应用 (PWA)
 - [x] 多线程
+- [x] 写入Meta和封面图片
 
 ## 使用方法
 
@@ -52,13 +55,13 @@
 ### 使用已构建版本
 
 - 从[GitHub Release](https://github.com/unlock-music/unlock-music/releases/latest)下载已构建的版本
-  - 本地使用请下载`legacy版本`（`modern版本`只能通过**http/https 协议**访问）
+  - 本地使用请下载`legacy版本`（`modern版本`只能通过 **http(s)协议** 访问）
 - 解压缩后即可部署或本地使用（**请勿直接运行源代码**）
 
 ### 使用 Docker 镜像
 
 ```shell
-docker run --name unlock-music -d -p 8080:80 unlock-music/unlock-music
+docker run --name unlock-music -d -p 8080:80 ix64/unlock-music
 ```
 
 ### 自行构建
@@ -79,7 +82,7 @@ docker run --name unlock-music -d -p 8080:80 unlock-music/unlock-music
    npm run build
    ```
 
-   - 如果是用于开发，可以执行 `npm run serve`。
+  - 如果是用于开发，可以执行 `npm run serve`。
 
 3. 如需构建浏览器扩展，build 完成后还需要执行：
 
