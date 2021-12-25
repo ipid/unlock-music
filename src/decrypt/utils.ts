@@ -145,7 +145,7 @@ export function WriteMetaToMp3(audioData: Buffer, info: IMusicMeta, original: IA
     writer.setFrame('APIC', {
       type: 3,
       data: info.picture,
-      description: info.picture_desc || 'Cover',
+      description: info.picture_desc || '',
     });
   }
   return writer.addTag();
