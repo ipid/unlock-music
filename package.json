@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@babel/preset-typescript": "^7.16.5",
-    "@jixun/qmc2-crypto": "^0.0.5-R4",
+    "@jixun/qmc2-crypto": "^0.0.6-R1",
     "@unlock-music/joox-crypto": "^0.0.1-R5",
     "base64-js": "^1.5.1",
     "browser-id3-writer": "^4.4.0",
