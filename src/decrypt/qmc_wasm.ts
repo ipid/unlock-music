@@ -25,7 +25,14 @@ export async function DecryptQMCWasm(mggBlob: ArrayBuffer): Promise<QMC2Decrypti
   const result: QMC2DecryptionResult = { success: false, data: new Uint8Array(), songId: 0, error: '' };
 
   // 初始化模组
-  const QMCCrypto = await QMCCryptoModule();
+  let QMCCrypto: QMCCrypto;
+
+  try {
+    QMCCrypto = await QMCCryptoModule();
+  } catch (err: any) {
+    result.error = err?.message || 'wasm 加载失败';
+    return result;
+  }
 
   // 申请内存块，并文件末端数据到 WASM 的内存堆
   const detectionBuf = new Uint8Array(mggBlob.slice(-DETECTION_SIZE));
