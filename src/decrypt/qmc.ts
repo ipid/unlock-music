@@ -1,6 +1,5 @@
 import { QmcMapCipher, QmcRC4Cipher, QmcStaticCipher, QmcStreamCipher } from './qmc_cipher';
 import { AudioMimeType, GetArrayBuffer, SniffAudioExt } from '@/decrypt/utils';
-import { DecryptQMCWasm } from './qmc_wasm';
 
 import { DecryptResult } from '@/decrypt/entity';
 import { QmcDeriveKey } from '@/decrypt/qmc_key';
@@ -42,20 +41,24 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
 
   const fileBuffer = await GetArrayBuffer(file);
   let musicDecoded: Uint8Array | undefined;
+  let musicID: number | undefined;
 
-  if (version === 2 && globalThis.WebAssembly) {
-    console.log('qmc: using wasm decoder');
-    const v2Decrypted = await DecryptQMCWasm(fileBuffer);
-    // 如果 v2 检测失败，降级到 v1 再尝试一次
-    if (v2Decrypted) {
-      musicDecoded = v2Decrypted;
-    }
-  }
+  // todo: wasm decoder doesn't support extract the song id for .mgg1/.mflac0 currently
+  // if (version === 2 && globalThis.WebAssembly) {
+  //   console.log('qmc: using wasm decoder');
+  //   const v2Decrypted = await DecryptQMCWasm(fileBuffer);
+  //   // 如果 v2 检测失败，降级到 v1 再尝试一次
+  //   if (v2Decrypted) {
+  //     musicDecoded = v2Decrypted;
+  //   }
+  // }
+
   if (!musicDecoded) {
     // may throw error
     console.log('qmc: using js decoder');
     const d = new QmcDecoder(new Uint8Array(fileBuffer));
     musicDecoded = d.decrypt();
+    musicID = d.songID;
   }
 
   const ext = SniffAudioExt(musicDecoded, handler.ext);
@@ -65,6 +68,7 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
     new Blob([musicDecoded], { type: mime }),
     raw_filename,
     ext,
+    musicID,
   );
 
   return {
@@ -81,19 +85,25 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
 
 export class QmcDecoder {
   private static readonly BYTE_COMMA = ','.charCodeAt(0);
-  file: Uint8Array;
-  size: number;
-  decoded: boolean = false;
-  audioSize?: number;
-  cipher?: QmcStreamCipher;
+  private readonly file: Uint8Array;
+  private readonly size: number;
+  private decoded: boolean = false;
+  private audioSize?: number;
+  private cipher?: QmcStreamCipher;
 
-  constructor(file: Uint8Array) {
+  public constructor(file: Uint8Array) {
     this.file = file;
     this.size = file.length;
     this.searchKey();
   }
 
-  decrypt(): Uint8Array {
+  private _songID?: number;
+
+  public get songID() {
+    return this._songID;
+  }
+
+  public decrypt(): Uint8Array {
     if (!this.cipher) {
       throw new Error('no cipher found');
     }
@@ -118,9 +128,20 @@ export class QmcDecoder {
       const sizeView = new DataView(sizeBuf.buffer, sizeBuf.byteOffset);
       const keySize = sizeView.getUint32(0, false);
       this.audioSize = this.size - keySize - 8;
+
       const rawKey = this.file.subarray(this.audioSize, this.size - 8);
       const keyEnd = rawKey.findIndex((v) => v == QmcDecoder.BYTE_COMMA);
+      if (keyEnd < 0) {
+        throw new Error('invalid key: search raw key failed');
+      }
       this.setCipher(rawKey.subarray(0, keyEnd));
+
+      const idBuf = rawKey.subarray(keyEnd + 1);
+      const idEnd = idBuf.findIndex((v) => v == QmcDecoder.BYTE_COMMA);
+      if (keyEnd < 0) {
+        throw new Error('invalid key: search song id failed');
+      }
+      this._songID = parseInt(textEnc.decode(idBuf.subarray(0, idEnd)));
     } else {
       const sizeView = new DataView(last4Byte.buffer, last4Byte.byteOffset);
       const keySize = sizeView.getUint32(0, true);
