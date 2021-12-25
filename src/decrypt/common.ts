@@ -5,10 +5,18 @@ import { Decrypt as KgmDecrypt } from '@/decrypt/kgm';
 import { Decrypt as KwmDecrypt } from '@/decrypt/kwm';
 import { Decrypt as RawDecrypt } from '@/decrypt/raw';
 import { Decrypt as TmDecrypt } from '@/decrypt/tm';
+import { Decrypt as JooxDecrypt } from '@/decrypt/joox';
 import { DecryptResult, FileInfo } from '@/decrypt/entity';
 import { SplitFilename } from '@/decrypt/utils';
+import { storage } from '@/utils/storage';
+import InMemoryStorage from '@/utils/storage/InMemoryStorage';
 
-export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
+export async function CommonDecrypt(file: FileInfo, config: Record<string, any>): Promise<DecryptResult> {
+  // Worker thread will fallback to in-memory storage.
+  if (storage instanceof InMemoryStorage) {
+    await storage.setAll(config);
+  }
+
   const raw = SplitFilename(file.name);
   let rt_data: DecryptResult;
   switch (raw.ext) {
@@ -59,6 +67,9 @@ export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
     case 'kgm':
     case 'kgma':
       rt_data = await KgmDecrypt(file.raw, raw.name, raw.ext);
+      break;
+    case 'ofl_en':
+      rt_data = await JooxDecrypt(file.raw, raw.name, raw.ext);
       break;
     default:
       throw '不支持此文件格式';
