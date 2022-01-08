@@ -43,8 +43,16 @@ export async function CommonDecrypt(file: FileInfo, config: Record<string, any>)
     case 'qmcflac': //QQ Music Android Flac
     case 'qmcogg': //QQ Music Android Ogg
     case 'tkm': //QQ Music Accompaniment M4a
-    case 'bkcmp3': //Moo Music Mp3
-    case 'bkcflac': //Moo Music Flac
+    // Moo Music
+    case 'bkcmp3':
+    case 'bkcm4a':
+    case 'bkcflac':
+    case 'bkcwav':
+    case 'bkcape':
+    case 'bkcogg':
+    case 'bkcwma':
+    // QQ Music v2
+    case 'mggl': //QQ Music Mac
     case 'mflac': //QQ Music New Flac
     case 'mflac0': //QQ Music New Flac
     case 'mgg': //QQ Music New Ogg
