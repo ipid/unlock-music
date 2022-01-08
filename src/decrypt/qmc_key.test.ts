@@ -16,7 +16,7 @@ function loadTestDataKeyDecrypt(name: string): {
 }
 
 test('key dec: real file', async () => {
-  const cases = ['mflac_map', 'mgg_map', 'mflac0_rc4'];
+  const cases = ['mflac_map', 'mgg_map', 'mflac0_rc4', 'mflac_rc4'];
   for (const name of cases) {
     const { clearText, cipherText } = loadTestDataKeyDecrypt(name);
     const buf = QmcDeriveKey(cipherText);

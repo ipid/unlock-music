@@ -18,7 +18,7 @@ function loadTestDataDecoder(name: string): {
 }
 
 test('qmc: real file', async () => {
-  const cases = ['mflac0_rc4', 'mflac_map', 'mgg_map', 'qmc0_static'];
+  const cases = ['mflac0_rc4', 'mflac_rc4', 'mflac_map', 'mgg_map', 'qmc0_static'];
   for (const name of cases) {
     const { clearText, cipherText } = loadTestDataDecoder(name);
     const c = new QmcDecoder(cipherText);

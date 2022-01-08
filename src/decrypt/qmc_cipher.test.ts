@@ -69,7 +69,7 @@ test('map cipher: real file', async () => {
 });
 
 test('rc4 cipher: real file', async () => {
-  const cases = ['mflac0_rc4'];
+  const cases = ['mflac0_rc4', 'mflac_rc4'];
   for (const name of cases) {
     const { key, clearText, cipherText } = loadTestDataCipher(name);
     const c = new QmcRC4Cipher(key);
@@ -81,7 +81,7 @@ test('rc4 cipher: real file', async () => {
 });
 
 test('rc4 cipher: first segment', async () => {
-  const cases = ['mflac0_rc4'];
+  const cases = ['mflac0_rc4', 'mflac_rc4'];
   for (const name of cases) {
     const { key, clearText, cipherText } = loadTestDataCipher(name);
     const c = new QmcRC4Cipher(key);
@@ -93,7 +93,7 @@ test('rc4 cipher: first segment', async () => {
 });
 
 test('rc4 cipher: align block (128~5120)', async () => {
-  const cases = ['mflac0_rc4'];
+  const cases = ['mflac0_rc4', 'mflac_rc4'];
   for (const name of cases) {
     const { key, clearText, cipherText } = loadTestDataCipher(name);
     const c = new QmcRC4Cipher(key);
@@ -105,7 +105,7 @@ test('rc4 cipher: align block (128~5120)', async () => {
 });
 
 test('rc4 cipher: simple block (5120~10240)', async () => {
-  const cases = ['mflac0_rc4'];
+  const cases = ['mflac0_rc4', 'mflac_rc4'];
   for (const name of cases) {
     const { key, clearText, cipherText } = loadTestDataCipher(name);
     const c = new QmcRC4Cipher(key);
