@@ -119,7 +119,7 @@ export class QmcRC4Cipher implements QmcStreamCipher {
       // ignore if key char is '\x00'
       if (!value) continue;
 
-      const next_hash = (this.hash * value) & 0xffffffff;
+      const next_hash = (this.hash * value) >>> 0;
       if (next_hash == 0 || next_hash <= this.hash) break;
 
       this.hash = next_hash;
@@ -174,7 +174,8 @@ export class QmcRC4Cipher implements QmcStreamCipher {
 
     // Calculate the number of bytes to skip.
     // The initial "key" derived from segment id, plus the current offset.
-    const skipLen = (offset % QmcRC4Cipher.SEGMENT_SIZE) + this.getSegmentKey(offset / QmcRC4Cipher.SEGMENT_SIZE);
+    const skipLen =
+      (offset % QmcRC4Cipher.SEGMENT_SIZE) + this.getSegmentKey(Math.floor(offset / QmcRC4Cipher.SEGMENT_SIZE));
 
     // decrypt the block
     let j = 0;
@@ -192,7 +193,7 @@ export class QmcRC4Cipher implements QmcStreamCipher {
 
   private getSegmentKey(id: number): number {
     const seed = this.key[id % this.N];
-    const idx = ((this.hash / ((id + 1) * seed)) * 100.0) | 0;
+    const idx = Math.floor((this.hash / ((id + 1) * seed)) * 100.0);
     return idx % this.N;
   }
 }
