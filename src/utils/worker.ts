@@ -1,4 +1,4 @@
 import { expose } from 'threads/worker';
-import { CommonDecrypt } from '@/decrypt/common';
+import { Decrypt } from '@/decrypt';
 
-expose(CommonDecrypt);
+expose(Decrypt);

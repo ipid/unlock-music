@@ -11,7 +11,7 @@ import { SplitFilename } from '@/decrypt/utils';
 import { storage } from '@/utils/storage';
 import InMemoryStorage from '@/utils/storage/InMemoryStorage';
 
-export async function CommonDecrypt(file: FileInfo, config: Record<string, any>): Promise<DecryptResult> {
+export async function Decrypt(file: FileInfo, config: Record<string, any>): Promise<DecryptResult> {
   // Worker thread will fallback to in-memory storage.
   if (storage instanceof InMemoryStorage) {
     await storage.setAll(config);
