@@ -23,13 +23,13 @@
 ### 支持的格式
 
 - [x] QQ 音乐 (.qmc0/.qmc2/.qmc3/.qmcflac/.qmcogg/.tkm)
-- [x] Moo 音乐格式 (.bkcmp3/.bkcflac)
+- [x] Moo 音乐格式 (.bkcmp3/.bkcflac/...)
 - [x] QQ 音乐 Tm 格式 (.tm0/.tm2/.tm3/.tm6)
-- [x] QQ 音乐新格式 ([.mflac/.mgg](https://github.com/unlock-music/unlock-music/issues/3))
-- [x] <ruby>QQ 音乐海外版<rt>JOOX Music</rt></ruby> (.)
-- [x] 虾米音乐格式 (.xm) (测试阶段)
-- [x] 酷我音乐格式 (.kwm) (测试阶段)
-- [x] 酷狗音乐格式 (.kgm) ([CLI 版本][kgm_cli])
+- [x] QQ 音乐新格式 (.mflac/.mgg/.mflac0/.mgg1/.mggl)
+- [x] <ruby>QQ 音乐海外版<rt>JOOX Music</rt></ruby> (.ofl_en)
+- [x] 虾米音乐格式 (.xm)
+- [x] 酷我音乐格式 (.kwm)
+- [x] 酷狗音乐格式 (.kgm/.vpr) ([CLI 版本][kgm_cli])
 
 [kgm_cli]: https://github.com/unlock-music/unlock-music/wiki/其他音乐格式工具#酷狗音乐-kgmvpr解锁工具
 
@@ -82,7 +82,7 @@ docker run --name unlock-music -d -p 8080:80 ix64/unlock-music
    npm run build
    ```
 
-  - 如果是用于开发，可以执行 `npm run serve`。
+- 如果是用于开发，可以执行 `npm run serve`。
 
 3. 如需构建浏览器扩展，build 完成后还需要执行：
 
