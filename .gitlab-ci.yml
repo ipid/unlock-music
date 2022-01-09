@@ -10,6 +10,9 @@ stages:
 build-job:
   stage: build
   script: |
+    apt-get update
+    apt-get -y install zip
+
     npm config set registry http://mirrors.cloud.tencent.com/npm/
     npm ci
 
