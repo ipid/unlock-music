@@ -37,7 +37,7 @@
 
 <script>
 import { spawn, Worker, Pool } from 'threads';
-import { CommonDecrypt } from '@/decrypt/common.ts';
+import { Decrypt } from '@/decrypt';
 import { DecryptQueue } from '@/utils/utils';
 import { storage } from '@/utils/storage';
 
@@ -74,7 +74,7 @@ export default {
     },
     async addFile(file) {
       this.task_all++;
-      this.queue.queue(async (dec = CommonDecrypt) => {
+      this.queue.queue(async (dec = Decrypt) => {
         console.log('start handling', file.name);
         try {
           this.$emit('success', await dec(file, await storage.getAll()));
