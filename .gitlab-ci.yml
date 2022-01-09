@@ -1,0 +1,43 @@
+image: node:16
+cache:
+  paths:
+    - node_modules/
+
+stages:          
+  - build
+
+
+build-job:
+  stage: build
+  script: |
+    npm config set registry http://mirrors.cloud.tencent.com/npm/
+    npm ci
+
+    npm run build
+    tar -czf legacy.tar.gz -C ./dist .
+    cd dist
+    zip -rJ9 ../legacy.zip *
+    cd ..
+
+    npm run make-extension
+    cd dist
+    zip -rJ9 ../extension.zip *
+    cd ..
+
+    npm run build -- --modern
+    tar -czf modern.tar.gz -C ./dist .
+    cd dist
+    zip -rJ9 ../modern.zip *
+    cd ..
+
+    sha256sum *.tar.gz *.zip > sha256sum.txt
+
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - legacy.zip
+      - legacy.tar.gz
+      - extension.zip
+      - modern.zip
+      - modern.tar.gz
+      - sha256sum.txt
