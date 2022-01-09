@@ -10,6 +10,7 @@ stages:
 build-job:
   stage: build
   script: |
+    sudo sed -i 's/deb.debian.org/mirrors.cloud.tencent.com/g' /etc/apt/sources.list
     apt-get update
     apt-get -y install zip
 
