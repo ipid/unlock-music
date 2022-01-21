@@ -13,6 +13,8 @@ interface Handler {
 
 export const HandlerMap: { [key: string]: Handler } = {
   mgg: { ext: 'ogg', version: 2 },
+  mgg0: { ext: 'ogg', version: 2 },
+  mggl: { ext: 'ogg', version: 2 },
   mgg1: { ext: 'ogg', version: 2 },
   mflac: { ext: 'flac', version: 2 },
   mflac0: { ext: 'flac', version: 2 },
