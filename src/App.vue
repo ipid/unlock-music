@@ -71,7 +71,14 @@ export default {
       } else {
         this.$notify.info({
           title: '离线使用',
-          message: `我们使用PWA技术，无网络也能使用<br/>最近更新：${config.updateInfo}<br/><a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>`,
+          message: `<div>
+                        <p>我们使用 PWA 技术，无网络也能使用</p>
+                        <div class="update-info">
+                            <div class="update-title">最近更新</div>
+                            <div class="update-content"> ${config.updateInfo} </div>
+                        </div>
+                        <a target="_blank" href="https://github.com/ix64/unlock-music/wiki/使用提示">使用提示</a>
+                    </div>`,
           dangerouslyUseHTMLString: true,
           duration: 10000,
           position: 'top-left',

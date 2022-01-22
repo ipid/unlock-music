@@ -28,7 +28,7 @@
               开启后，解锁结果将不会存留于浏览器中，防止内存不足。
             </span>
           </div>
-          <el-checkbox v-model="instant_save" border class="ml-2">立即保存</el-checkbox>
+            <el-checkbox v-model="instant_save" type="success" border class="ml-2">立即保存</el-checkbox>
         </el-tooltip>
       </el-row>
     </div>

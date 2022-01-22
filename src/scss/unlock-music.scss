@@ -1,5 +1,26 @@
 @import "variables";
+@import "utility";
 @import "gaps";
+@import "element-ui-overrite";
 
 @import "normal";
 @import "dark-mode"; // dark-mode 放在 normal 后面，以获得更高优先级
+
+
+// 首页弹窗提示信息的 更新信息 面板
+.update-info{
+  @include border-radius(8px);
+  overflow: hidden;
+  border: 1px solid $color-border-el;
+  margin: 10px 0;
+  .update-title{
+    font-size: $fz-mini-title;
+    padding: 5px 10px;
+    background-color: $color-border-el;
+  }
+  .update-content{
+    font-size: $fz-mini-content;
+    line-height: 1.5;
+    padding: 10px;
+  }
+}

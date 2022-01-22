@@ -8,6 +8,8 @@ $text-main : #2C3E50;
 $color-link: $blue;
 
 $fz-main: 14px;
+$fz-mini-title: 13px;
+$fz-mini-content: 12px;
 
 $font-family: "Helvetica Neue", Helvetica, "PingFang SC",
 "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
@@ -26,3 +28,7 @@ $dark-btn-bg-highlight      : lighten(black, 30%);
 $dark-bg-th                 : lighten(black, 18%);
 $dark-bg-td                 : lighten(black, 13%);
 $dark-color-link            : $green;
+
+$dark-blue      : darken(desaturate($blue, 40%), 30%);
+$dark-red       : darken(desaturate($red, 50%), 30%);
+$dark-green     : darken(desaturate($green, 30%), 30%);

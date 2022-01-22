@@ -1,7 +1,5 @@
 /*
- * name:    样式 - 夜间模式
- * author:  @KyleBing
- * date:    2020-11-24
+ * 样式 - 暗黑模式
  */
 
 @media (prefers-color-scheme: dark) {
@@ -37,9 +35,11 @@
 
   .el-checkbox.is-bordered{
     border-color: $dark-border;
+    color: $dark-text-main;
+    background-color: $dark-btn-bg;
     .el-checkbox__inner{
-      background-color: $dark-btn-bg;
-      border-color: $dark-border;
+      background-color: $dark-btn-bg-highlight;
+      border-color: $dark-border-highlight;
     }
     &:hover{
       border-color: $dark-border-highlight;
@@ -54,11 +54,17 @@
     &.is-checked{
       background-color: $blue;
       .el-checkbox__inner{
-        border-color: $dark-btn-bg-highlight;
+        border-color: white;
       }
       .el-checkbox__label{
         color: white;
         font-weight: bold;
+      }
+      &:hover{
+        border-color: $blue;
+        .el-checkbox__inner{
+          background-color: white;
+        }
       }
     }
   }
@@ -84,6 +90,35 @@
           color: white;
         }
       }
+      &.is-circle {
+        background-color: $dark-blue;
+        border-color: $dark-blue;
+        &:hover {
+          background-color: $blue;
+          border-color: $blue;
+          color: white;
+        }
+      }
+    }
+
+    &--success{
+      &.is-plain {
+        background-color: $dark-btn-bg;
+        &:hover {
+          background-color: $green;
+          border-color: $green;
+          color: white;
+        }
+      }
+      &.is-circle {
+        background-color: $dark-green;
+        border-color: $dark-green;
+        &:hover {
+          background-color: $green;
+          border-color: $green;
+          color: white;
+        }
+      }
     }
     &--danger{
       &.is-plain{
@@ -92,6 +127,15 @@
         &:hover{
           background-color: $red;
           border-color: $red;
+        }
+      }
+      &.is-circle {
+        background-color: $dark-red;
+        border-color: $dark-red;
+        &:hover {
+          background-color: $red;
+          border-color: $red;
+          color: white;
         }
       }
     }
@@ -113,7 +157,7 @@
     }
   }
 
-  //TABLE
+  // TABLE
   .el-table{
     background-color: $dark-bg-td;
     &:before{ // 去除表格末尾的横线
@@ -124,7 +168,7 @@
         border-bottom-color: $dark-border !important;
       }
     }
-    th{
+    th.el-table__cell{
       background-color: $dark-bg-th;
       color: $dark-text-info;
     }
@@ -141,7 +185,6 @@
       }
     }
   }
-
 
   // LINKS
   a{
@@ -161,6 +204,22 @@
     }
     &__content{
       color: $dark-text-info;
+    }
+  }
+
+
+
+  // 自定义样式
+  // 首页弹窗提示信息的 更新信息 面板
+  .update-info{
+    border: 1px solid $dark-btn-bg !important;
+    .update-title{
+      color: $dark-text-main;
+      background-color: $dark-btn-bg !important;
+    }
+    .update-content{
+      color: $dark-text-info;
+      padding: 10px;
     }
   }
 }

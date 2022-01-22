@@ -1,7 +1,7 @@
 <template>
   <el-upload :auto-upload="false" :on-change="addFile" :show-file-list="false" action="" drag multiple>
     <i class="el-icon-upload" />
-    <div class="el-upload__text">将文件拖到此处，或<em>点击选择</em></div>
+    <div class="el-upload__text">将文件拖到此处，或 <em>点击选择</em></div>
     <div slot="tip" class="el-upload__tip">
       <div>
         仅在浏览器内对文件进行解锁，无需消耗流量
