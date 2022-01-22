@@ -207,6 +207,37 @@
     }
   }
 
+  // DIALOG
+  .el-dialog{
+    background-color: $dark-dialog-bg;
+    .el-dialog__header{
+      .el-dialog__title{
+        color: $dark-text-main;
+      }
+    }
+    .el-dialog__body{
+      color: $dark-text-main;
+      .el-input{
+        .el-input__inner{
+          color: $dark-text-main;
+          background-color: $dark-btn-bg;
+        }
+        .el-input__suffix{
+          .el-input__suffix-inner{
+          }
+        }
+        .el-input__count{
+          .el-input__count-inner{
+            background-color: transparent;
+          }
+        }
+      }
+    }
+    .item-desc{
+      color: $dark-text-info;
+    }
+  }
+
 
 
   // 自定义样式
