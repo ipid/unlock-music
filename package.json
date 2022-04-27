@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@babel/preset-typescript": "^7.16.5",
-    "@jixun/kugou-crypto": "^1.0.2",
+    "@jixun/kugou-crypto": "^1.0.3",
     "@jixun/qmc2-crypto": "^0.0.6-R1",
     "@unlock-music/joox-crypto": "^0.0.1-R5",
     "base64-js": "^1.5.1",
