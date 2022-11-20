@@ -2,6 +2,8 @@ import { IAudioMetadata } from 'music-metadata-browser';
 import ID3Writer from 'browser-id3-writer';
 import MetaFlac from 'metaflac-js';
 
+export const split_regex = /[ ]?[,;/_、][ ]?/;
+
 export const FLAC_HEADER = [0x66, 0x4c, 0x61, 0x43];
 export const MP3_HEADER = [0x49, 0x44, 0x33];
 export const OGG_HEADER = [0x4f, 0x67, 0x67, 0x53];
@@ -91,7 +93,7 @@ export function GetMetaFromFile(
 
   const items = filename.split(separator);
   if (items.length > 1) {
-    if (!meta.artist) meta.artist = items[0].trim();
+    if (!meta.artist || meta.artist.split(split_regex).length < items[0].trim().split(split_regex).length) meta.artist = items[0].trim();
     if (!meta.title) meta.title = items[1].trim();
   } else if (items.length === 1) {
     if (!meta.title) meta.title = items[0].trim();
@@ -119,6 +121,8 @@ export interface IMusicMeta {
   title: string;
   artists?: string[];
   album?: string;
+  albumartist?: string;
+  genre?: string[];
   picture?: ArrayBuffer;
   picture_desc?: string;
 }
@@ -161,6 +165,83 @@ export function WriteMetaToFlac(audioData: Buffer, info: IMusicMeta, original: I
       writer.removeTag('ARTIST');
       info.artists.forEach((artist) => writer.setTag('ARTIST=' + artist));
     }
+  }
+
+  if (info.picture) {
+    writer.importPictureFromBuffer(Buffer.from(info.picture));
+  }
+  return writer.save();
+}
+
+export function RewriteMetaToMp3(audioData: Buffer, info: IMusicMeta, original: IAudioMetadata) {
+  const writer = new ID3Writer(audioData);
+
+  // reserve original data
+  const frames = original.native['ID3v2.4'] || original.native['ID3v2.3'] || original.native['ID3v2.2'] || [];
+  frames.forEach((frame) => {
+    if (frame.id !== 'TPE1'
+      && frame.id !== 'TIT2'
+      && frame.id !== 'TALB'
+      && frame.id !== 'TPE2'
+      && frame.id !== 'TCON'
+    ) {
+      try {
+        writer.setFrame(frame.id, frame.value);
+      } catch (e) {
+        throw new Error('write unknown mp3 frame failed');
+      }
+    }
+  });
+
+  const old = original.common;
+  writer
+    .setFrame('TPE1', info?.artists || old.artists || [])
+    .setFrame('TIT2', info?.title || old.title)
+    .setFrame('TALB', info?.album || old.album || '')
+    .setFrame('TPE2', info?.albumartist || old.albumartist || '')
+    .setFrame('TCON', info?.genre || old.genre || []);
+  if (info.picture) {
+    writer.setFrame('APIC', {
+      type: 3,
+      data: info.picture,
+      description: info.picture_desc || '',
+    });
+  }
+  return writer.addTag();
+}
+
+export function RewriteMetaToFlac(audioData: Buffer, info: IMusicMeta, original: IAudioMetadata) {
+  const writer = new MetaFlac(audioData);
+  const old = original.common;
+  if (info.title) {
+    if (old.title) {
+      writer.removeTag('TITLE');
+    }
+    writer.setTag('TITLE=' + info.title);
+  }
+  if (info.album) {
+    if (old.album) {
+      writer.removeTag('ALBUM');
+    }
+    writer.setTag('ALBUM=' + info.album);
+  }
+  if (info.albumartist) {
+    if (old.albumartist) {
+      writer.removeTag('ALBUMARTIST');
+    }
+    writer.setTag('ALBUMARTIST=' + info.albumartist);
+  }
+  if (info.artists) {
+    if (old.artists) {
+      writer.removeTag('ARTIST');
+    }
+    info.artists.forEach((artist) => writer.setTag('ARTIST=' + artist));
+  }
+  if (info.genre) {
+    if (old.genre) {
+      writer.removeTag('GENRE');
+    }
+    info.genre.forEach((singlegenre) => writer.setTag('GENRE=' + singlegenre));
   }
 
   if (info.picture) {

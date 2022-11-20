@@ -1,8 +1,8 @@
 {
   "name": "unlock-music",
-  "version": "v1.10.0",
+  "version": "v1.10.3",
   "ext_build": 0,
-  "updateInfo": "重写QMC解锁，完全支持.mflac*/.mgg*; 支持JOOX解锁",
+  "updateInfo": "完善音乐标签编辑功能，支持编辑更多标签",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
@@ -22,7 +22,6 @@
   "dependencies": {
     "@babel/preset-typescript": "^7.16.5",
     "@jixun/kugou-crypto": "^1.0.3",
-    "@jixun/qmc2-crypto": "^0.0.6-R1",
     "@unlock-music/joox-crypto": "^0.0.1-R5",
     "base64-js": "^1.5.1",
     "browser-id3-writer": "^4.4.0",

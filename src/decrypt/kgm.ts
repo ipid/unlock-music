@@ -8,6 +8,7 @@ import {
 } from '@/decrypt/utils';
 import { parseBlob as metaParseBlob } from 'music-metadata-browser';
 import { DecryptResult } from '@/decrypt/entity';
+import { DecryptKgmWasm } from '@/decrypt/kgm_wasm';
 import { decryptKgmByteAtOffsetV2, decryptVprByteAtOffset } from '@jixun/kugou-crypto/dist/utils/decryptionHelper';
 
 //prettier-ignore
@@ -22,31 +23,48 @@ const KgmHeader = [
 ]
 
 export async function Decrypt(file: File, raw_filename: string, raw_ext: string): Promise<DecryptResult> {
-  const oriData = new Uint8Array(await GetArrayBuffer(file));
+  const oriData = await GetArrayBuffer(file);
   if (raw_ext === 'vpr') {
-    if (!BytesHasPrefix(oriData, VprHeader)) throw Error('Not a valid vpr file!');
+    if (!BytesHasPrefix(new Uint8Array(oriData), VprHeader)) throw Error('Not a valid vpr file!');
   } else {
-    if (!BytesHasPrefix(oriData, KgmHeader)) throw Error('Not a valid kgm(a) file!');
+    if (!BytesHasPrefix(new Uint8Array(oriData), KgmHeader)) throw Error('Not a valid kgm(a) file!');
   }
-  let bHeaderLen = new DataView(oriData.slice(0x10, 0x14).buffer);
-  let headerLen = bHeaderLen.getUint32(0, true);
+  let musicDecoded: Uint8Array | undefined;
+  if (globalThis.WebAssembly) {
+    console.log('kgm: using wasm decoder');
 
-  let audioData = oriData.slice(headerLen);
-  let dataLen = audioData.length;
-
-  let key1 = Array.from(oriData.slice(0x1c, 0x2c));
-  key1.push(0);
-
-  const decryptByte = raw_ext === 'vpr' ? decryptVprByteAtOffset : decryptKgmByteAtOffsetV2;
-  for (let i = 0; i < dataLen; i++) {
-    audioData[i] = decryptByte(audioData[i], key1, i);
+    const kgmDecrypted = await DecryptKgmWasm(oriData, raw_ext);
+    // 若 v2 检测失败，降级到 v1 再尝试一次
+    if (kgmDecrypted.success) {
+      musicDecoded = kgmDecrypted.data;
+      console.log('kgm wasm decoder suceeded');
+    } else {
+      console.warn('KgmWasm failed with error %s', kgmDecrypted.error || '(no error)');
+    }
   }
 
-  const ext = SniffAudioExt(audioData);
+  if (!musicDecoded) {
+    musicDecoded = new Uint8Array(oriData);
+    let bHeaderLen = new DataView(musicDecoded.slice(0x10, 0x14).buffer);
+    let headerLen = bHeaderLen.getUint32(0, true);
+
+    let key1 = Array.from(musicDecoded.slice(0x1c, 0x2c));
+    key1.push(0);
+
+    musicDecoded = musicDecoded.slice(headerLen);
+    let dataLen = musicDecoded.length;
+
+    const decryptByte = raw_ext === 'vpr' ? decryptVprByteAtOffset : decryptKgmByteAtOffsetV2;
+    for (let i = 0; i < dataLen; i++) {
+      musicDecoded[i] = decryptByte(musicDecoded[i], key1, i);
+    }
+  }
+
+  const ext = SniffAudioExt(musicDecoded);
   const mime = AudioMimeType[ext];
-  let musicBlob = new Blob([audioData], { type: mime });
+  let musicBlob = new Blob([musicDecoded], { type: mime });
   const musicMeta = await metaParseBlob(musicBlob);
-  const { title, artist } = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist);
+  const { title, artist } = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artists == undefined ? musicMeta.common.artist : musicMeta.common.artists.toString());
   return {
     album: musicMeta.common.album,
     picture: GetCoverFromFile(musicMeta),

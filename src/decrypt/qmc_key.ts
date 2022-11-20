@@ -5,11 +5,13 @@ const ZERO_LEN = 7;
 
 export function QmcDeriveKey(raw: Uint8Array): Uint8Array {
   const textDec = new TextDecoder();
-  const rawDec = Buffer.from(textDec.decode(raw), 'base64');
+  let rawDec = Buffer.from(textDec.decode(raw), 'base64');
   let n = rawDec.length;
   if (n < 16) {
     throw Error('key length is too short');
   }
+
+  rawDec = decryptV2Key(rawDec);
 
   const simpleKey = simpleMakeKey(106, 8);
   let teaKey = new Uint8Array(16);
@@ -30,6 +32,30 @@ export function simpleMakeKey(salt: number, length: number): number[] {
     keyBuf[i] = 0xff & (Math.abs(tmp) * 100.0);
   }
   return keyBuf;
+}
+
+const mixKey1: Uint8Array = new Uint8Array([ 0x33, 0x38, 0x36, 0x5A, 0x4A, 0x59, 0x21, 0x40, 0x23, 0x2A, 0x24, 0x25, 0x5E, 0x26, 0x29, 0x28 ])
+const mixKey2: Uint8Array = new Uint8Array([ 0x2A, 0x2A, 0x23, 0x21, 0x28, 0x23, 0x24, 0x25, 0x26, 0x5E, 0x61, 0x31, 0x63, 0x5A, 0x2C, 0x54 ])
+
+const v2KeyPrefix: Uint8Array = new Uint8Array([ 0x51, 0x51, 0x4D, 0x75, 0x73, 0x69, 0x63, 0x20, 0x45, 0x6E, 0x63, 0x56, 0x32, 0x2C, 0x4B, 0x65, 0x79, 0x3A ])
+
+function decryptV2Key(key: Buffer): Buffer
+{
+  const textEnc = new TextDecoder();
+  if (key.length < 18 || textEnc.decode(key.slice(0, 18)) !== 'QQMusic EncV2,Key:') {
+    return key;
+  }
+
+  let out = decryptTencentTea(key.slice(18), mixKey1);
+  out = decryptTencentTea(out, mixKey2);
+  const textDec = new TextDecoder();
+  const keyDec = Buffer.from(textDec.decode(out), 'base64');
+  let n = keyDec.length;
+  if (n < 16) {
+    throw Error('EncV2 key decode failed');
+  }
+
+  return keyDec;
 }
 
 function decryptTencentTea(inBuf: Uint8Array, key: Uint8Array): Uint8Array {
