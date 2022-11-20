@@ -64,8 +64,7 @@ jobs:
         run: npm ci
 
       - name: Build Wasm
-        run: bash ./src/QmcWasm/build-wasm
-             bash ./src/KgmWasm/build-wasm
+        run: bash build-wasm
 
       - name: Build
         run: npm run build ${{ matrix.BUILD_ARGS }}

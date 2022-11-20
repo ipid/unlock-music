@@ -20,8 +20,7 @@ jobs:
         run: npm ci
 
       - name: Build Wasm
-        run: bash ./src/QmcWasm/build-wasm
-             bash ./src/KgmWasm/build-wasm
+        run: bash build-wasm
 
       - name: Build Legacy
         env:
