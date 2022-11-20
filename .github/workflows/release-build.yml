@@ -19,6 +19,10 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Build Wasm
+        run: bash ./src/QmcWasm/build-wasm
+             bash ./src/KgmWasm/build-wasm
+
       - name: Build Legacy
         env:
           GZIP: "--best"

@@ -56,7 +56,7 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
       musicID = v2Decrypted.songId;
       console.log('qmc wasm decoder suceeded');
     } else {
-      console.warn('QmcWasm failed with error %s', v2Decrypted.error || '(no error)');
+      console.warn('QmcWasm failed with error %s', v2Decrypted.error || '(unknown error)');
     }
   }
 
