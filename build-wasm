@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+
+pushd ./src/QmcWasm
+bash build-wasm
+popd
+
+pushd ./src/QmcWasm
+bash build-wasm
+popd
