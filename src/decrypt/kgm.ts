@@ -34,12 +34,11 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
     console.log('kgm: using wasm decoder');
 
     const kgmDecrypted = await DecryptKgmWasm(oriData, raw_ext);
-    // 若 v2 检测失败，降级到 v1 再尝试一次
     if (kgmDecrypted.success) {
       musicDecoded = kgmDecrypted.data;
       console.log('kgm wasm decoder suceeded');
     } else {
-      console.warn('KgmWasm failed with error %s', kgmDecrypted.error || '(no error)');
+      console.warn('KgmWasm failed with error %s', kgmDecrypted.error || '(unknown error)');
     }
   }
 
