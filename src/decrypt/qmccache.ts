@@ -13,9 +13,8 @@ import { DecryptResult } from '@/decrypt/entity';
 
 import { parseBlob as metaParseBlob } from 'music-metadata-browser';
 
-export async function Decrypt(file: Blob, raw_filename: string, _: string): Promise<DecryptResult> {
-  const buffer = new Uint8Array(await GetArrayBuffer(file));
-  let length = buffer.length;
+export function DecryptBuffer(buffer: Uint8Array | Buffer) {
+  let length = buffer.byteLength;
   for (let i = 0; i < length; i++) {
     buffer[i] ^= 0xf4;
     if (buffer[i] <= 0x3f) buffer[i] = buffer[i] * 4;
@@ -23,6 +22,11 @@ export async function Decrypt(file: Blob, raw_filename: string, _: string): Prom
     else if (buffer[i] <= 0xbf) buffer[i] = (buffer[i] - 0x80) * 4 + 2;
     else buffer[i] = (buffer[i] - 0xc0) * 4 + 3;
   }
+}
+
+export async function Decrypt(file: Blob, raw_filename: string, _: string): Promise<DecryptResult> {
+  const buffer = new Uint8Array(await GetArrayBuffer(file));
+  DecryptBuffer(buffer);
   let ext = SniffAudioExt(buffer, '');
   const newName = SplitFilename(raw_filename);
   let audioBlob: Blob;
