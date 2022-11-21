@@ -157,9 +157,12 @@ export default {
       let notifyMsg = '成功修改 ' + this.editing_data.title;
       try {
         const musicMeta = await metaParseBlob(new Blob([this.editing_data.blob], { type: mime }));
-        const imageInfo = await GetImageFromURL(this.editing_data.picture);
-        if (!imageInfo) {
-          console.warn('获取图像失败', this.editing_data.picture);
+        let imageInfo = undefined;
+        if (this.editing_data.picture !== '') {
+          imageInfo = await GetImageFromURL(this.editing_data.picture);
+          if (!imageInfo) {
+            console.warn('获取图像失败', this.editing_data.picture);
+          }
         }
         const newMeta = { picture: imageInfo?.buffer,
           title: data.title,
@@ -176,7 +179,7 @@ export default {
           this.editing_data.blob = new Blob([RewriteMetaToFlac(buffer, newMeta, musicMeta)], { type: mime });
         } else {
           writeSuccess = undefined;
-          notifyMsg = info.ext + '类型文件暂时不支持修改音乐标签';
+          notifyMsg = this.editing_data.ext + '类型文件暂时不支持修改音乐标签';
         }
       } catch (e) {
         writeSuccess = false;
