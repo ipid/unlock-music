@@ -40,7 +40,7 @@ export async function extractQQMusicMeta(
     if (musicMeta.native[metaIdx].some((item) => item.id === 'TCON' && item.value === '(12)')) {
       console.warn('try using gbk encoding to decode meta');
       musicMeta.common.artist = '';
-      if (musicMeta.common.artists) {
+      if (!musicMeta.common.artists) {
         musicMeta.common.artist = iconv.decode(new Buffer(musicMeta.common.artist ?? ''), 'gbk');
       }
       else {

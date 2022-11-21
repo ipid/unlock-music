@@ -153,6 +153,8 @@ export default {
       this.editing_data.title = data.title;
       this.editing_data.artist = data.artist;
       this.editing_data.album = data.album;
+      let writeSuccess = true;
+      let notifyMsg = '成功修改 ' + this.editing_data.title;
       try {
         const musicMeta = await metaParseBlob(new Blob([this.editing_data.blob], { type: mime }));
         const imageInfo = await GetImageFromURL(this.editing_data.picture);
@@ -173,17 +175,33 @@ export default {
         } else if (this.editing_data.ext === 'flac') {
           this.editing_data.blob = new Blob([RewriteMetaToFlac(buffer, newMeta, musicMeta)], { type: mime });
         } else {
-          console.info('writing metadata for ' + info.ext + ' is not being supported for now');
+          writeSuccess = undefined;
+          notifyMsg = info.ext + '类型文件暂时不支持修改音乐标签';
         }
       } catch (e) {
-        console.warn('Error while appending cover image to file ' + e);
+        writeSuccess = false;
+        notifyMsg = '修改' + this.editing_data.title + '未能完成。在写入新的元数据时发生错误：' + e;
       }
-      this.editing_data.file = URL.createObjectURL(this.editing_data.blob);/**/
-      this.$notify.success({
-        title: '修改成功',
-        message: '成功修改 ' + this.editing_data.title,
-        duration: 3000,
-      });
+      this.editing_data.file = URL.createObjectURL(this.editing_data.blob);
+      if (writeSuccess === true) {
+        this.$notify.success({
+          title: '修改成功',
+          message: notifyMsg,
+          duration: 3000,
+        });
+      } else if (writeSuccess === false) {
+        this.$notify.error({
+          title: '修改失败',
+          message: notifyMsg,
+          duration: 3000,
+        });
+      } else {
+        this.$notify.warning({
+          title: '修改取消',
+          message: notifyMsg,
+          duration: 3000,
+        });
+      }
     },
 
     async editFile(data) {
