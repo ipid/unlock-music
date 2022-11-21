@@ -54,7 +54,7 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
     throw '不支持的QQ音乐缓存格式';
   }
   const tag = await metaParseBlob(audioBlob);
-  const { title, artist } = GetMetaFromFile(raw_filename, tag.common.title, String(tag.common.artists || tag.common.artist));
+  const { title, artist } = GetMetaFromFile(raw_filename, tag.common.title, String(tag.common.artists || tag.common.artist || ""));
 
   return {
     title,

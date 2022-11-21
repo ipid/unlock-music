@@ -20,6 +20,8 @@ interface MetaResult {
   blob: Blob;
 }
 
+const fromGBK = (text?: string) => iconv.decode(new Buffer(text || ''), 'gbk');
+
 /**
  *
  * @param musicBlob 音乐文件（解密后）
@@ -41,14 +43,13 @@ export async function extractQQMusicMeta(
       console.warn('try using gbk encoding to decode meta');
       musicMeta.common.artist = '';
       if (!musicMeta.common.artists) {
-        musicMeta.common.artist = iconv.decode(new Buffer(musicMeta.common.artist ?? ''), 'gbk');
+        musicMeta.common.artist = fromGBK(musicMeta.common.artist);
       }
       else {
-        musicMeta.common.artists.forEach((artist) => artist = iconv.decode(new Buffer(artist ?? ''), 'gbk'));
-        musicMeta.common.artist = musicMeta.common.artists.toString();
+        musicMeta.common.artist = musicMeta.common.artists.map(fromGBK).join();
       }
-      musicMeta.common.title = iconv.decode(new Buffer(musicMeta.common.title ?? ''), 'gbk');
-      musicMeta.common.album = iconv.decode(new Buffer(musicMeta.common.album ?? ''), 'gbk');
+      musicMeta.common.title = fromGBK(musicMeta.common.title);
+      musicMeta.common.album = fromGBK(musicMeta.common.album);
     }
   }
 
