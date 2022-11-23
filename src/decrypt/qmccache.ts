@@ -22,12 +22,12 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
     console.log('qmc: using wasm decoder');
 
     const qmcDecrypted = await DecryptQmcWasm(buffer, raw_ext);
-    // 若 qmc 检测失败，降级到 v1 再尝试一次
+    // 若 wasm 失败，降级到 js 再尝试一次
     if (qmcDecrypted.success) {
       musicDecoded = qmcDecrypted.data;
       console.log('qmc wasm decoder suceeded');
     } else {
-      console.warn('QmcWasm failed with error %s', qmcDecrypted.error || '(no error)');
+      console.warn('QmcWasm failed with error %s', qmcDecrypted.error || '(unknown error)');
     }
   }
 
