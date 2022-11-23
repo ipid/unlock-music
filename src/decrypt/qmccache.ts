@@ -35,11 +35,9 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
     musicDecoded = new Uint8Array(buffer);
     let length = musicDecoded.length;
     for (let i = 0; i < length; i++) {
-      musicDecoded[i] ^= 0xf4;
-      if (musicDecoded[i] <= 0x3f) musicDecoded[i] = musicDecoded[i] * 4;
-      else if (musicDecoded[i] <= 0x7f) musicDecoded[i] = (musicDecoded[i] - 0x40) * 4 + 1;
-      else if (musicDecoded[i] <= 0xbf) musicDecoded[i] = (musicDecoded[i] - 0x80) * 4 + 2;
-      else musicDecoded[i] = (musicDecoded[i] - 0xc0) * 4 + 3;
+      let byte = musicDecoded[i] ^ 0xf4; // xor 0xf4
+      byte = ((byte & 0b0011_1111) << 2) | (byte >> 6); // rol 2
+      musicDecoded[i] = byte;
     }
   }
   let ext = SniffAudioExt(musicDecoded, '');
