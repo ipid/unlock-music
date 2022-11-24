@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -e
+
+pushd "$(realpath "$(dirname "$0")")"
+
+CURR_DIR="${PWD}"
+
+BUILD_TYPE="$1"
+if [ -z "$BUILD_TYPE" ]; then
+	BUILD_TYPE=Release
+fi
+
+mkdir -p build/wasm
+if [ ! -d build/emsdk ]; then
+	git clone https://github.com/emscripten-core/emsdk.git build/emsdk
+fi
+
+pushd build/emsdk
+#git pull
+./emsdk install 3.0.0
+./emsdk activate 3.0.0
+source ./emsdk_env.sh
+popd # build/emsdk
+
+pushd build/wasm
+emcmake cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ../..
+make -j
+TARGET_FILES="
+	KgmLegacy.js
+	KgmWasm.js
+	KgmWasm.wasm
+	KgmWasmBundle.js
+"
+
+#mkdir -p "${CURR_DIR}/npm"
+#cp $TARGET_FILES "${CURR_DIR}/npm/"
+cp $TARGET_FILES "${CURR_DIR}/"
+popd # build/wasm
+
+popd

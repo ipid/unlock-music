@@ -67,6 +67,8 @@ docker run --name unlock-music -d -p 8080:80 ix64/unlock-music
 
 ### 自行构建
 
+#### JS部分
+
 - 环境要求
   - nodejs (v16.x)
   - npm
@@ -89,4 +91,16 @@ docker run --name unlock-music -d -p 8080:80 ix64/unlock-music
 
    ```sh
    npm run make-extension
+   ```
+
+#### WASM部分
+
+- 环境要求
+  - Linux
+  - python3
+
+- 运行此目录下的build-wasm
+
+   ```sh
+   bash build-wasm
    ```

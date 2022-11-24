@@ -3,7 +3,7 @@ import { AudioMimeType, GetArrayBuffer, SniffAudioExt } from '@/decrypt/utils';
 
 import { DecryptResult } from '@/decrypt/entity';
 import { QmcDeriveKey } from '@/decrypt/qmc_key';
-import { DecryptQMCWasm } from '@/decrypt/qmc_wasm';
+import { DecryptQmcWasm } from '@/decrypt/qmc_wasm';
 import { extractQQMusicMeta } from '@/utils/qm_meta';
 
 interface Handler {
@@ -24,9 +24,9 @@ export const HandlerMap: { [key: string]: Handler } = {
   qmcflac: { ext: 'flac', version: 2 },
   qmcogg: { ext: 'ogg', version: 2 },
 
-  qmc0: { ext: 'mp3', version: 1 },
-  qmc2: { ext: 'ogg', version: 1 },
-  qmc3: { ext: 'mp3', version: 1 },
+  qmc0: { ext: 'mp3', version: 2 },
+  qmc2: { ext: 'ogg', version: 2 },
+  qmc3: { ext: 'mp3', version: 2 },
   bkcmp3: { ext: 'mp3', version: 1 },
   bkcflac: { ext: 'flac', version: 1 },
   tkm: { ext: 'm4a', version: 1 },
@@ -49,13 +49,14 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
   if (version === 2 && globalThis.WebAssembly) {
     console.log('qmc: using wasm decoder');
 
-    const v2Decrypted = await DecryptQMCWasm(fileBuffer);
+    const v2Decrypted = await DecryptQmcWasm(fileBuffer, raw_ext);
     // 若 v2 检测失败，降级到 v1 再尝试一次
     if (v2Decrypted.success) {
       musicDecoded = v2Decrypted.data;
       musicID = v2Decrypted.songId;
+      console.log('qmc wasm decoder suceeded');
     } else {
-      console.warn('qmc2-wasm failed with error %s', v2Decrypted.error || '(no error)');
+      console.warn('QmcWasm failed with error %s', v2Decrypted.error || '(unknown error)');
     }
   }
 
@@ -151,7 +152,7 @@ export class QmcDecoder {
     } else {
       const sizeView = new DataView(last4Byte.buffer, last4Byte.byteOffset);
       const keySize = sizeView.getUint32(0, true);
-      if (keySize < 0x300) {
+      if (keySize < 0x400) {
         this.audioSize = this.size - keySize - 4;
         const rawKey = this.file.subarray(this.audioSize, this.size - 4);
         this.setCipher(rawKey);

@@ -10,6 +10,15 @@
         </el-radio>
       </el-row>
       <el-row>
+        <edit-dialog
+          :show="showEditDialog"
+          :picture="editing_data.picture"
+          :title="editing_data.title"
+          :artist="editing_data.artist"
+          :album="editing_data.album"
+          :albumartist="editing_data.albumartist"
+          :genre="editing_data.genre"
+          @cancel="showEditDialog = false" @ok="handleEdit"></edit-dialog>
         <config-dialog :show="showConfigDialog" @done="showConfigDialog = false"></config-dialog>
         <el-tooltip class="item" effect="dark" placement="top">
           <div slot="content">
@@ -35,7 +44,7 @@
 
     <audio :autoplay="playing_auto" :src="playing_url" controls />
 
-    <PreviewTable :policy="filename_policy" :table-data="tableData" @download="saveFile" @play="changePlaying" />
+    <PreviewTable :policy="filename_policy" :table-data="tableData" @download="saveFile" @edit="editFile" @play="changePlaying" />
   </div>
 </template>
 
@@ -43,8 +52,11 @@
 import FileSelector from '@/component/FileSelector';
 import PreviewTable from '@/component/PreviewTable';
 import ConfigDialog from '@/component/ConfigDialog';
+import EditDialog from '@/component/EditDialog';
 
 import { DownloadBlobMusic, FilenamePolicy, FilenamePolicies, RemoveBlobMusic, DirectlyWriteFile } from '@/utils/utils';
+import { GetImageFromURL, RewriteMetaToMp3, RewriteMetaToFlac, AudioMimeType, split_regex } from '@/decrypt/utils';
+import { parseBlob as metaParseBlob } from 'music-metadata-browser';
 
 export default {
   name: 'Home',
@@ -52,10 +64,13 @@ export default {
     FileSelector,
     PreviewTable,
     ConfigDialog,
+    EditDialog,
   },
   data() {
     return {
       showConfigDialog: false,
+      showEditDialog: false,
+      editing_data: { picture: '', title: '', artist: '', album: '', albumartist: '', genre: '', },
       tableData: [],
       playing_url: '',
       playing_auto: false,
@@ -128,7 +143,77 @@ export default {
         }
       }, 300);
     },
+    async handleEdit(data) {
+      this.showEditDialog = false;
+      URL.revokeObjectURL(this.editing_data.file);
+      if (data.picture) {
+        URL.revokeObjectURL(this.editing_data.picture);
+        this.editing_data.picture = URL.createObjectURL(data.picture);
+      }
+      this.editing_data.title = data.title;
+      this.editing_data.artist = data.artist;
+      this.editing_data.album = data.album;
+      let writeSuccess = true;
+      let notifyMsg = '成功修改 ' + this.editing_data.title;
+      try {
+        const musicMeta = await metaParseBlob(new Blob([this.editing_data.blob], { type: mime }));
+        let imageInfo = undefined;
+        if (this.editing_data.picture !== '') {
+          imageInfo = await GetImageFromURL(this.editing_data.picture);
+          if (!imageInfo) {
+            console.warn('获取图像失败', this.editing_data.picture);
+          }
+        }
+        const newMeta = { picture: imageInfo?.buffer,
+          title: data.title,
+          artists: data.artist.split(split_regex),
+          album: data.album,
+          albumartist: data.albumartist,
+          genre: data.genre.split(split_regex)
+        };
+        const buffer = Buffer.from(await this.editing_data.blob.arrayBuffer());
+        const mime = AudioMimeType[this.editing_data.ext] || AudioMimeType.mp3;
+        if (this.editing_data.ext === 'mp3') {
+          this.editing_data.blob = new Blob([RewriteMetaToMp3(buffer, newMeta, musicMeta)], { type: mime });
+        } else if (this.editing_data.ext === 'flac') {
+          this.editing_data.blob = new Blob([RewriteMetaToFlac(buffer, newMeta, musicMeta)], { type: mime });
+        } else {
+          writeSuccess = undefined;
+          notifyMsg = this.editing_data.ext + '类型文件暂时不支持修改音乐标签';
+        }
+      } catch (e) {
+        writeSuccess = false;
+        notifyMsg = '修改' + this.editing_data.title + '未能完成。在写入新的元数据时发生错误：' + e;
+      }
+      this.editing_data.file = URL.createObjectURL(this.editing_data.blob);
+      if (writeSuccess === true) {
+        this.$notify.success({
+          title: '修改成功',
+          message: notifyMsg,
+          duration: 3000,
+        });
+      } else if (writeSuccess === false) {
+        this.$notify.error({
+          title: '修改失败',
+          message: notifyMsg,
+          duration: 3000,
+        });
+      } else {
+        this.$notify.warning({
+          title: '修改取消',
+          message: notifyMsg,
+          duration: 3000,
+        });
+      }
+    },
 
+    async editFile(data) {
+      this.editing_data = data;
+      const musicMeta = await metaParseBlob(this.editing_data.blob);
+      this.editing_data.albumartist = musicMeta.common.albumartist || '';
+      this.editing_data.genre = musicMeta.common.genre?.toString() || '';
+      this.showEditDialog = true;
+    },
     async saveFile(data) {
       if (this.dir) {
         await DirectlyWriteFile(data, this.filename_policy, this.dir);

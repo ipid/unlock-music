@@ -1,3 +1,4 @@
+import { Decrypt as Mg3dDecrypt } from '@/decrypt/mg3d';
 import { Decrypt as NcmDecrypt } from '@/decrypt/ncm';
 import { Decrypt as NcmCacheDecrypt } from '@/decrypt/ncmcache';
 import { Decrypt as XmDecrypt } from '@/decrypt/xm';
@@ -22,6 +23,9 @@ export async function Decrypt(file: FileInfo, config: Record<string, any>): Prom
   const raw = SplitFilename(file.name);
   let rt_data: DecryptResult;
   switch (raw.ext) {
+    case 'mg3d': // Migu Wav
+      rt_data = await Mg3dDecrypt(file.raw, raw.name);
+      break;
     case 'ncm': // Netease Mp3/Flac
       rt_data = await NcmDecrypt(file.raw, raw.name, raw.ext);
       break;
