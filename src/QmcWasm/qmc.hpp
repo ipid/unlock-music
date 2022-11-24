@@ -192,7 +192,7 @@ void QmcDecode::DecodeCache()
 {
     for (size_t i = 0; i < blobData.size(); i++) {
         blobData[i] ^= 0xf4;
-        blobData[i] = ((blobData[i] & 0b0011_1111) << 2) | (blobData[i] >> 6); // rol 2
+        blobData[i] = ((blobData[i] & 0b00111111) << 2) | (blobData[i] >> 6); // rol 2
     }
 }
 
