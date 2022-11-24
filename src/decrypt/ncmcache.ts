@@ -13,7 +13,7 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string)
   const ext = SniffAudioExt(buffer, raw_ext);
   if (ext !== raw_ext) file = new Blob([buffer], { type: AudioMimeType[ext] });
   const tag = await metaParseBlob(file);
-  const { title, artist } = GetMetaFromFile(raw_filename, tag.common.title, tag.common.artist);
+  const { title, artist } = GetMetaFromFile(raw_filename, tag.common.title, String(tag.common.artists || tag.common.artist || ""));
 
   return {
     title,

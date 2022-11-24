@@ -49,7 +49,7 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
   const { title, artist } = GetMetaFromFile(
     raw_filename,
     musicMeta.common.title,
-    musicMeta.common.artist,
+    String(musicMeta.common.artists || musicMeta.common.artist || ""),
     raw_filename.indexOf('_') === -1 ? '-' : '_',
   );
 

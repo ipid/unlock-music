@@ -8,6 +8,7 @@ import {
   WriteMetaToFlac,
   WriteMetaToMp3,
   AudioMimeType,
+  split_regex,
 } from '@/decrypt/utils';
 import { getQMImageURLFromPMID, queryAlbumCover, querySongInfoById } from '@/utils/api';
 
@@ -18,6 +19,8 @@ interface MetaResult {
   imgUrl: string;
   blob: Blob;
 }
+
+const fromGBK = (text?: string) => iconv.decode(new Buffer(text || ''), 'gbk');
 
 /**
  *
@@ -38,13 +41,19 @@ export async function extractQQMusicMeta(
     if (!musicMeta.native.hasOwnProperty(metaIdx)) continue;
     if (musicMeta.native[metaIdx].some((item) => item.id === 'TCON' && item.value === '(12)')) {
       console.warn('try using gbk encoding to decode meta');
-      musicMeta.common.artist = iconv.decode(new Buffer(musicMeta.common.artist ?? ''), 'gbk');
-      musicMeta.common.title = iconv.decode(new Buffer(musicMeta.common.title ?? ''), 'gbk');
-      musicMeta.common.album = iconv.decode(new Buffer(musicMeta.common.album ?? ''), 'gbk');
+      musicMeta.common.artist = '';
+      if (!musicMeta.common.artists) {
+        musicMeta.common.artist = fromGBK(musicMeta.common.artist);
+      }
+      else {
+        musicMeta.common.artist = musicMeta.common.artists.map(fromGBK).join();
+      }
+      musicMeta.common.title = fromGBK(musicMeta.common.title);
+      musicMeta.common.album = fromGBK(musicMeta.common.album);
     }
   }
 
-  if (id) {
+  if (id && id !== '0') {
     try {
       return fetchMetadataFromSongId(id, ext, musicMeta, musicBlob);
     } catch (e) {
@@ -62,12 +71,12 @@ export async function extractQQMusicMeta(
 
   return {
     title: info.title,
-    artist: info.artist || '',
+    artist: info.artist,
     album: musicMeta.common.album || '',
     imgUrl: imageURL,
     blob: await writeMetaToAudioFile({
       title: info.title,
-      artists: info.artist.split(' _ '),
+      artists: info.artist.split(split_regex),
       ext,
       imageURL,
       musicMeta,
@@ -88,7 +97,7 @@ async function fetchMetadataFromSongId(
 
   return {
     title: info.track_info.title,
-    artist: artists.join('、'),
+    artist: artists.join(','),
     album: info.track_info.album.name,
     imgUrl: imageURL,
 
