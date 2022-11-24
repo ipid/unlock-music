@@ -6,6 +6,6 @@ pushd ./src/QmcWasm
 bash build-wasm
 popd
 
-pushd ./src/QmcWasm
+pushd ./src/KgmWasm
 bash build-wasm
 popd
