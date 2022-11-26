@@ -1,0 +1,37 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: build
+    image: node:16.18-bullseye
+    commands:
+      - apt-get update
+      - apt-get install -y cmake jq zip
+      - ./scripts/build-wasm.sh
+      - npm ci
+      - npm run test
+      - ./scripts/build-and-package.sh legacy
+      - ./scripts/build-and-package.sh extension
+      - ./scripts/build-and-package.sh modern
+      - sha256sum *.zip > sha256sum.txt
+      - mkdir -p upload
+      - mv *.zip sha256sum.txt upload/
+
+  - name: upload
+    image: "plugins/s3"
+    settings:
+      path_style: true
+      endpoint:
+        from_secret: S3_ENDPOINT
+      access_key:
+        from_secret: S3_ACCESS_KEY
+      secret_key:
+        from_secret: S3_SECRET_KEY
+      bucket:
+        from_secret: S3_BUCKET
+      region: "auto"
+      source: "upload/*"
+      strip_prefix: "upload/"
+      target: "${DRONE_REPO}/${DRONE_BUILD_NUMBER}/"

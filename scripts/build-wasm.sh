@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
+
+cd "$(git rev-parse --show-toplevel)"
 
 pushd ./src/QmcWasm
 bash build-wasm

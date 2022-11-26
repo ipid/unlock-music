@@ -1,6 +1,6 @@
 {
   "name": "unlock-music",
-  "version": "v1.10.3",
+  "version": "1.10.3",
   "ext_build": 0,
   "updateInfo": "完善音乐标签编辑功能，支持编辑更多标签",
   "license": "MIT",

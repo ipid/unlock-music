@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 /dist
+/build
 /coverage
 
 # local env files
@@ -27,3 +28,7 @@ yarn-error.log*
 /src/QmcWasm/build
 /src/QmcWasm/*.js
 /src/QmcWasm/*.wasm
+
+*.zip
+*.tar.gz
+/sha256sum.txt

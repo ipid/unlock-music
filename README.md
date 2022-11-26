@@ -80,5 +80,5 @@
 - 运行此目录下的build-wasm
 
    ```sh
-   bash build-wasm
+   ./scripts/build-wasm.sh
    ```
