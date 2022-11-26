@@ -16,10 +16,13 @@ steps:
       - ./scripts/build-and-package.sh extension
       - ./scripts/build-and-package.sh modern
       - sha256sum *.zip > sha256sum.txt
+      - mkdir -p upload
+      - mv *.zip sha256sum.txt upload/
 
   - name: upload
     image: "plugins/s3"
     settings:
+      path_style: true
       endpoint:
         from_secret: S3_ENDPOINT
       access_key:
@@ -29,8 +32,6 @@ steps:
       bucket:
         from_secret: S3_BUCKET
       region: "auto"
-      source: |
-        *.zip
-        sha256sum.txt
+      source: "upload/*"
+      strip_prefix: "upload/"
       target: "${DRONE_REPO}/${DRONE_BUILD_NUMBER}/"
-      path_style: true
