@@ -15,23 +15,13 @@ steps:
       - ./scripts/build-and-package.sh legacy
       - ./scripts/build-and-package.sh extension
       - ./scripts/build-and-package.sh modern
-      - sha256sum *.zip > sha256sum.txt
-      - mkdir -p upload
-      - mv *.zip sha256sum.txt upload/
 
-  - name: upload
-    image: "plugins/s3"
-    settings:
-      path_style: true
-      endpoint:
-        from_secret: S3_ENDPOINT
-      access_key:
-        from_secret: S3_ACCESS_KEY
-      secret_key:
-        from_secret: S3_SECRET_KEY
-      bucket:
-        from_secret: S3_BUCKET
-      region: "auto"
-      source: "upload/*"
-      strip_prefix: "upload/"
-      target: "${DRONE_REPO}/${DRONE_BUILD_NUMBER}/"
+  - name: upload artifact
+    image: busybox:1.34-glibc
+    environment:
+      DRONE_GITEA_SERVER: https://git.unlock-music.dev
+      GITEA_API_KEY:
+        from_secret: GITEA_API_KEY
+    commands:
+      - apt-get update && apt-get install -y curl
+      - ./scripts/upload-packages.sh
