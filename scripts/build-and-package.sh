@@ -21,7 +21,7 @@ esac
 mv dist "${DIST_NAME}"
 zip -rJ9 "${DIST_NAME}.zip" "${DIST_NAME}"
 
-if [ "$1" == "legacy" ]; then
+if [ "$1" = "legacy" ]; then
   # For upcoming extension build
   mv "${DIST_NAME}" dist
 else
