@@ -5,7 +5,7 @@ set -ex
 cd "$(git rev-parse --show-toplevel)"
 
 VERSION="$(jq -r ".version" <package.json)"
-DIST_NAME="um-web.$1.${VERSION}"
+DIST_NAME="um-web.$1.v${VERSION}"
 
 case "$1" in
 "modern") npm run build -- --modern ;;
