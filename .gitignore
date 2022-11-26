@@ -31,3 +31,4 @@ yarn-error.log*
 
 *.zip
 *.tar.gz
+/sha256sum.txt
