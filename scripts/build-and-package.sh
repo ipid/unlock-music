@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -ex
+
+cd "$(git rev-parse --show-toplevel)"
+
+VERSION="$(jq -r ".version" <package.json)"
+DIST_NAME="um-web.$1.${VERSION}"
+
+case "$1" in
+"modern") npm run build -- --modern ;;
+"legacy") npm run build ;;
+"extension") npm run make-extension ;;
+
+*)
+    echo "Unknown command: $1"
+    exit 1
+    ;;
+esac
+
+mv dist "${DIST_NAME}"
+zip -rJ9 "${DIST_NAME}.zip" "${DIST_NAME}"
+rm -rf "${DIST_NAME}"
