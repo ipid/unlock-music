@@ -21,11 +21,10 @@ steps:
       - ./scripts/build-and-package.sh modern
 
   - name: upload artifact
-    image: debian:bullseye-20221114
+    image: node:16.18-bullseye
     environment:
       DRONE_GITEA_SERVER: https://git.unlock-music.dev
       GITEA_API_KEY:
         from_secret: GITEA_API_KEY
     commands:
-      - apt-get update && apt-get install -y curl git
       - ./scripts/upload-packages.sh
