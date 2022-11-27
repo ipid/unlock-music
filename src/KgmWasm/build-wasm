@@ -8,29 +8,31 @@ CURR_DIR="${PWD}"
 
 BUILD_TYPE="$1"
 if [ -z "$BUILD_TYPE" ]; then
-	BUILD_TYPE=Release
+  BUILD_TYPE=Release
+fi
+
+# CI: already had emsdk installed.
+if ! command -v emcc; then
+  if [ ! -d ../../build/emsdk ]; then
+    git clone https://github.com/emscripten-core/emsdk.git ../../build/emsdk
+  fi
+
+  pushd ../../build/emsdk
+  ./emsdk install 3.0.0
+  ./emsdk activate 3.0.0
+  source ./emsdk_env.sh
+  popd # ../../build/emsdk
 fi
 
 mkdir -p build/wasm
-if [ ! -d ../../build/emsdk ]; then
-	git clone https://github.com/emscripten-core/emsdk.git ../../build/emsdk
-fi
-
-pushd ../../build/emsdk
-#git pull
-./emsdk install 3.0.0
-./emsdk activate 3.0.0
-source ./emsdk_env.sh
-popd # ../../build/emsdk
-
 pushd build/wasm
 emcmake cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ../..
 make -j
 TARGET_FILES="
-	KgmLegacy.js
-	KgmWasm.js
-	KgmWasm.wasm
-	KgmWasmBundle.js
+    KgmLegacy.js
+    KgmWasm.js
+    KgmWasm.wasm
+    KgmWasmBundle.js
 "
 
 cp $TARGET_FILES "${CURR_DIR}/"
