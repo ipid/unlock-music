@@ -70,6 +70,7 @@ export async function Decrypt(file: FileInfo, config: Record<string, any>): Prom
     case 'mgg': //QQ Music New Ogg
     case 'mgg1': //QQ Music New Ogg
     case 'mgg0':
+    case 'mmp4': // QMC MP4 Container w/ E-AC-3 JOC
     case '666c6163': //QQ Music Weiyun Flac
     case '6d7033': //QQ Music Weiyun Mp3
     case '6f6767': //QQ Music Weiyun Ogg

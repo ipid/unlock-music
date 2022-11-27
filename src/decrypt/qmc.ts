@@ -18,6 +18,7 @@ export const HandlerMap: { [key: string]: Handler } = {
   mgg1: { ext: 'ogg', version: 2 },
   mflac: { ext: 'flac', version: 2 },
   mflac0: { ext: 'flac', version: 2 },
+  mmp4: { ext: 'mmp4', version: 2 },
 
   // qmcflac / qmcogg:
   // 有可能是 v2 加密但混用同一个后缀名。
