@@ -4,12 +4,16 @@ type: docker
 name: default
 
 steps:
+  - name: build-wasm
+    image: emscripten/emsdk:3.0.0
+    commands:
+      - ./scripts/build-wasm.sh
+
   - name: build
     image: node:16.18-bullseye
     commands:
       - apt-get update
-      - apt-get install -y cmake jq zip
-      - ./scripts/build-wasm.sh
+      - apt-get install -y jq zip
       - npm ci
       - npm run test
       - ./scripts/build-and-package.sh legacy
