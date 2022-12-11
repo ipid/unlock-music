@@ -32,7 +32,7 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
         }
     }
     
-    const info = GetMetaFromFile(musicMeta.common.artist, musicMeta.common.title, raw_filename);
+    const info = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist);
 
     return {
         picture: "",
@@ -48,7 +48,6 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
 
 function ProcessX2M(data: Uint8Array) {
     const x2mHeaderSize = 1024;
-    // x2m Key in test format: ['x', 'm', 'l', 'y'];
     const x2mKey = new Uint8Array([0x78, 0x6D, 0x6C, 0x79]);
     let x2mScrambleTable = new Uint16Array(x2mHeaderSize);
     if (x2mScrambleTableBytes.length != 2 * x2mHeaderSize)
