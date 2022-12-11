@@ -1,6 +1,5 @@
 import { parseBlob as metaParseBlob } from 'music-metadata-browser';
 import { AudioMimeType, SniffAudioExt, GetArrayBuffer, GetMetaFromFile } from "./utils";
-import { decode } from 'iconv-lite';
 import { DecryptResult } from '@/decrypt/entity';
 
 interface Handler {
@@ -24,13 +23,6 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
     let musicBlob = new Blob([musicDecoded], { type: mime });
     
     const musicMeta = await metaParseBlob(musicBlob);
-    for (let metaIdx in musicMeta.native) {
-        if (musicMeta.native[metaIdx].some(item => item.id === "TCON" && item.value === "(12)")) {
-            musicMeta.common.artist = decode(musicMeta.common.artist, "gbk");
-            musicMeta.common.title = decode(musicMeta.common.title, "gbk");
-            musicMeta.common.album = decode(musicMeta.common.album, "gbk");
-        }
-    }
     
     const info = GetMetaFromFile(raw_filename, musicMeta.common.title, musicMeta.common.artist);
 
