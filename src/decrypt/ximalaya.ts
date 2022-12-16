@@ -3,7 +3,7 @@ import { AudioMimeType, SniffAudioExt, GetArrayBuffer, GetMetaFromFile } from ".
 import { DecryptResult } from '@/decrypt/entity';
 
 
-const HandlerMap: Map<string, Function> = new Map([
+const HandlerMap: Map<string, (data: Uint8Array) => Uint8Array> = new Map([
     ["x2m", ProcessX2M],
     ["x3m", ProcessX3M],
 ]);
