@@ -9,6 +9,7 @@ import { Decrypt as KwmDecrypt } from '@/decrypt/kwm';
 import { Decrypt as RawDecrypt } from '@/decrypt/raw';
 import { Decrypt as TmDecrypt } from '@/decrypt/tm';
 import { Decrypt as JooxDecrypt } from '@/decrypt/joox';
+import { Decrypt as XimalayaDecrypt } from './ximalaya';
 import { DecryptResult, FileInfo } from '@/decrypt/entity';
 import { SplitFilename } from '@/decrypt/utils';
 import { storage } from '@/utils/storage';
@@ -92,6 +93,10 @@ export async function Decrypt(file: FileInfo, config: Record<string, any>): Prom
       break;
     case 'ofl_en':
       rt_data = await JooxDecrypt(file.raw, raw.name, raw.ext);
+      break;
+    case 'x2m':
+    case 'x3m':
+      rt_data = await XimalayaDecrypt(file.raw, raw.name, raw.ext);
       break;
     default:
       throw '不支持此文件格式';
