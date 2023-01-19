@@ -28,8 +28,16 @@ export const HandlerMap: { [key: string]: Handler } = {
   qmc0: { ext: 'mp3', version: 2 },
   qmc2: { ext: 'ogg', version: 2 },
   qmc3: { ext: 'mp3', version: 2 },
+  qmc4: { ext: 'ogg', version: 2 },
+  qmc6: { ext: 'ogg', version: 2 },
+  qmc8: { ext: 'ogg', version: 2 },
   bkcmp3: { ext: 'mp3', version: 1 },
+  bkcm4a: { ext: 'm4a', version: 1 },
   bkcflac: { ext: 'flac', version: 1 },
+  bkcwav: { ext: 'wav', version: 1 },
+  bkcape: { ext: 'ape', version: 1 },
+  bkcogg: { ext: 'ogg', version: 1 },
+  bkcwma: { ext: 'wma', version: 1 },
   tkm: { ext: 'm4a', version: 1 },
   '666c6163': { ext: 'flac', version: 1 },
   '6d7033': { ext: 'mp3', version: 1 },
@@ -131,7 +139,9 @@ export class QmcDecoder {
   private searchKey() {
     const last4Byte = this.file.slice(-4);
     const textEnc = new TextDecoder();
-    if (textEnc.decode(last4Byte) === 'QTag') {
+    if (textEnc.decode(last4Byte) === 'STag') {
+      throw new Error('文件中没有写入密钥，无法解锁，请降级App并重试');
+    } else if (textEnc.decode(last4Byte) === 'QTag') {
       const sizeBuf = this.file.slice(-8, -4);
       const sizeView = new DataView(sizeBuf.buffer, sizeBuf.byteOffset);
       const keySize = sizeView.getUint32(0, false);

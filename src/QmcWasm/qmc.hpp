@@ -131,6 +131,10 @@ public:
     int PreDecode(std::string ext) {
         cipherType = checkType(ext);
         size_t tailSize = 0;
+        if (cipherType == "invalid" || cipherType == "STag") {
+            error = "file is invalid or not supported (Please downgrade your app).";
+            return -1;
+        }
         if (cipherType == "QTag") {
             tailSize = 8;
         }
@@ -155,10 +159,6 @@ public:
                 return -1;
             }
             rawKeyBuf = tmp;
-        }
-        if (cipherType == "invalid") {
-            error = "file is invalid or not supported(Please downgrade your app.)";
-            return -1;
         }
         return keySize + tailSize;
     }
