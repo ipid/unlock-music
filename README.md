@@ -1,3 +1,11 @@
+# 关于仓库官方
+
+本仓库原始地址（已 DMCA）：https://github.com/unlock-music/unlock-music
+
+本仓库目前官方地址：https://git.unlock-music.dev/um/web
+
+你所看到的这个仓库是依照 MIT 协议授权转载的，代码与[本人](https://github.com/ipid)无关。
+
 # Unlock Music 音乐解锁
 
 [![Build Status](https://ci.unlock-music.dev/api/badges/um/web/status.svg)](https://ci.unlock-music.dev/um/web)
